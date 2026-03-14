@@ -127,25 +127,25 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
       <div className="relative max-w-7xl mx-auto">
         <div className="absolute inset-0 bg-lumis-text-primary rounded-2xl transform rotate-1 opacity-20"></div>
         
-        <div className="relative bg-lumis-surface-elevated rounded-2xl shadow-theme-xl border border-lumis-text-tertiary overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-8 bg-lumis-accent-gold border-r border-lumis-accent-gold-light">
+        <div className="relative rounded-2xl shadow-theme-xl border overflow-hidden" style={{ backgroundColor: 'var(--surface-elevated)', borderColor: 'var(--border-tertiary)' }}>
+          <div className="absolute left-0 top-0 bottom-0 w-8 border-r" style={{ backgroundColor: 'var(--accent-secondary)', borderColor: 'var(--accent-secondary)' }}>
             <div className="h-full flex flex-col justify-center items-center">
-              <div className="transform -rotate-90 text-xs font-mono uppercase tracking-widest text-lumis-accent-gold whitespace-nowrap">
+              <div className="transform -rotate-90 text-xs font-mono uppercase tracking-widest whitespace-nowrap" style={{ color: 'var(--text-inverse)' }}>
                 {member.fullName}
               </div>
             </div>
           </div>
 
           <div className="ml-8 grid grid-cols-12 min-h-[600px]">
-            <div className="col-span-5 p-8 border-r border-lumis-text-tertiary bg-lumis-bg-primary">
+            <div className="col-span-5 p-8 border-r" style={{ borderColor: 'var(--border-tertiary)', backgroundColor: 'var(--surface)' }}>
               <div className="mb-8">
                 <div className="text-center mb-4">
-                  <h2 className="font-serif text-xl text-lumis-text-primary mb-2">
+                  <h2 className="font-serif text-xl mb-2" style={{ color: 'var(--text-primary)' }}>
                     Journal Entries
                   </h2>
-                  <div className="w-16 h-px bg-lumis-accent-gold mx-auto"></div>
+                  <div className="w-16 h-px mx-auto" style={{ backgroundColor: 'var(--accent-secondary)' }}></div>
                 </div>
-                <p className="font-serif text-sm text-lumis-text-secondary text-center italic">
+                <p className="font-serif text-sm text-center italic" style={{ color: 'var(--text-secondary)' }}>
                   "The unexamined life is not worth living" — Socrates
                 </p>
               </div>
@@ -157,13 +157,19 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
                     onClick={() => handleEntrySelection(entry.id)}
                     className={`cursor-pointer p-3 rounded-lg border transition-all duration-300 ${
                       selectedEntry === entry.id
-                        ? 'bg-lumis-accent-primary-light border-lumis-accent-primary shadow-sm'
-                        : 'bg-lumis-surface border-lumis-text-tertiary hover:bg-lumis-surface-hover'
+                        ? 'shadow-sm'
+                        : 'hover:opacity-80'
                     }`}
+                    style={{
+                      backgroundColor: selectedEntry === entry.id ? 'var(--accent-primary-light)' : 'var(--surface-elevated)',
+                      borderColor: selectedEntry === entry.id ? 'var(--accent-primary)' : 'var(--border-tertiary)'
+                    }}
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex-1 min-w-0">
-                        <div className="font-mono text-xs text-lumis-text-tertiary mb-1">
+                        <div className="font-mono text-xs mb-1" style={{ 
+                          color: selectedEntry === entry.id ? '#2A2622' : 'var(--text-tertiary)' 
+                        }}>
                           {new Date(entry.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
@@ -171,11 +177,15 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
                           })}
                         </div>
                         {entry.title ? (
-                          <h4 className="font-serif text-sm font-medium text-lumis-text-primary truncate">
+                          <h4 className="font-serif text-sm font-medium truncate" style={{ 
+                            color: selectedEntry === entry.id ? '#1A1816' : 'var(--text-primary)' 
+                          }}>
                             {entry.title}
                           </h4>
                         ) : (
-                          <h4 className="font-serif text-sm text-lumis-text-secondary italic truncate">
+                          <h4 className="font-serif text-sm italic truncate" style={{ 
+                            color: selectedEntry === entry.id ? '#1A1816' : 'var(--text-secondary)' 
+                          }}>
                             Untitled Entry
                           </h4>
                         )}
@@ -187,12 +197,12 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
                               <div key={idx} className={`w-2 h-2 rounded-full ${getMoodColor(mood).split(' ')[0]}`}></div>
                             ))}
                             {entry.mood.length > 1 && (
-                              <span className="text-xs text-lumis-text-tertiary">+{entry.mood.length - 1}</span>
+                              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>+{entry.mood.length - 1}</span>
                             )}
                           </div>
                         )}
                         {entry.isPrivate && (
-                          <svg className="w-3 h-3 text-lumis-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'var(--text-tertiary)' }}>
                             <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clipRule="evenodd" />
                           </svg>
                         )}
@@ -229,6 +239,30 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
                       : 'animate-page-turn-backward'
                     : ''
                 }`}>
+                  
+                  {/* Simple Bookmark Ribbon - Empty with Triangle Cut */}
+                  {selectedEntryData && (
+                    <div className="absolute top-0 right-6 z-20">
+                      <div className="relative">
+                        {/* Slim vertical ribbon */}
+                        <div 
+                          className="w-6 h-20 shadow-md relative" 
+                          style={{ backgroundColor: 'var(--accent-gold)' }}
+                        >
+                          {/* Deep triangle cut at bottom using CSS borders */}
+                          <div 
+                            className="absolute bottom-0 left-0 w-0 h-0"
+                            style={{
+                              borderLeft: '12px solid var(--accent-gold)',
+                              borderRight: '12px solid var(--accent-gold)',
+                              borderBottom: '16px solid transparent',
+                              transform: 'translateY(100%)'
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="page-front backface-hidden">
                     <div className="absolute inset-0 opacity-5 bg-gradient-to-bl from-lumis-accent-ai via-transparent to-lumis-accent-gold pointer-events-none rounded-l-lg"></div>
                     
@@ -261,7 +295,7 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
                                 )}
                               </div>
                               {selectedEntryData.isPrivate && (
-                                <div className="flex items-center gap-1 px-2 py-1 bg-lumis-surface rounded-full border border-lumis-text-tertiary shadow-sm">
+                                <div className="flex items-center gap-1 px-2 py-1 bg-lumis-surface rounded-full border border-lumis-text-tertiary shadow-sm" style={{ marginRight: '22px' }}>
                                   <svg className="w-3 h-3 text-lumis-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
                                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clipRule="evenodd" />
                                   </svg>
@@ -351,6 +385,96 @@ export function MemberJournalTab({ member }: MemberJournalTabProps) {
           </div>
         </div>
       </div>
+
+      {/* New Entry Modal */}
+      {showAddForm && (
+        <div className="fixed inset-0 bg-lumis-text-primary bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-lumis-surface rounded-2xl shadow-theme-xl border border-lumis-text-tertiary p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-serif text-xl font-medium text-lumis-text-primary">
+                New Journal Entry
+              </h3>
+              <button
+                onClick={() => setShowAddForm(false)}
+                className="p-2 hover:bg-lumis-surface-hover rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-lumis-text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-widest text-lumis-text-tertiary mb-2">
+                  Title (Optional)
+                </label>
+                <input
+                  type="text"
+                  value={newEntry.title}
+                  onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
+                  placeholder="Give your entry a title..."
+                  className="w-full p-3 bg-lumis-bg-primary border border-lumis-text-tertiary rounded-lg font-serif text-lumis-text-primary placeholder-lumis-text-tertiary focus:border-lumis-accent-secondary focus:outline-none focus:ring-2 focus:ring-lumis-accent-secondary focus:ring-opacity-20"
+                />
+              </div>
+
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-widest text-lumis-text-tertiary mb-2">
+                  Content
+                </label>
+                <textarea
+                  value={newEntry.content}
+                  onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
+                  placeholder="What's on your mind about this relationship?"
+                  rows={8}
+                  className="w-full p-3 bg-lumis-bg-primary border border-lumis-text-tertiary rounded-lg font-serif text-lumis-text-primary placeholder-lumis-text-tertiary focus:border-lumis-accent-secondary focus:outline-none focus:ring-2 focus:ring-lumis-accent-secondary focus:ring-opacity-20 resize-none"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block font-mono text-xs uppercase tracking-widest text-lumis-text-tertiary mb-2">
+                  Tags
+                </label>
+                <input
+                  type="text"
+                  placeholder="vulnerability, patterns, growth (comma separated)"
+                  className="w-full p-3 bg-lumis-bg-primary border border-lumis-text-tertiary rounded-lg font-serif text-lumis-text-primary placeholder-lumis-text-tertiary focus:border-lumis-accent-secondary focus:outline-none focus:ring-2 focus:ring-lumis-accent-secondary focus:ring-opacity-20"
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="isPrivate"
+                  checked={newEntry.isPrivate}
+                  onChange={(e) => setNewEntry({ ...newEntry, isPrivate: e.target.checked })}
+                  className="w-4 h-4 text-lumis-accent-secondary bg-lumis-bg-primary border-lumis-text-tertiary rounded focus:ring-lumis-accent-secondary focus:ring-2"
+                />
+                <label htmlFor="isPrivate" className="font-serif text-sm text-lumis-text-primary">
+                  Keep this entry private
+                </label>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setShowAddForm(false)}
+                  className="flex-1 px-6 py-3 bg-lumis-surface border border-lumis-text-tertiary text-lumis-text-primary font-serif rounded-lg hover:bg-lumis-surface-hover transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-lumis-accent-secondary text-lumis-text-inverse font-serif rounded-lg hover:bg-lumis-accent-secondary-hover transition-colors shadow-sm"
+                >
+                  Save Entry
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

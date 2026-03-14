@@ -457,10 +457,47 @@
     inset 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
-/* Enhanced 3D Page Effect */
+/* Enhanced 3D Page Effect with Theme-Aware Colors */
 .page-3d {
   transform-style: preserve-3d;
   backface-visibility: hidden;
+}
+
+/* Theme-aware page backgrounds */
+.page-front,
+.page-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  -moz-backface-visibility: hidden;
+}
+
+.page-back {
+  /* Use theme-aware background color */
+  background: var(--bg-primary) !important;
+}
+
+.page-back::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 10;
+  border-radius: inherit;
+}
+
+.page-back::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 11;
+  border-radius: inherit;
 }
 
 .page-3d::before {
