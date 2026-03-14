@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Validate Build on File Changes",
+  "description": "Automatically runs npm run build to validate syntax and catch compilation errors whenever TypeScript/React files are modified",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "frontend/src/**/*.tsx",
+      "frontend/src/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd frontend && npm run build",
+    "timeout": 120
+  }
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Conversation with Lumen (Advice Mode)</title>
+<!-- Tailwind CSS with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'paper': '#F8F6F3',
+            'sage': '#9CAF9E',
+            'terracotta': '#C9A58F',
+            'amber-accent': '#FFBF00',
+            'midnight': '#1A1A1A',
+          },
+          fontFamily: {
+            'cormorant': ['"Cormorant Garamond"', 'serif'],
+            'mono': ['"DM Mono"', 'monospace'],
+            'lora': ['"Lora"', 'serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      background-color: #F8F6F3;
+      color: #1A1A1A;
+      font-family: 'Lora', serif;
+    }
+    .title-font { font-family: 'Cormorant Garamond', serif; }
+    .mono-font { font-family: 'DM Mono', monospace; }
+    .lumen-voice { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1.25rem; }
+    
+    /* Custom Scrollbar for the parchment look */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #F8F6F3; }
+    ::-webkit-scrollbar-thumb { background: #C9A58F; border-radius: 10px; }
+  </style>
+<style data-purpose="layout-specifics">
+    .conversation-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .active-nav-item {
+      border-bottom: 2px solid #C9A58F;
+    }
+    .mode-selector-active {
+      color: #C9A58F;
+      font-weight: 500;
+    }
+    .lumen-dot {
+      color: #FFBF00;
+      margin-right: 0.5rem;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- BEGIN: Top Navigation -->
+<header class="w-full border-b border-stone-200 bg-paper/80 backdrop-blur-sm sticky top-0 z-50 px-8 py-4">
+<div class="max-w-[1440px] mx-auto flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="title-font text-2xl font-semibold tracking-tight text-stone-800">LUMIS</span>
+</div>
+<nav class="flex gap-12 text-sm uppercase tracking-widest mono-font text-stone-500">
+<a class="hover:text-stone-800 transition-colors" href="#">Dashboard</a>
+<a class="hover:text-stone-800 transition-colors" href="#">Members</a>
+<a class="text-stone-900 active-nav-item pb-1" href="#">Lumen</a>
+<a class="hover:text-stone-800 transition-colors" href="#">Profile</a>
+</nav>
+<div class="w-10 h-10 rounded-full border border-terracotta/30 flex items-center justify-center overflow-hidden">
+<div class="bg-sage/20 w-full h-full flex items-center justify-center text-xs mono-font">JD</div>
+</div>
+</div>
+</header>
+<!-- END: Top Navigation -->
+<!-- BEGIN: Main Conversation Content -->
+<main class="flex-grow pt-12 pb-32 px-6">
+<div class="conversation-container">
+<!-- BEGIN: Mode Selector -->
+<div class="flex justify-center gap-8 mb-16 mono-font text-xs uppercase tracking-[0.2em] text-stone-400" data-purpose="mode-selector">
+<button class="hover:text-stone-600 transition-colors">Analysis</button>
+<button class="hover:text-stone-600 transition-colors">Vent</button>
+<button class="hover:text-stone-600 transition-colors">Guided</button>
+<button class="mode-selector-active border-b border-terracotta pb-1">Advice</button>
+</div>
+<!-- END: Mode Selector -->
+<!-- BEGIN: Chat History -->
+<section class="space-y-16" id="chat-stream">
+<!-- User Message -->
+<article class="flex flex-col items-end" data-purpose="user-message">
+<div class="max-w-xl">
+<p class="text-stone-800 text-lg leading-relaxed mono-font">
+              Based on that, how should I handle the next time she feels I'm pulling away? Give me some concrete advice.
+            </p>
+</div>
+</article>
+<!-- Lumen Response -->
+<article class="flex flex-col items-start" data-purpose="lumen-message">
+<div class="max-w-2xl">
+<header class="flex items-center mb-6">
+<span class="lumen-dot text-xl">✦</span>
+<span class="mono-font text-[10px] uppercase tracking-widest text-sage font-bold">Lumen Advice Mode</span>
+</header>
+<div class="lumen-voice text-stone-700 space-y-8 leading-relaxed">
+<p>
+                To navigate the <span class="text-terracotta italic">Ego vs. Solitude</span> landscape without losing your sanctuary or leaving Zara in the cold, we must transform your withdrawal into a collaborative rhythm.
+              </p>
+<div class="space-y-6 not-italic font-lora text-base">
+<div class="flex gap-4">
+<div class="text-terracotta mono-font text-xs pt-1">01.</div>
+<div>
+<h4 class="font-semibold text-stone-800 mb-1">Scheduled Visibility</h4>
+<p class="text-stone-600">Proactively offer the "Ego" its stage. By scheduling high-quality, focused time with Zara before you retreat, you fill her connection cup. This prevents the "starvation" that leads to her pushing for attention when you are least able to give it.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="text-terracotta mono-font text-xs pt-1">02.</div>
+<div>
+<h4 class="font-semibold text-stone-800 mb-1">Communicating the Need for Quiet</h4>
+<p class="text-stone-600">The friction often arises from the <em>suddenness</em> of your silence. Practice labeling the transition. Instead of disappearing, try: "My mind needs to go into processing mode for an hour so I can be fully present with you later." It turns an act of 'leaving' into an act of 'preparing to return'.</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="text-terracotta mono-font text-xs pt-1">03.</div>
+<div>
+<h4 class="font-semibold text-stone-800 mb-1">The Transparency Bridge</h4>
+<p class="text-stone-600">When you emerge from solitude, share one small, non-sensitive insight from your thoughts. This signals to her that your time away wasn't a rejection, but a productive journey she is now being invited to witness.</p>
+</div>
+</div>
+</div>
+<p>
+                By implementing these shifts, you protect your intellectual soil while reassuring Zara that the bridge between you remains intact, even when you aren't walking across it.
+              </p>
+</div>
+<footer class="mt-8">
+<div class="mono-font text-[9px] uppercase tracking-widest text-stone-400 border-t border-stone-200 pt-4">
+                Strategy: Relational Rhythms · Implementation Difficulty: Moderate
+              </div>
+</footer>
+</div>
+</article>
+</section>
+<!-- END: Chat History -->
+</div>
+</main>
+<!-- END: Main Conversation Content -->
+<!-- BEGIN: Message Input -->
+<footer class="fixed bottom-0 left-0 w-full bg-paper/95 backdrop-blur-md border-t border-stone-200 py-8 px-6">
+<div class="max-w-3xl mx-auto relative">
+<div class="relative group">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-stone-800 placeholder-stone-400 text-lg font-lora resize-none pb-12" placeholder="Reflect or ask Lumen..." rows="1"></textarea>
+<div class="absolute bottom-0 right-0 flex items-center gap-4">
+<span class="mono-font text-[10px] text-stone-400 uppercase tracking-widest">Press Enter to Send</span>
+<button class="w-10 h-10 rounded-full border border-terracotta/30 flex items-center justify-center hover:bg-terracotta/10 transition-colors">
+<svg fill="none" height="18" stroke="#C9A58F" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="m5 12 7-7 7 7"></path><path d="M12 19V5"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: Message Input -->
+</body></html>

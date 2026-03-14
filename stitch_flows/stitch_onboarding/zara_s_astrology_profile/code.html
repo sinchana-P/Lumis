@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&amp;family=DM+Mono:wght@300;400;500&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=Public+Sans:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "astrology-violet": "#6A4A7C",
+                        "astrology-slate": "#4A5A7C",
+                        "background-light": "#F8F6F3",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "mono-alt": ["DM Mono", "monospace"],
+                        "serif-alt": ["Cormorant Garamond", "serif"],
+                        "body-serif": ["Lora", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; background-color: #F8F6F3; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-dm-mono { font-family: 'DM Mono', monospace; }
+        .font-lora { font-family: 'Lora', serif; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-[1440px] mx-auto min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-10 py-6 border-b border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">flare</span>
+</div>
+<h2 class="font-dm-mono text-lg font-light tracking-tighter uppercase">Lumis</h2>
+</div>
+<nav class="flex items-center gap-12">
+<a class="font-dm-mono text-xs font-light tracking-widest text-slate-500 hover:text-primary transition-colors" href="#">DASHBOARD</a>
+<a class="font-dm-mono text-xs font-medium tracking-widest text-primary border-b border-primary pb-1" href="#">MEMBERS</a>
+<a class="font-dm-mono text-xs font-light tracking-widest text-slate-500 hover:text-primary transition-colors" href="#">LUMEN</a>
+<a class="font-dm-mono text-xs font-light tracking-widest text-slate-500 hover:text-primary transition-colors" href="#">PROFILE</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-primary/5 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600">search</span>
+</button>
+<button class="p-2 hover:bg-primary/5 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600">notifications</span>
+</button>
+</div>
+</header>
+<!-- Member Header -->
+<section class="px-20 pt-16 pb-10 flex flex-col items-center text-center">
+<div class="mb-6 relative">
+<div class="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/20 p-1">
+<img alt="Zara Profile" class="w-full h-full object-cover rounded-full" data-alt="Portrait of a woman with a thoughtful expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7VFH0nwqUihUUYUGtCwg-vADFW51ZR4EEYMoTLFfPU6C85hDMBAV642Xtk1hMPRBbjce0Q2MZFjpKsjJGwgJnE9SYnsh-vqBdDK2gNj11lRdehH7Xb0fEmUyTTyEr0Ua9wvIcNbC__VfflH6N1ojypMxh6ROl2eu9gVjlxCEaQN_UmwqhcRO_uoN5NWLFwmrh6f3NQ_HgWnonHM-no81ozwNua00itpCHpKOlRI-jmVo84fKXI-a6kBkClcZq3j_WAf3DtKvWkDM"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-astrology-violet text-white w-8 h-8 rounded-full flex items-center justify-center border-4 border-background-light">
+<span class="material-symbols-outlined text-xs">auto_awesome</span>
+</div>
+</div>
+<h1 class="font-serif-alt italic text-6xl text-slate-800 dark:text-slate-100 mb-2">Zara</h1>
+<p class="font-dm-mono text-xs tracking-[0.4em] text-astrology-slate uppercase">Seeker of Depth</p>
+</section>
+<!-- Sub-tabs -->
+<div class="px-20 mb-10">
+<div class="flex justify-center gap-10 border-b border-slate-200 dark:border-slate-800">
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">TRAITS</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">INCIDENTS</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">JOURNAL</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">NUMEROLOGY</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-primary border-b-2 border-primary" href="#">ASTROLOGY</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">REPORT</a>
+</div>
+</div>
+<!-- Main Content Grid -->
+<main class="px-20 pb-20 grid grid-cols-12 gap-8">
+<!-- Side Panel: Transits -->
+<aside class="col-span-3 space-y-8">
+<div class="bg-white/50 dark:bg-slate-900/50 p-6 rounded-xl border border-slate-100 dark:border-slate-800">
+<h3 class="font-dm-mono text-[10px] tracking-[0.2em] uppercase text-astrology-violet mb-6 border-b border-astrology-violet/10 pb-2">Current Transits</h3>
+<div class="space-y-6">
+<div class="group">
+<div class="flex items-center justify-between mb-1">
+<span class="font-serif-alt italic text-lg text-slate-700">Saturn Return</span>
+<span class="material-symbols-outlined text-astrology-violet text-sm">error_outline</span>
+</div>
+<p class="font-lora text-xs leading-relaxed text-slate-500 italic">Structural shifts in career and long-term foundations. Heavy but necessary.</p>
+</div>
+<div class="group">
+<div class="flex items-center justify-between mb-1">
+<span class="font-serif-alt italic text-lg text-slate-700">Jupiter Trine Mars</span>
+<span class="material-symbols-outlined text-primary text-sm">bolt</span>
+</div>
+<p class="font-lora text-xs leading-relaxed text-slate-500 italic">High energy for creative expansion. Luck favors the bold today.</p>
+</div>
+<div class="group">
+<div class="flex items-center justify-between mb-1">
+<span class="font-serif-alt italic text-lg text-slate-700">Mercury Shadow</span>
+<span class="material-symbols-outlined text-astrology-slate text-sm">visibility_off</span>
+</div>
+<p class="font-lora text-xs leading-relaxed text-slate-500 italic">Internal processing. Avoid signing major contracts until next week.</p>
+</div>
+</div>
+</div>
+<div class="bg-white/50 dark:bg-slate-900/50 p-6 rounded-xl border border-slate-100 dark:border-slate-800">
+<h3 class="font-dm-mono text-[10px] tracking-[0.2em] uppercase text-astrology-slate mb-6 border-b border-astrology-slate/10 pb-2">Dominant Element</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 45%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">FIRE</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-astrology-slate h-full rounded-full" style="width: 30%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">WATER</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-slate-400 h-full rounded-full" style="width: 15%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">AIR</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-astrology-violet h-full rounded-full" style="width: 10%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">EARTH</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content: Natal Chart -->
+<div class="col-span-9 bg-white dark:bg-slate-900 rounded-3xl p-12 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h2 class="font-serif-alt text-4xl text-slate-800 dark:text-slate-100">Natal Chart</h2>
+<p class="font-dm-mono text-[10px] tracking-[0.2em] uppercase text-slate-400 mt-2">August 12, 1994 • 11:42 PM • London, UK</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-sm">print</span>
+<span class="font-dm-mono text-[10px] tracking-widest">DOWNLOAD CHART</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-12">
+<!-- Chart Visualization -->
+<div class="relative aspect-square flex items-center justify-center">
+<!-- Abstract Planetary Rings -->
+<div class="absolute inset-0 border border-slate-100 rounded-full"></div>
+<div class="absolute inset-8 border border-slate-100 rounded-full"></div>
+<div class="absolute inset-20 border border-slate-100 rounded-full"></div>
+<div class="absolute inset-32 border border-slate-100 rounded-full"></div>
+<!-- Connecting Lines (Aspects) -->
+<svg class="absolute inset-0 w-full h-full opacity-20" viewbox="0 0 400 400">
+<line stroke="#6A4A7C" stroke-width="1" x1="200" x2="350" y1="50" y2="200"></line>
+<line stroke="#ec5b13" stroke-width="1" x1="200" x2="50" y1="50" y2="200"></line>
+<line stroke="#4A5A7C" stroke-width="1" x1="50" x2="200" y1="200" y2="350"></line>
+</svg>
+<!-- Central Sun Icon -->
+<div class="z-10 bg-white dark:bg-slate-900 p-4 rounded-full shadow-lg border border-primary/20">
+<span class="material-symbols-outlined text-primary text-4xl">wb_sunny</span>
+</div>
+<!-- Planets -->
+<div class="absolute top-[10%] left-1/2 -translate-x-1/2 text-center">
+<div class="w-8 h-8 rounded-full bg-astrology-violet flex items-center justify-center text-white text-xs mb-1">☉</div>
+<span class="font-dm-mono text-[9px] text-slate-400">SUN LEO</span>
+</div>
+<div class="absolute right-[10%] top-1/2 -translate-y-1/2 text-center">
+<div class="w-8 h-8 rounded-full bg-astrology-slate flex items-center justify-center text-white text-xs mb-1">☽</div>
+<span class="font-dm-mono text-[9px] text-slate-400">MOON SCORPIO</span>
+</div>
+<div class="absolute left-[10%] top-1/2 -translate-y-1/2 text-center">
+<div class="w-8 h-8 rounded-full bg-primary/40 flex items-center justify-center text-slate-800 text-xs mb-1">ASC</div>
+<span class="font-dm-mono text-[9px] text-slate-400">RISING TAURUS</span>
+</div>
+<div class="absolute bottom-[10%] left-1/2 -translate-x-1/2 text-center">
+<div class="w-8 h-8 rounded-full border border-astrology-slate flex items-center justify-center text-astrology-slate text-xs mb-1">♂</div>
+<span class="font-dm-mono text-[9px] text-slate-400">MARS CANCER</span>
+</div>
+</div>
+<!-- Planet Details List -->
+<div class="flex flex-col justify-center space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Sun</p>
+<p class="font-serif-alt text-xl italic">Leo</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Inner essence &amp; drive.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Moon</p>
+<p class="font-serif-alt text-xl italic">Scorpio</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Emotional landscape.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Venus</p>
+<p class="font-serif-alt text-xl italic">Libra</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Love &amp; aesthetic values.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Mars</p>
+<p class="font-serif-alt text-xl italic">Cancer</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Action &amp; defensive drive.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Mercury</p>
+<p class="font-serif-alt text-xl italic">Virgo</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Communication &amp; logic.</p>
+</div>
+<div class="p-4 bg-astrology-violet/5 rounded-xl border border-astrology-violet/20">
+<p class="font-dm-mono text-[9px] text-astrology-violet uppercase tracking-widest mb-1">Rising</p>
+<p class="font-serif-alt text-xl italic">Taurus</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Public mask &amp; approach.</p>
+</div>
+</div>
+<div class="mt-8 p-6 border-l-2 border-primary/20 bg-primary/5 rounded-r-xl">
+<h4 class="font-dm-mono text-xs uppercase tracking-widest mb-2 text-slate-700">Synthesized Insight</h4>
+<p class="font-lora text-sm leading-relaxed text-slate-600">Zara, your Leo Sun seeks the spotlight, but your Scorpio Moon demands privacy and depth. This creates a fascinating tension between your desire to be seen and your need to remain mysterious. Your Taurus rising grounds this intensity in a calm, aesthetic exterior.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Footer -->
+<footer class="mt-auto px-20 py-8 border-t border-primary/5 text-center">
+<p class="font-dm-mono text-[10px] tracking-widest text-slate-400 uppercase">Lumis Archive © 2024 • Guided by the Stars</p>
+</footer>
+</div>
+</body></html>

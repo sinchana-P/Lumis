@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Zara's Journal</title>
+<!-- Tailwind CSS v3 with plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Cormorant Garamond, DM Mono, Lora -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Lora:ital,wght@0,400;1,400&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: '#F8F6F3',
+            ink: '#2D2926',
+            muted: '#8C857D',
+            leather: '#4A3F35',
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            mono: ['"DM Mono"', 'monospace'],
+            body: ['"Lora"', 'serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="layout-textures">/* Subtle grain texture overlay */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.04;
+    z-index: 50;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBj-6CBFYx0aOrYOVhSckntvg3ouRxKLaCisDQLKlSpVbAN8pDSOXQJxiGEX9cZ8A18eYIJf9x6F_1UtA1ZJokIzslaxT9lSfOztf79U-6pzAMgXpfwkSJtvYhPgqGbtmKqeAsOjeUYRZlJjRLpTkoy5L2r4OwWZ1ekyBDTfpTr95ptmuaTK_r_TogD3OHpRGHRbHYHdcXVASFTKpbPFIubpiQtbTuK5NBxjk3x0xyOmSo26XEXyL4P5Kg6fpAgJOEjoYuIgnVGzik)
+    }
+/* Journal shadow for depth */
+.journal-surface {
+    box-shadow: 0 10px 50px -12px rgba(0, 0, 0, 0.08);
+    min-height: calc(100vh - 80px)
+    }
+/* Smooth scrolling for reflection */
+html {
+    scroll-behavior: smooth
+    }</style>
+<style data-purpose="typography">
+    .journal-entry-text {
+      line-height: 1.8;
+      letter-spacing: -0.01em;
+    }
+    .active-tab {
+      border-bottom: 1.5px solid #2D2926;
+      color: #2D2926;
+    }
+    .inactive-tab {
+      color: #A39E98;
+      transition: color 0.2s ease;
+    }
+    .inactive-tab:hover {
+      color: #2D2926;
+    }
+  </style>
+</head>
+<body class="bg-parchment text-ink font-body selection:bg-leather/10">
+<!-- BEGIN: MainHeader -->
+<header class="w-full py-8 px-12 flex justify-between items-center" data-purpose="navigation-top">
+<div class="flex items-center space-x-2">
+<span class="font-serif italic text-xl tracking-wider">Lumis</span>
+</div>
+<nav class="flex space-x-10">
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink" href="#">Dashboard</a>
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-ink border-b border-ink/30 pb-1" href="#">Members</a>
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink" href="#">Lumen</a>
+<a class="font-mono text-[10px] uppercase tracking-[0.2em] text-muted hover:text-ink" href="#">Profile</a>
+</nav>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: JournalContainer -->
+<main class="max-w-[1440px] mx-auto px-12 pb-24">
+<!-- BEGIN: MemberHeader -->
+<section class="text-center mb-16" data-purpose="member-identity">
+<span class="font-mono text-[11px] tracking-[0.3em] text-muted uppercase block mb-2">Journal</span>
+<h1 class="font-serif italic text-7xl font-normal">Zara</h1>
+</section>
+<!-- END: MemberHeader -->
+<!-- BEGIN: TabNavigation -->
+<nav class="flex justify-center mb-20 space-x-12 border-b border-ink/5" data-purpose="member-tabs">
+<a class="inactive-tab font-mono text-[11px] tracking-widest pb-4" href="#">TRAITS</a>
+<a class="inactive-tab font-mono text-[11px] tracking-widest pb-4" href="#">INCIDENTS</a>
+<a class="active-tab font-mono text-[11px] tracking-widest pb-4" href="#">JOURNAL</a>
+<a class="inactive-tab font-mono text-[11px] tracking-widest pb-4" href="#">NUMEROLOGY</a>
+<a class="inactive-tab font-mono text-[11px] tracking-widest pb-4" href="#">ASTROLOGY</a>
+<a class="inactive-tab font-mono text-[11px] tracking-widest pb-4" href="#">REPORT</a>
+</nav>
+<!-- END: TabNavigation -->
+<!-- BEGIN: EntryList -->
+<section class="max-w-[768px] mx-auto journal-surface bg-white/30 rounded-sm p-12 md:p-20 relative" data-purpose="journal-body">
+<!-- Entry 1 -->
+<article class="mb-24 group">
+<time class="font-mono text-[10px] text-muted block mb-6 tracking-widest" datetime="2023-10-22">OCT 22, 2023</time>
+<p class="journal-entry-text text-xl text-ink/90 font-body">
+          Something felt different today. She mentioned the childhood story again, the one about the lighthouse. There's a specific kind of quiet in her voice when she talks about it—like she's guarding something.
+        </p>
+</article>
+<!-- Entry 2 -->
+<article class="mb-24 group">
+<time class="font-mono text-[10px] text-muted block mb-6 tracking-widest" datetime="2023-10-15">OCT 15, 2023</time>
+<p class="journal-entry-text text-xl text-ink/90 font-body">
+          Lumen suggested I look at the pattern of her withdrawing after deep conversations. I see it now. It's not coldness; it's a need for air.
+        </p>
+</article>
+<!-- BEGIN: InputFooter -->
+<footer class="mt-40 pt-12 border-t border-ink/5" data-purpose="reflection-input">
+<div class="w-full">
+<textarea class="w-full bg-transparent border-none focus:ring-0 p-0 text-xl font-body italic text-muted/60 resize-none h-32 placeholder:text-muted/40" placeholder="Tell Lumen how you feel about Zara..."></textarea>
+</div>
+</footer>
+<!-- END: InputFooter -->
+</section>
+<!-- END: EntryList -->
+</main>
+<!-- END: JournalContainer -->
+<!-- BEGIN: InteractionScripts -->
+<script data-purpose="interactive-elements">
+    // Auto-expand textarea if needed
+    const tx = document.getElementsByTagName("textarea");
+    for (let i = 0; i < tx.length; i++) {
+      tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+      tx[i].addEventListener("input", OnInput, false);
+    }
+
+    function OnInput() {
+      this.style.height = "auto";
+      this.style.height = (this.scrollHeight) + "px";
+    }
+  </script>
+<!-- END: InteractionScripts -->
+</body></html>

@@ -1,0 +1,238 @@
+'use client';
+
+import { useState, FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
+import { AuthFormField } from './AuthFormField';
+import { AuthErrorDisplay } from './AuthErrorDisplay';
+import { useSignUpMutation } from '@/store/api/authApi';
+import { validateEmail, validatePassword } from '@/lib/validation';
+
+export interface SignUpFormProps {
+  onSuccess?: () => void;
+  className?: string;
+}
+
+interface SignUpFormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+interface FormErrors {
+  email?: string;
+  password?: string[];
+  confirmPassword?: string;
+}
+
+/**
+ * SignUpForm Component
+ * 
+ * Local sign up form with email, password, and confirm password fields.
+ * Features:
+ * - Email format validation on blur
+ * - Password requirements validation on blur
+ * - Confirm password matching validation
+ * - Real-time validation feedback
+ * - Uses shadcn/ui FormField components with Lumis theme
+ * - Generous spacing between fields
+ * 
+ * Requirements: 2.1, 2.2, 2.9, 8.3, 9.3, 10.1, 10.2, 10.3, 10.7, 10.8
+ * Subtask: 13.1, 13.2, 13.3
+ */
+export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
+  const router = useRouter();
+  const [signUp, { isLoading }] = useSignUpMutation();
+
+  const [formData, setFormData] = useState<SignUpFormData>({
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [apiError, setApiError] = useState<string | null>(null);
+
+  // Validate email on blur
+  const handleEmailBlur = () => {
+    setTouched({ ...touched, email: true });
+    const emailError = validateEmail(formData.email);
+    setErrors({ ...errors, email: emailError || undefined });
+  };
+
+  // Validate password on blur
+  const handlePasswordBlur = () => {
+    setTouched({ ...touched, password: true });
+    const passwordErrors = validatePassword(formData.password);
+    setErrors({ 
+      ...errors, 
+      password: passwordErrors.length > 0 ? passwordErrors : undefined 
+    });
+  };
+
+  // Validate confirm password on blur
+  const handleConfirmPasswordBlur = () => {
+    setTouched({ ...touched, confirmPassword: true });
+    if (formData.confirmPassword && formData.password !== formData.confirmPassword) {
+      setErrors({ ...errors, confirmPassword: 'Passwords do not match' });
+    } else {
+      setErrors({ ...errors, confirmPassword: undefined });
+    }
+  };
+
+  // Handle input changes
+  const handleChange = (field: keyof SignUpFormData) => (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = e.target.value;
+    setFormData({ ...formData, [field]: value });
+
+    // Clear field error when user starts typing
+    if (touched[field]) {
+      setErrors({ ...errors, [field]: undefined });
+    }
+
+    // Clear API error when user starts typing
+    if (apiError) {
+      setApiError(null);
+    }
+  };
+
+  // Validate entire form before submission
+  const validateForm = (): boolean => {
+    const emailError = validateEmail(formData.email);
+    const passwordErrors = validatePassword(formData.password);
+    const confirmPasswordError =
+      formData.password !== formData.confirmPassword
+        ? 'Passwords do not match'
+        : null;
+
+    const newErrors: FormErrors = {
+      email: emailError || undefined,
+      password: passwordErrors.length > 0 ? passwordErrors : undefined,
+      confirmPassword: confirmPasswordError || undefined,
+    };
+
+    setErrors(newErrors);
+    setTouched({ email: true, password: true, confirmPassword: true });
+
+    return !emailError && passwordErrors.length === 0 && !confirmPasswordError;
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setApiError(null);
+
+    // Validate form
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      // Call sign up mutation
+      await signUp({
+        email: formData.email,
+        password: formData.password,
+      }).unwrap();
+
+      // Clear sensitive form data from memory (Requirement 9.3)
+      setFormData({ email: '', password: '', confirmPassword: '' });
+
+      // Call success callback if provided
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        // Default: redirect to dashboard
+        router.push('/dashboard');
+      }
+    } catch (error: any) {
+      // Handle API errors
+      const errorMessage = error?.data?.error?.message || 'An error occurred during sign up. Please try again.';
+      
+      // Map specific error codes to user-friendly messages
+      if (error?.data?.error?.code === 'EMAIL_ALREADY_EXISTS') {
+        setApiError('An account with this email already exists. Please sign in instead.');
+      } else if (error?.data?.error?.code === 'VALIDATION_ERROR') {
+        setApiError(errorMessage);
+      } else if (error?.status === 429) {
+        setApiError('Too many attempts. Please wait a moment and try again.');
+      } else {
+        setApiError(errorMessage);
+      }
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className={className}>
+      <div className="space-y-6">
+        {/* API Error Display */}
+        {apiError && (
+          <AuthErrorDisplay
+            error={apiError}
+            onDismiss={() => setApiError(null)}
+          />
+        )}
+
+        {/* Email Field */}
+        <AuthFormField
+          label="Email"
+          name="email"
+          type="email"
+          value={formData.email}
+          onChange={handleChange('email')}
+          onBlur={handleEmailBlur}
+          error={touched.email ? errors.email : undefined}
+          placeholder="your@email.com"
+          required
+          autoComplete="email"
+          disabled={isLoading}
+        />
+
+        {/* Password Field */}
+        <AuthFormField
+          label="Password"
+          name="password"
+          type="password"
+          value={formData.password}
+          onChange={handleChange('password')}
+          onBlur={handlePasswordBlur}
+          error={
+            touched.password && errors.password
+              ? errors.password.join('. ')
+              : undefined
+          }
+          hint="Minimum 8 characters with uppercase, lowercase, and number"
+          placeholder="••••••••"
+          required
+          autoComplete="new-password"
+          disabled={isLoading}
+        />
+
+        {/* Confirm Password Field */}
+        <AuthFormField
+          label="Confirm Password"
+          name="confirmPassword"
+          type="password"
+          value={formData.confirmPassword}
+          onChange={handleChange('confirmPassword')}
+          onBlur={handleConfirmPasswordBlur}
+          error={touched.confirmPassword ? errors.confirmPassword : undefined}
+          placeholder="••••••••"
+          required
+          autoComplete="new-password"
+          disabled={isLoading}
+        />
+
+        {/* Submit Button */}
+        <button
+          type="submit"
+          disabled={isLoading}
+          className="w-full px-6 py-3 rounded-md bg-accent-primary text-inverse font-sans font-medium text-base shadow-sm transition-all duration-200 hover:bg-accent-primary-hover hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-lumis-accent-primary-light disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+        >
+          {isLoading ? 'Creating account...' : 'Create account'}
+        </button>
+      </div>
+    </form>
+  );
+}

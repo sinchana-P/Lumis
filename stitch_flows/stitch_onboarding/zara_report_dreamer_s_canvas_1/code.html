@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - AI Relationship Report: Zara</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@1,300;1,600&amp;family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#C8B8D4", // Soft Lavender Accent
+                        "background-light": "#FAF8F7", // Warm Off-White
+                        "background-dark": "#1A161C",
+                        "surface": "#E8E0E8", // Muted Watercolor Purple
+                        "text-main": "#3D3540", // Deep Charcoal Purple
+                    },
+                    fontFamily: {
+                        "display": ["Crimson Pro", "serif"],
+                        "body": ["Lora", "serif"],
+                        "mono": ["DM Mono", "monospace"],
+                        "italic-heading": ["Cormorant Garamond", "serif"],
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "1.5rem", "xl": "2.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lora', serif;
+            background-color: #FAF8F7;
+            color: #3D3540;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(273,33%,92%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(20,40%,95%,1) 0, transparent 50%),
+                radial-gradient(at 100% 0%, hsla(273,20%,90%,1) 0, transparent 50%);
+        }
+        .header-font { font-family: 'Crimson Pro', serif; }
+        .mono-font { font-family: 'DM Mono', monospace; }
+        .italic-display { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+        
+        .watercolor-card {
+            background: rgba(232, 224, 232, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(200, 184, 212, 0.3);
+            box-shadow: 0 10px 30px -10px rgba(61, 53, 64, 0.05);
+        }
+        
+        .fluid-border {
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+        }
+
+        .dreamy-gradient {
+            background: linear-gradient(135deg, #C8B8D4 0%, #E8E0E8 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-main dark:text-slate-100 min-h-screen">
+<div class="max-w-[1440px] mx-auto min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-12 py-8">
+<div class="flex items-center gap-3">
+<div class="text-primary relative">
+<span class="material-symbols-outlined text-4xl animate-pulse">cloud</span>
+<span class="material-symbols-outlined text-xs absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">auto_awesome</span>
+</div>
+<h2 class="header-font text-2xl font-light tracking-[0.2em]">LUMIS</h2>
+</div>
+<nav class="flex items-center gap-12">
+<a class="mono-font text-[10px] tracking-widest text-text-main/60 hover:text-primary transition-colors" href="#">DASHBOARD</a>
+<a class="mono-font text-[10px] tracking-widest text-text-main/60 hover:text-primary transition-colors" href="#">MEMBERS</a>
+<a class="mono-font text-[10px] tracking-widest text-primary border-b border-primary/40 pb-1" href="#">LUMEN</a>
+<a class="mono-font text-[10px] tracking-widest text-text-main/60 hover:text-primary transition-colors" href="#">PROFILE</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-11 h-11 rounded-full p-[2px] bg-gradient-to-tr from-primary to-surface">
+<div class="w-full h-full rounded-full overflow-hidden border-2 border-background-light">
+<img class="w-full h-full object-cover" data-alt="Portrait of a woman profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLunkpEyMg2FP_9no7wpYzeCs0zp8iGiPoiJlmHav-4rurrDZhve8Q-6BcNPYIXByUQ5EP2f0Qsh4L9PqH7HO9nORrWTQ9OfnfqHtgzj9ehOIa_hEXcEhfbPsIZbcON1NttTHnArHtZnRGIwU-kHd61ieCXNNXCeXZS-04GE6cddUpJltR_I0760gwurxFoEYIeZA9p7LOY2fnDgzz0NDCdP1O5-mTzYIMGRZHeTgNWroSn7cfZhwb33y4PDAn2F56JkRYaRld2sg"/>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow px-12 py-12">
+<!-- Hero Header Section -->
+<div class="mb-20 text-center md:text-left">
+<p class="mono-font text-[10px] tracking-[0.5em] text-primary uppercase mb-4 opacity-80">RELATIONSHIP REPORT</p>
+<h1 class="italic-display text-9xl text-text-main dark:text-slate-100 font-light leading-none">Zara</h1>
+</div>
+<div class="grid grid-cols-12 gap-12">
+<!-- Left Column: Insights & Analysis -->
+<div class="col-span-8 space-y-12">
+<!-- Cards Row -->
+<div class="grid grid-cols-2 gap-8">
+<div class="watercolor-card p-10 rounded-xl">
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 uppercase mb-4">Dynamic Type</p>
+<h3 class="header-font text-3xl font-medium text-text-main dark:text-slate-200 italic-display">The Reflective Mirror</h3>
+<p class="mt-4 text-sm text-text-main/70 dark:text-slate-400 leading-relaxed font-light">A synergy of introspective depth and shared intellectual discovery.</p>
+</div>
+<div class="watercolor-card p-10 rounded-xl flex flex-col justify-between">
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 uppercase mb-4">Compatibility Score</p>
+<div class="flex items-end gap-8">
+<div class="relative w-28 h-14 overflow-hidden">
+<div class="absolute top-0 left-0 w-28 h-28 rounded-full border-[2px] border-primary/20"></div>
+<div class="absolute top-0 left-0 w-28 h-28 rounded-full border-[3px] border-primary border-t-transparent border-r-transparent transition-all duration-1000" style="transform: rotate(140deg);"></div>
+</div>
+<span class="header-font text-6xl font-extralight text-text-main">78%</span>
+</div>
+<p class="mt-4 text-xs text-text-main/60 dark:text-slate-400 italic">Harmonious alignment with minor growth friction.</p>
+</div>
+</div>
+<!-- Lumen's Insight -->
+<section class="bg-white/40 dark:bg-white/5 p-12 rounded-[2rem] border border-primary/10 shadow-sm relative overflow-hidden">
+<div class="absolute -top-20 -right-20 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+<div class="flex items-center gap-4 mb-10">
+<span class="material-symbols-outlined text-primary text-3xl">filter_drama</span>
+<h2 class="header-font text-3xl font-light tracking-wide">Lumen's Insight</h2>
+</div>
+<div class="space-y-8 text-text-main/80 dark:text-slate-300 leading-relaxed text-xl font-light italic-display">
+<p>
+                            Your relationship dynamic is uniquely anchored by Zara's <span class="text-primary italic font-medium">Simha Rashi</span> (Leo) influence, which brings a regal warmth and protective loyalty to the core of your connection. This solar energy creates a radiant center, yet it is beautifully tempered by her <span class="text-primary italic font-medium">Life Path 7</span> vibration.
+                        </p>
+<p>
+                            This combination suggests a profound psychological depth. While the Leo placement seeks external expression and validation, the 7 vibration pulls inward toward spiritual mystery and intellectual solitude. In your dynamic, this manifests as a 'Reflective Mirror'—where you both serve as catalysts for each other's inner growth.
+                        </p>
+<p>
+                            The Vedic alignment indicates a natural leadership quality in this bond, but one that is quiet and observational rather than dominant. You are building a sanctuary of the mind as much as a partnership of the heart.
+                        </p>
+</div>
+</section>
+<!-- Tension & Growth -->
+<div class="grid grid-cols-2 gap-10">
+<div class="space-y-6">
+<h3 class="mono-font text-[10px] tracking-[0.4em] text-text-main/40 uppercase flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/40"></span> Tension Points
+                        </h3>
+<ul class="space-y-6">
+<li class="bg-surface/30 p-6 rounded-2xl border-l-4 border-primary/20">
+<p class="font-medium text-text-main mb-2">Ego vs. Solitude</p>
+<p class="text-sm text-text-main/60 leading-relaxed">The need for public recognition may occasionally clash with the urgent need for private withdrawal.</p>
+</li>
+<li class="bg-surface/30 p-6 rounded-2xl border-l-4 border-primary/20">
+<p class="font-medium text-text-main mb-2">The Silent Wall</p>
+<p class="text-sm text-text-main/60 leading-relaxed">Over-intellectualizing emotions can lead to a 'cold' phase if warmth isn't intentionally cultivated.</p>
+</li>
+</ul>
+</div>
+<div class="space-y-6">
+<h3 class="mono-font text-[10px] tracking-[0.4em] text-text-main/40 uppercase flex items-center gap-3">
+<span class="w-1.5 h-1.5 rounded-full bg-primary/80"></span> Growth Points
+                        </h3>
+<ul class="space-y-6">
+<li class="bg-primary/5 p-6 rounded-2xl border-l-4 border-primary/40">
+<p class="font-medium text-text-main mb-2">Spiritual Alchemy</p>
+<p class="text-sm text-text-main/60 leading-relaxed">Transforming daily routines into shared rituals deepens the spiritual resonance of the bond.</p>
+</li>
+<li class="bg-primary/5 p-6 rounded-2xl border-l-4 border-primary/40">
+<p class="font-medium text-text-main mb-2">The Sage &amp; The King</p>
+<p class="text-sm text-text-main/60 leading-relaxed">Merging wisdom with action allows the relationship to achieve significant worldly success.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Right Column: Sidebar -->
+<div class="col-span-4 space-y-12">
+<!-- Timing Guidance -->
+<section class="watercolor-card p-10 rounded-[2.5rem] sticky top-12 border-primary/20">
+<div class="flex items-center gap-4 mb-8">
+<span class="material-symbols-outlined text-primary">nights_stay</span>
+<h3 class="header-font text-2xl font-light">Timing Guidance</h3>
+</div>
+<div class="space-y-8">
+<div class="pb-6 border-b border-primary/10">
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 mb-3 uppercase">Current Transit</p>
+<p class="text-sm font-medium mb-2">Venus in Trine with Saturn</p>
+<p class="text-xs text-text-main/60 leading-relaxed italic">A window of stability. Ideal for discussing long-term commitments or structural changes to your shared life.</p>
+</div>
+<div>
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 mb-4 uppercase">Optimal Connection</p>
+<div class="flex items-center justify-between bg-white/50 dark:bg-white/5 p-5 rounded-3xl">
+<div class="text-center px-4 border-r border-primary/10">
+<p class="text-[10px] text-text-main/40 uppercase mb-1">Starts</p>
+<p class="header-font text-lg">Oct 14</p>
+</div>
+<div class="text-center px-4">
+<p class="text-[10px] text-text-main/40 uppercase mb-1">Ends</p>
+<p class="header-font text-lg">Oct 18</p>
+</div>
+<div class="w-10 h-10 dreamy-gradient text-text-main flex items-center justify-center rounded-full shadow-lg">
+<span class="material-symbols-outlined text-lg">notifications</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-10 bg-text-main text-background-light py-4 rounded-full font-light hover:opacity-90 transition-all uppercase tracking-[0.2em] text-[10px]">Sync with Calendar</button>
+</section>
+<!-- Profile Quick Stats -->
+<div class="p-10 border border-primary/20 rounded-[2rem] space-y-8 bg-surface/20 backdrop-blur-sm">
+<h4 class="mono-font text-[10px] tracking-[0.3em] text-text-main/50 uppercase text-center">Astro-Numerical Profile</h4>
+<div class="grid grid-cols-2 gap-6">
+<div class="p-4 bg-white/40 rounded-2xl text-center">
+<p class="text-[10px] text-text-main/40 uppercase mb-1">Sun Sign</p>
+<p class="header-font text-xl italic-display">Leo</p>
+</div>
+<div class="p-4 bg-white/40 rounded-2xl text-center">
+<p class="text-[10px] text-text-main/40 uppercase mb-1">Rashi</p>
+<p class="header-font text-xl italic-display">Simha</p>
+</div>
+<div class="p-4 bg-white/40 rounded-2xl text-center">
+<p class="text-[10px] text-text-main/40 uppercase mb-1">Life Path</p>
+<p class="header-font text-xl italic-display">7</p>
+</div>
+<div class="p-4 bg-white/40 rounded-2xl text-center">
+<p class="text-[10px] text-text-main/40 uppercase mb-1">Element</p>
+<p class="header-font text-xl italic-display">Fire/Air</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Subtle Footer -->
+<footer class="px-12 py-12 flex justify-between items-center opacity-40">
+<p class="mono-font text-[10px] tracking-[0.4em]">© LUMIS INTELLIGENCE 2024</p>
+<div class="flex gap-8">
+<span class="material-symbols-outlined text-xl">blur_on</span>
+<span class="material-symbols-outlined text-xl">waves</span>
+<span class="material-symbols-outlined text-xl">tempest</span>
+</div>
+</footer>
+</div>
+</body></html>

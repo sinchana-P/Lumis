@@ -1,0 +1,13 @@
+{
+  "name": "Review AI Service Changes",
+  "version": "1.0.0",
+  "description": "Review changes to AI service files for prompt quality and context handling",
+  "when": {
+    "type": "fileEdited",
+    "patterns": ["**/lumen.service.ts", "**/ai/**/*.ts"]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review the changes to this AI service file. Check: 1) Prompt clarity and specificity, 2) Context building completeness, 3) Error handling for API failures, 4) Token usage optimization, 5) Response streaming implementation"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "enabled": true,
+  "name": "Build Test Automation",
+  "description": "Automatically runs build tests after code changes to catch compilation errors",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "frontend/src/**/*.tsx",
+      "frontend/src/**/*.ts"
+    ]
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "cd frontend && npm run build",
+    "timeout": 120
+  }
+}

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&amp;family=Public+Sans:wght@300;400;500;600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13", // Theme Primary
+                        "accent-sage": "#9CAF9E",
+                        "accent-terracotta": "#C9A58F",
+                        "accent-lavender": "#B5A8C1",
+                        "charcoal": "#3D3935",
+                        "background-light": "#F8F6F3",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Crimson Pro", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: #F8F6F3;
+            color: #3D3935;
+        }
+        .font-serif {
+            font-family: 'Crimson Pro', serif;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 antialiased">
+<!-- Top Navigation Bar -->
+<header class="w-full border-b border-charcoal/10 bg-background-light/80 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1200px] mx-auto px-6 h-16 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="bg-primary p-1.5 rounded-lg text-white">
+<span class="material-symbols-outlined text-2xl">lens_blur</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight font-display">Lumis</h2>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Members</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Lumen</a>
+<a class="text-sm font-medium hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-charcoal/5 rounded-full transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="size-9 rounded-full bg-accent-sage/30 border border-charcoal/10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar close up" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCV_JatZnE3B1kt_m39DLxaYrm6F04E8KuYWNKPSBaBnY4UHZOzniZbIyOLgN_9nOv5VNv5omAI9J3AMMBU9kbxB63npHn15wKnrP3Sv5GbllB2WvzgG7UTRFQC6osAX7S48h1YT40U9f1xlD1l8ZkD34sUPvlGfjzLCoSevWhHbUsdS-1kpfUR6Bu99LabSmETcPwsQxTTS9A6VAigB7XYtkcMNkd1ZXhIDSyqDiV0UaNdEIKI2mNlHCutKgRSjRM5BzKiWeDdr1o"/>
+</div>
+</div>
+</div>
+</header>
+<main class="max-w-[1200px] mx-auto px-6 py-12">
+<!-- Hero Section -->
+<section class="max-w-3xl mb-16">
+<nav class="flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-accent-sage mb-4">
+<span>Psychology</span>
+<span class="material-symbols-outlined text-[10px]">arrow_forward_ios</span>
+<span>Tools Library</span>
+</nav>
+<h1 class="text-5xl md:text-6xl font-serif font-bold text-charcoal leading-tight mb-6">
+                The Architecture of Connection
+            </h1>
+<p class="text-lg md:text-xl text-charcoal/70 leading-relaxed font-light">
+                Bridges and Rituals are not just advice—they are the building blocks of your <span class="text-charcoal font-medium border-b border-accent-terracotta/40">relational hygiene</span>. They help you signal your needs and protect your inner world.
+            </p>
+</section>
+<!-- Library Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Card 1: The Narrative Bridge -->
+<div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-charcoal/5 flex flex-col">
+<div class="h-56 overflow-hidden relative">
+<div class="absolute inset-0 bg-accent-sage/20 mix-blend-multiply"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Quiet stone bridge over a misty river" src="https://lh3.googleusercontent.com/aida-public/AB6AXuABRVMxsBaWFPzcNCJyZQ6dc7tu_892iv9uSH4JSryB_HisDt4cIjNOxr0N2c9dZOeh2HK-yfs_Si1RNFcLkHJ4cz8kxsUnNZNDe8cUYK9HN4u52revhwZ7H9cI3ZKD90Xz7Clgyli7vDS7ie7ldPy2zA2p94_ezCJfQBywDnJbwMtjLgOnEeXBPVGTSCf0VnDTM5cPfffR-U3_8YpxM1gl_faLvUCHPu0GLmo8wpRbIAq1BL6yvExnVeqT1_BiglEpcIW1WTFFmUs"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-charcoal">
+                        Communication
+                    </div>
+</div>
+<div class="p-8 flex flex-col grow">
+<h3 class="text-2xl font-serif font-bold mb-4 text-charcoal">The Narrative Bridge</h3>
+<p class="text-charcoal/70 text-sm leading-relaxed mb-6">
+                        A verbal signal or script that provides context for your withdrawal so others don't feel rejected.
+                    </p>
+<div class="bg-accent-sage/10 p-4 rounded-lg border-l-2 border-accent-sage mb-6 italic text-sm text-charcoal/80">
+                        "The Deep Well" — explaining your need for solitude as a way to recharge, not a reaction to others.
+                    </div>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="text-xs font-bold text-accent-sage tracking-widest uppercase">Explore Scripts</span>
+<span class="material-symbols-outlined text-accent-sage group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+</div>
+</div>
+</div>
+<!-- Card 2: The Physical Boundary -->
+<div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-charcoal/5 flex flex-col">
+<div class="h-56 overflow-hidden relative">
+<div class="absolute inset-0 bg-accent-terracotta/20 mix-blend-multiply"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Hand closing a solid wooden door" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAgpO5GeB5Y5csa5ZbJQMb_1JHRY168CPvfnAh1HYyKxpklYPVJ-bLIwry24bFHa2s8mKe-0NamUJxeB2MvwEhhXyXXOLju5tubN78NLzwG5QEUorLSxbnTDT2ar9KsZRrVzJIUPhwZsZU-GhIZ55G6-YI2-l-A0uKivNB7tFxEdRXswedk2URtFDVAb9SJir7rPJj0hbUBf4GRdhe_p7vmCR1-vZbrPlCjZqQefCg8P0iYoei2A4JNiS_z1JFetg7-sDKIvof_1Ng"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-charcoal">
+                        Somatic
+                    </div>
+</div>
+<div class="p-8 flex flex-col grow">
+<h3 class="text-2xl font-serif font-bold mb-4 text-charcoal">The Physical Boundary</h3>
+<p class="text-charcoal/70 text-sm leading-relaxed mb-6">
+                        A visceral action that signals a shift to your nervous system. Mark the transition between roles clearly.
+                    </p>
+<ul class="space-y-2 mb-6 text-sm text-charcoal/80">
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-accent-terracotta text-sm">check_circle</span> Closing an office door</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-accent-terracotta text-sm">check_circle</span> Changing into 'home' clothes</li>
+<li class="flex items-center gap-2"><span class="material-symbols-outlined text-accent-terracotta text-sm">check_circle</span> Clearing a physical workspace</li>
+</ul>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="text-xs font-bold text-accent-terracotta tracking-widest uppercase">View Rituals</span>
+<span class="material-symbols-outlined text-accent-terracotta group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+</div>
+</div>
+</div>
+<!-- Card 3: The Sensory Anchor -->
+<div class="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-charcoal/5 flex flex-col">
+<div class="h-56 overflow-hidden relative">
+<div class="absolute inset-0 bg-accent-lavender/20 mix-blend-multiply"></div>
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="Close up of a burning candle and lavender sprigs" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgtt_ViqLh0NZXq7QejqmcFAixYXj0N-DrcCXRqNzgUhAtFyz1aJpuPaBkUCpsw90JZCACOgtTvK04Szrx_TPGMlVTCFlT7qAPY06u7OkGEo6X-yJmmTAanhhm19UyohkEC4QLyDMSexHU9Zca_vrbQ536Bl9k1MaH576UygHQSQses2VC24qWsFW4V9Yo9Ins1tCM3qS77g7wmLHwXaPKn7stNKuqDKdY1tp_xJN7wgkAeeq21XVv_Ruai3hL2LeFa7E9F7ozv3c"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase text-charcoal">
+                        Atmosphere
+                    </div>
+</div>
+<div class="p-8 flex flex-col grow">
+<h3 class="text-2xl font-serif font-bold mb-4 text-charcoal">The Sensory Anchor</h3>
+<p class="text-charcoal/70 text-sm leading-relaxed mb-6">
+                        Using scent, sound, or light to trigger specific mental states. Anchoring creates automatic psychological shortcuts.
+                    </p>
+<p class="text-sm text-charcoal/80 italic mb-6">
+                        "The mind follows the senses. A specific tea or a specific playlist can be the threshold to calm."
+                    </p>
+<div class="mt-auto pt-4 flex items-center justify-between">
+<span class="text-xs font-bold text-accent-lavender tracking-widest uppercase">Configure Anchors</span>
+<span class="material-symbols-outlined text-accent-lavender group-hover:translate-x-1 transition-transform">arrow_right_alt</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Note -->
+<footer class="mt-20 py-12 border-t border-charcoal/10 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-charcoal/40">auto_stories</span>
+<p class="text-xs text-charcoal/50 font-medium uppercase tracking-[0.2em]">Guided by Lumis Methodology</p>
+</div>
+<div class="flex gap-8">
+<button class="text-xs font-bold uppercase tracking-widest text-charcoal/70 hover:text-primary transition-colors">Privacy Policy</button>
+<button class="text-xs font-bold uppercase tracking-widest text-charcoal/70 hover:text-primary transition-colors">Relational Ethics</button>
+<button class="text-xs font-bold uppercase tracking-widest text-charcoal/70 hover:text-primary transition-colors">Support</button>
+</div>
+</footer>
+</main>
+</body></html>

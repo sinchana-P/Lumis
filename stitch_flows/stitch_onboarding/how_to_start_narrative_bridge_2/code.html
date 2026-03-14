@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Crimson+Pro:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f3",
+                        "background-dark": "#221610",
+                        "sage": "#7a8d7a",
+                        "parchment": "#f8f6f3",
+                        "midnight": "#221311",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Crimson Pro", "serif"],
+                        "header": ["Cormorant Garamond", "serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: "Public Sans", sans-serif; }
+        .serif-text { font-family: "Crimson Pro", serif; }
+        .header-text { font-family: "Cormorant Garamond", serif; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Top Navigation Bar -->
+<header class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-10 py-4">
+<div class="max-w-7xl mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">auto_stories</span>
+<h2 class="header-text text-2xl font-bold leading-tight tracking-tight text-slate-900 dark:text-white">Lumis</h2>
+</div>
+<nav class="hidden md:flex flex-1 justify-center gap-10">
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Guide</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Journal</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Concepts</a>
+<a class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">settings</span>
+</button>
+</div>
+</div>
+</header>
+<main class="flex-1 w-full max-w-4xl mx-auto px-6 py-12 md:py-20">
+<!-- Hero Section -->
+<section class="mb-16 text-center">
+<span class="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-widest uppercase bg-primary/10 text-primary rounded-full">Practice Guide</span>
+<h1 class="header-text text-5xl md:text-6xl font-medium text-slate-900 dark:text-white mb-6">How to Start Using a Narrative Bridge</h1>
+<p class="serif-text text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    A Narrative Bridge is a short, structured statement that helps you transition from social connection to necessary solitude without leaving others feeling abandoned.
+                </p>
+</section>
+<!-- Feature Image -->
+<div class="mb-20 rounded-2xl overflow-hidden shadow-2xl shadow-primary/5">
+<div class="w-full aspect-[21/9] bg-center bg-cover" data-alt="A vintage leather journal and fountain pen on a warm wooden desk" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDt1uAtXFTySfGcmQnpBlvBaT7el3oEpb5Q5vkD0vQuDLsEoyGzkuhRTV8qlAy20H14o5jUZSyVx5Gpiu1lbQJetkLd02hQOplX9hzZd_aDKPzXZ79HYWnbCuWOoyiK6GGhQx3TayyOFOlpABGEg7amlV5TfZBeh5ZmMN0Rqi3xHKSlRqEqjux-wU_zeHv1RuivgxiWzMg-1uZa2pRmJPCH1IETsqYK6uCQCVS09i21giPHGyVXalaGN3u9VWDLUGfze1JcdJXwtLU')"></div>
+</div>
+<!-- Section 1: Choose Your Anchor -->
+<section class="mb-24">
+<div class="flex items-center gap-4 mb-8">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm">1</span>
+<h2 class="header-text text-3xl font-medium">Choose Your Anchor Script</h2>
+</div>
+<p class="serif-text text-lg mb-10 text-slate-700 dark:text-slate-300">Select a metaphor that feels most natural to your internal experience. This will be the "bridge" you use consistently.</p>
+<div class="grid md:grid-cols-2 gap-8">
+<div class="group p-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary/50 transition-all cursor-pointer">
+<div class="text-primary mb-4">
+<span class="material-symbols-outlined text-4xl">water_drop</span>
+</div>
+<h3 class="header-text text-2xl font-bold mb-3">The 'Deep-Well'</h3>
+<p class="serif-text text-slate-600 dark:text-slate-400">Perfect if you feel like your energy is a pool that needs time to settle and refill in quiet depths.</p>
+</div>
+<div class="group p-8 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-primary/50 transition-all cursor-pointer">
+<div class="text-primary mb-4">
+<span class="material-symbols-outlined text-4xl">battery_horiz_000</span>
+</div>
+<h3 class="header-text text-2xl font-bold mb-3">The 'Low-Battery'</h3>
+<p class="serif-text text-slate-600 dark:text-slate-400">Best if you view social interaction as a steady drain and need a "charging station" to function again.</p>
+</div>
+</div>
+</section>
+<!-- Section 2: The Formula -->
+<section class="mb-24 p-10 md:p-16 bg-slate-900 dark:bg-black rounded-3xl text-white">
+<div class="flex items-center gap-4 mb-12">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-primary text-white font-bold text-sm">2</span>
+<h2 class="header-text text-3xl font-medium">The 3-Part Formula</h2>
+</div>
+<div class="space-y-12 relative">
+<div class="absolute left-6 top-0 bottom-0 w-px bg-slate-700 hidden md:block"></div>
+<div class="flex flex-col md:flex-row gap-6 md:gap-12 relative">
+<div class="md:w-12 md:h-12 shrink-0 rounded-full bg-slate-800 flex items-center justify-center z-10 border-4 border-slate-900">
+<span class="material-symbols-outlined text-primary">priority_high</span>
+</div>
+<div>
+<p class="text-primary text-sm font-bold uppercase tracking-widest mb-2">Part One</p>
+<h4 class="header-text text-2xl mb-2">State the Need</h4>
+<p class="serif-text text-xl text-slate-300 font-light italic">"I need to go into my deep-well for a bit..."</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-6 md:gap-12 relative">
+<div class="md:w-12 md:h-12 shrink-0 rounded-full bg-slate-800 flex items-center justify-center z-10 border-4 border-slate-900">
+<span class="material-symbols-outlined text-primary">info</span>
+</div>
+<div>
+<p class="text-primary text-sm font-bold uppercase tracking-widest mb-2">Part Two</p>
+<h4 class="header-text text-2xl mb-2">Give the Context</h4>
+<p class="serif-text text-xl text-slate-300 font-light italic">"...to process my day and recharge my social battery."</p>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-6 md:gap-12 relative">
+<div class="md:w-12 md:h-12 shrink-0 rounded-full bg-slate-800 flex items-center justify-center z-10 border-4 border-slate-900">
+<span class="material-symbols-outlined text-primary">assignment_return</span>
+</div>
+<div>
+<p class="text-primary text-sm font-bold uppercase tracking-widest mb-2">Part Three</p>
+<h4 class="header-text text-2xl mb-2">Promise the Return</h4>
+<p class="serif-text text-xl text-slate-300 font-light italic">"I'll be back out in about an hour for some tea."</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: First Practice -->
+<section class="mb-24 grid md:grid-cols-2 gap-12 items-center">
+<div>
+<div class="flex items-center gap-4 mb-6">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold text-sm">3</span>
+<h2 class="header-text text-3xl font-medium">The First Practice</h2>
+</div>
+<div class="serif-text text-lg text-slate-700 dark:text-slate-300 space-y-4">
+<p>Don't wait for a crisis. Introduce this concept to Zara during a calm, connected moment—perhaps over breakfast or a weekend walk.</p>
+<p>Explain that you've found a new way to describe your "recharge mode" so she doesn't have to wonder why you're quiet. Show her this guide and ask which metaphor she likes best.</p>
+</div>
+</div>
+<div class="rounded-2xl overflow-hidden">
+<div class="w-full aspect-square bg-center bg-cover" data-alt="Two people sitting comfortably in a quiet sunlit corner having a calm conversation" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAyAYcu62hpcGDECvVTqbVXXKLTbYQvGkiNd5rRaK7tPiHJ6AtBlsluSTZ3LA6MJ5WXLadNsjgn3BTY2G7iMRIEOwkDt6yxyanMoaAlOxMs6zpU_P_Fiu9jnTWKAgexhWdnDrKkdpjVVrbAw_YdSYnd3edh_8cAZ4lui83R5g5wLy-Vl2fKSLesjuqFjcDBZ9NpXe2_U-oXxhZ8rwdrjqH0mKs5YzojDf1Zw-1uBPVyHL9GwVG4SNWOVMyuZl0cyxP3CKHgySh3hhM')"></div>
+</div>
+</section>
+<!-- Section 4: Quick Tips -->
+<section class="mb-16">
+<h3 class="header-text text-2xl font-medium mb-8 text-center">Gentle Reminders</h3>
+<div class="flex flex-wrap justify-center gap-4">
+<div class="px-6 py-3 rounded-full bg-sage/10 text-sage border border-sage/20 font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span> Don't over-explain
+                    </div>
+<div class="px-6 py-3 rounded-full bg-sage/10 text-sage border border-sage/20 font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span> Be consistent
+                    </div>
+<div class="px-6 py-3 rounded-full bg-sage/10 text-sage border border-sage/20 font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span> Use a soft tone
+                    </div>
+<div class="px-6 py-3 rounded-full bg-sage/10 text-sage border border-sage/20 font-medium text-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span> Honor your return promise
+                    </div>
+</div>
+</section>
+<!-- Final Action CTA -->
+<div class="text-center pt-12 border-t border-slate-200 dark:border-slate-800">
+<p class="serif-text text-slate-500 mb-6">Ready to commit this to your journal?</p>
+<button class="bg-primary hover:bg-primary/90 text-white px-10 py-4 rounded-full font-bold transition-all shadow-lg shadow-primary/20">
+                    Add to Practice Log
+                </button>
+</div>
+</main>
+<footer class="w-full py-12 px-6 border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-2 text-slate-400">
+<span class="material-symbols-outlined">auto_stories</span>
+<span class="text-sm font-medium">Lumis Midnight Amber Edition</span>
+</div>
+<div class="flex gap-8 text-sm text-slate-500 font-medium">
+<a class="hover:text-primary" href="#">About</a>
+<a class="hover:text-primary" href="#">Privacy</a>
+<a class="hover:text-primary" href="#">Terms</a>
+<a class="hover:text-primary" href="#">Contact</a>
+</div>
+</div>
+</footer>
+</div>
+</body></html>

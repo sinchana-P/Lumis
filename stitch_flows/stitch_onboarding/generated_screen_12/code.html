@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Theme Selector</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'midnight': '#0F172A',
+            'amber-glow': '#FCD34D',
+            'sage-focus': '#86A789',
+            'lumis-bg': '#FDFCFB', // Midnight Amber Light Theme background
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            mono: ['"DM Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    h1, h2, h3 {
+      font-family: 'Cormorant Garamond', serif;
+    }
+    .label-text {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .vibe-text {
+      font-style: italic;
+      color: #64748b;
+    }
+  </style>
+<style data-purpose="layout-and-effects">
+    .theme-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      border: 1px solid #E2E8F0;
+    }
+    .theme-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    }
+    .active-theme {
+      outline: 2px solid #86A789;
+      outline-offset: 4px;
+      box-shadow: 0 0 15px rgba(134, 167, 137, 0.3);
+    }
+    .palette-swatch {
+      height: 40px;
+      border-radius: 4px;
+    }
+    .scroll-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: #E2E8F0;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-lumis-bg text-midnight antialiased min-h-screen">
+<!-- BEGIN: MainHeader -->
+<header class="sticky top-0 z-50 bg-lumis-bg/80 backdrop-blur-md border-b border-slate-200 px-8 py-4">
+<div class="max-w-7xl mx-auto flex justify-between items-center">
+<div class="flex items-center gap-8">
+<span class="text-2xl font-serif font-semibold tracking-tight">Lumis</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="label-text hover:text-amber-glow transition-colors" href="#">Dashboard</a>
+<a class="label-text hover:text-amber-glow transition-colors" href="#">Members</a>
+<a class="label-text hover:text-amber-glow transition-colors" href="#">Lumen</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="label-text flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-sage-focus"></span>
+          Profile
+        </div>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<main class="max-w-7xl mx-auto px-8 py-12">
+<!-- BEGIN: HeroSection -->
+<section class="mb-16">
+<h1 class="text-5xl mb-4">Atmosphere &amp; Resonance</h1>
+<p class="text-slate-500 max-w-xl font-serif text-lg leading-relaxed">
+        Select a visual frequency that aligns with your current intellectual state. Each theme adjusts color, contrast, and depth across the entire Lumis interface.
+      </p>
+</section>
+<!-- END: HeroSection -->
+<!-- BEGIN: ThemeGrid -->
+<div class="space-y-20">
+<!-- SECTION: Classic -->
+<section id="classic-themes">
+<div class="flex items-baseline gap-4 mb-8 border-b border-slate-100 pb-2">
+<h2 class="text-3xl">Classic</h2>
+<span class="label-text text-slate-400">01 — Standard Palettes</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Midnight Amber (Active) -->
+<div class="theme-card active-theme bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #0F172A;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FDFCFB;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FCD34D;"></div>
+</div>
+<div>
+<h3 class="text-xl">Midnight Amber</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Original Lumis</p>
+<p class="vibe-text text-sm italic">Clear, intelligent, and grounded in warmth.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #1A1A1A;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F5F5F5;"></div>
+<div class="palette-swatch flex-1" style="background-color: #64748B;"></div>
+</div>
+<div>
+<h3 class="text-xl">Onyx &amp; Slate</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Monochrome</p>
+<p class="vibe-text text-sm">Pure focus without the distraction of hue.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #2C3E50;"></div>
+<div class="palette-swatch flex-1" style="background-color: #ECF0F1;"></div>
+<div class="palette-swatch flex-1" style="background-color: #E74C3C;"></div>
+</div>
+<div>
+<h3 class="text-xl">Deep Harbor</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Heritage</p>
+<p class="vibe-text text-sm">Professional, stable, and nautical in spirit.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #F8FAFC;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFFFFF;"></div>
+<div class="palette-swatch flex-1" style="background-color: #38BDF8;"></div>
+</div>
+<div>
+<h3 class="text-xl">Ivory Sky</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">High Contrast Light</p>
+<p class="vibe-text text-sm">Maximum readability for bright environments.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: Seasonal -->
+<section id="seasonal-themes">
+<div class="flex items-baseline gap-4 mb-8 border-b border-slate-100 pb-2">
+<h2 class="text-3xl">Seasonal</h2>
+<span class="label-text text-slate-400">02 — Chronological Shift</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #E2E8CE;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FEFEFE;"></div>
+<div class="palette-swatch flex-1" style="background-color: #86A789;"></div>
+</div>
+<div>
+<h3 class="text-xl">Vernal Bloom</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Spring</p>
+<p class="vibe-text text-sm">Fresh growth, renewal, and soft greens.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #FFF9C4;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFFDE7;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFB300;"></div>
+</div>
+<div>
+<h3 class="text-xl">Solstice High</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Summer</p>
+<p class="vibe-text text-sm">Vibrant, energetic, and sun-drenched.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #451A03;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFF7ED;"></div>
+<div class="palette-swatch flex-1" style="background-color: #C2410C;"></div>
+</div>
+<div>
+<h3 class="text-xl">Ember Harvest</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Autumn</p>
+<p class="vibe-text text-sm">Crisp air, rich woods, and falling leaves.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #F1F5F9;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F8FAFC;"></div>
+<div class="palette-swatch flex-1" style="background-color: #94A3B8;"></div>
+</div>
+<div>
+<h3 class="text-xl">Boreal Frost</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Winter</p>
+<p class="vibe-text text-sm">Quiet, crystalline, and cool blue depths.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #334155;"></div>
+<div class="palette-swatch flex-1" style="background-color: #CBD5E1;"></div>
+<div class="palette-swatch flex-1" style="background-color: #94A3B8;"></div>
+</div>
+<div>
+<h3 class="text-xl">Equinox Grey</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Transition</p>
+<p class="vibe-text text-sm">Perfect balance between light and dark.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: Cultural -->
+<section id="cultural-themes">
+<div class="flex items-baseline gap-4 mb-8 border-b border-slate-100 pb-2">
+<h2 class="text-3xl">Cultural</h2>
+<span class="label-text text-slate-400">03 — Art &amp; Design History</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #2F3E46;"></div>
+<div class="palette-swatch flex-1" style="background-color: #CAD2C5;"></div>
+<div class="palette-swatch flex-1" style="background-color: #52796F;"></div>
+</div>
+<div>
+<h3 class="text-xl">Nordic Zen</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Scandinavian</p>
+<p class="vibe-text text-sm">Minimalism, natural materials, and utility.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #1A1A1A;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F2E3D5;"></div>
+<div class="palette-swatch flex-1" style="background-color: #D9411E;"></div>
+</div>
+<div>
+<h3 class="text-xl">Kyoto Ink</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Japanese Traditional</p>
+<p class="vibe-text text-sm">Wabi-sabi philosophy and vermillion accents.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #3D2B1F;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FAF3E0;"></div>
+<div class="palette-swatch flex-1" style="background-color: #B8860B;"></div>
+</div>
+<div>
+<h3 class="text-xl">Bauhaus Primary</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Modernism</p>
+<p class="vibe-text text-sm">Geometric rigor meets functional color.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #000000;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFFFFF;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFD700;"></div>
+</div>
+<div>
+<h3 class="text-xl">Art Deco Gold</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">The 1920s</p>
+<p class="vibe-text text-sm">Opulence, luxury, and streamlined forms.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #4A0E0E;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FDF2F2;"></div>
+<div class="palette-swatch flex-1" style="background-color: #8E1B1B;"></div>
+</div>
+<div>
+<h3 class="text-xl">Tuscan Sun</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Mediterranean</p>
+<p class="vibe-text text-sm">Terracotta, ochre, and warm stonework.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #1E3A8A;"></div>
+<div class="palette-swatch flex-1" style="background-color: #DBEAFE;"></div>
+<div class="palette-swatch flex-1" style="background-color: #3B82F6;"></div>
+</div>
+<div>
+<h3 class="text-xl">Aegean Breeze</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Cycladic</p>
+<p class="vibe-text text-sm">Whites and blues of the Greek islands.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION: Personality -->
+<section class="pb-24" id="personality-themes">
+<div class="flex items-baseline gap-4 mb-8 border-b border-slate-100 pb-2">
+<h2 class="text-3xl">Personality</h2>
+<span class="label-text text-slate-400">04 — Psychological Archetypes</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #064E3B;"></div>
+<div class="palette-swatch flex-1" style="background-color: #ECFDF5;"></div>
+<div class="palette-swatch flex-1" style="background-color: #10B981;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Sage</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Wisdom</p>
+<p class="vibe-text text-sm">Deep, reflective greens for contemplation.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #4C1D95;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F5F3FF;"></div>
+<div class="palette-swatch flex-1" style="background-color: #8B5CF6;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Mystic</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Mystery</p>
+<p class="vibe-text text-sm">Deep purples and violets for intuition.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #78350F;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFFBEB;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F59E0B;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Maverick</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Boldness</p>
+<p class="vibe-text text-sm">Daring oranges and high-energy contrasts.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #1E293B;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F1F5F9;"></div>
+<div class="palette-swatch flex-1" style="background-color: #64748B;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Stoic</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Resilience</p>
+<p class="vibe-text text-sm">Unyielding greys and professional steel.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #701A75;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FDF4FF;"></div>
+<div class="palette-swatch flex-1" style="background-color: #D946EF;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Muse</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Creativity</p>
+<p class="vibe-text text-sm">Playful magentas and inspiring light.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #7C2D12;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FFF7ED;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FB923C;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Guardian</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Stability</p>
+<p class="vibe-text text-sm">Earth tones that provide a sense of safety.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #111827;"></div>
+<div class="palette-swatch flex-1" style="background-color: #F9FAFB;"></div>
+<div class="palette-swatch flex-1" style="background-color: #6B7280;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Architect</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Precision</p>
+<p class="vibe-text text-sm">Structured, grid-aligned, and technical.</p>
+</div>
+</div>
+<div class="theme-card bg-white p-5 rounded-lg flex flex-col gap-4">
+<div class="flex gap-1">
+<div class="palette-swatch flex-1" style="background-color: #431407;"></div>
+<div class="palette-swatch flex-1" style="background-color: #FEF2F2;"></div>
+<div class="palette-swatch flex-1" style="background-color: #EF4444;"></div>
+</div>
+<div>
+<h3 class="text-xl">The Catalyst</h3>
+<p class="label-text text-[10px] text-slate-400 mb-2">Change</p>
+<p class="vibe-text text-sm">Intense reds to spark action and movement.</p>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- END: ThemeGrid -->
+</main>
+<!-- BEGIN: Footer -->
+<footer class="bg-white border-t border-slate-200 py-12 px-8">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex flex-col gap-2">
+<span class="label-text text-slate-400">System Information</span>
+<p class="font-serif italic">Version 2.4.0 — All themes synced to local node.</p>
+</div>
+<div class="flex gap-12">
+<div class="flex flex-col gap-1">
+<span class="label-text text-slate-400">Current Node</span>
+<span class="font-mono text-sm">LUMIS-OS-01</span>
+</div>
+<div class="flex flex-col gap-1">
+<span class="label-text text-slate-400">Latency</span>
+<span class="font-mono text-sm">14ms</span>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: Footer -->
+<script data-purpose="interaction-logic">
+    // Subtle interaction to show selection
+    document.querySelectorAll('.theme-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active-theme'));
+        card.classList.add('active-theme');
+      });
+    });
+  </script>
+</body></html>

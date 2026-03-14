@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13", // Terracotta
+                        "sage": "#8ba88e",
+                        "parchment": "#f8f6f6",
+                        "charcoal": "#2d2a28",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif-title": ["Cormorant Garamond", "serif"],
+                        "serif-body": ["Lora", "serif"],
+                        "mono-tech": ["DM Mono", "monospace"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lora', serif;
+            background-color: #f8f6f6;
+            color: #2d2a28;
+        }
+        .title-font { font-family: 'Cormorant Garamond', serif; }
+        .mono-font { font-family: 'DM Mono', monospace; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-charcoal dark:text-slate-100 min-h-screen">
+<!-- Top Navigation -->
+<header class="border-b border-charcoal/10 px-8 py-4 bg-white/50 backdrop-blur-md sticky top-0 z-50">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-xl">storm</span>
+</div>
+<h2 class="title-font text-2xl font-bold tracking-tight">Lumis</h2>
+</div>
+<nav class="flex items-center gap-12">
+<div class="flex items-center gap-8 mono-font text-xs uppercase tracking-widest font-medium">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="hover:text-primary transition-colors" href="#">Members</a>
+<a class="hover:text-primary transition-colors text-primary" href="#">Lumen</a>
+<a class="hover:text-primary transition-colors" href="#">Profile</a>
+</div>
+<div class="size-10 rounded-full border border-charcoal/10 bg-slate-200 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile portrait soft lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7w5XUbzU9jW-W_zrAyYVT3GJzQSvKIk-0w-j3lYDIP-EYkFI1jLTcxXnuBe9itstBw5oJ01qqIgUkYZfqOHHScINGsuEsPZjWviGc_wY1ximOCFlajE8oevRREyj_8mAGDUC_Yi4f9PmTiZq8xuqw8gVCeDol5Qu1GM2r7LXNQMAQIn9PJJsydWTTyiF9plDgLn9KGLzq-PsHMnBVD5ofr9wHRfF3fq-nyE1j4EIOD7lKmOXSHlaEltTPvM-XD7ckXfxm67bagGw"/>
+</div>
+</nav>
+</div>
+</header>
+<main class="max-w-[1440px] mx-auto px-12 py-16 grid grid-cols-12 gap-12">
+<!-- Left Column: Introduction & Phases -->
+<div class="col-span-8 space-y-12">
+<section class="max-w-2xl">
+<h1 class="title-font text-6xl font-semibold leading-tight mb-6">The Three-Layer Shift:<br/>21-Day Practice Schedule</h1>
+<div class="flex gap-4 items-start bg-sage/10 p-6 rounded-xl border border-sage/20">
+<span class="material-symbols-outlined text-sage">auto_awesome</span>
+<p class="text-lg leading-relaxed italic text-charcoal/80">
+                        "Rituals are built through repetition, not perfection. This journey is a gentle unfolding of your inner space. Allow the layers to settle into your bones one breath at a time." — <span class="font-semibold italic">Lumen</span>
+</p>
+</div>
+</section>
+<!-- Phase Tabs/Navigation -->
+<div class="flex gap-4 mono-font text-xs uppercase tracking-widest border-b border-charcoal/5 pb-4">
+<button class="px-4 py-2 bg-charcoal text-white rounded-full">Week 1: Foundation</button>
+<button class="px-4 py-2 hover:bg-charcoal/5 rounded-full transition-colors text-charcoal/50">Week 2: Integration</button>
+<button class="px-4 py-2 hover:bg-charcoal/5 rounded-full transition-colors text-charcoal/50">Week 3: Embodiment</button>
+</div>
+<!-- Content Area -->
+<div class="space-y-8">
+<div>
+<h2 class="title-font text-3xl font-bold mb-2">Phase 1: The Narrative Bridge</h2>
+<p class="text-charcoal/60 mb-8 max-w-xl">Focusing on establishing the mental framework and the story we tell ourselves during the shift.</p>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<!-- Day Cards -->
+<div class="bg-white p-8 rounded-2xl shadow-sm border border-charcoal/5 flex justify-between items-center group hover:shadow-md transition-shadow">
+<div class="flex items-center gap-8">
+<span class="mono-font text-primary text-xl font-medium">01</span>
+<div>
+<h4 class="title-font text-2xl font-semibold">The Naming Ceremony</h4>
+<p class="text-charcoal/60">Identify the current state and its temporary nature.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-sage/40 group-hover:text-sage transition-colors">check_circle</span>
+</div>
+<div class="bg-white p-8 rounded-2xl shadow-sm border border-charcoal/5 flex justify-between items-center group hover:shadow-md transition-shadow">
+<div class="flex items-center gap-8">
+<span class="mono-font text-primary text-xl font-medium">02</span>
+<div>
+<h4 class="title-font text-2xl font-semibold">Temporal Anchors</h4>
+<p class="text-charcoal/60">Defining the 'before' and 'after' thresholds.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-sage/40 group-hover:text-sage transition-colors">check_circle</span>
+</div>
+<div class="bg-white/50 p-8 rounded-2xl border border-dashed border-charcoal/20 flex justify-between items-center opacity-60">
+<div class="flex items-center gap-8">
+<span class="mono-font text-charcoal/40 text-xl font-medium">03</span>
+<div>
+<h4 class="title-font text-2xl font-semibold">Verbal Affirmations</h4>
+<p class="text-charcoal/60">Vocalizing the transition intent three times.</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-charcoal/20">radio_button_unchecked</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Checklist & Reflection -->
+<div class="col-span-4 space-y-8">
+<!-- Checklist Card -->
+<div class="bg-white p-8 rounded-3xl shadow-xl shadow-charcoal/5 border border-charcoal/5">
+<h3 class="mono-font text-xs uppercase tracking-[0.2em] font-bold text-primary mb-6">Daily Flow Checklist</h3>
+<ul class="space-y-6">
+<li class="flex items-start gap-4">
+<div class="size-6 rounded border border-primary/30 flex items-center justify-center mt-1">
+<span class="material-symbols-outlined text-sm text-primary">check</span>
+</div>
+<div>
+<span class="title-font text-xl font-bold block">Narrative Bridge</span>
+<span class="text-sm text-charcoal/50 leading-snug">State your intent clearly. Name the threshold you are crossing.</span>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="size-6 rounded border border-charcoal/20 flex items-center justify-center mt-1"></div>
+<div>
+<span class="title-font text-xl font-bold block">Physical Boundary</span>
+<span class="text-sm text-charcoal/50 leading-snug">Release the tension in the jaw and drop the shoulders.</span>
+</div>
+</li>
+<li class="flex items-start gap-4">
+<div class="size-6 rounded border border-charcoal/20 flex items-center justify-center mt-1"></div>
+<div>
+<span class="title-font text-xl font-bold block">Sensory Anchor</span>
+<span class="text-sm text-charcoal/50 leading-snug">Connect with one texture or scent for 30 seconds.</span>
+</div>
+</li>
+</ul>
+<button class="w-full mt-8 py-3 bg-primary text-white mono-font text-xs uppercase tracking-widest rounded-lg hover:brightness-110 transition-all">
+                    Complete Day 3
+                </button>
+</div>
+<!-- Reflection Space -->
+<div class="bg-sage/5 p-8 rounded-3xl border border-sage/20">
+<h3 class="mono-font text-xs uppercase tracking-[0.2em] font-bold text-sage mb-4">Daily Reflection</h3>
+<p class="text-sm italic text-charcoal/70 mb-4">How did the transition feel in your body today?</p>
+<textarea class="w-full h-32 bg-transparent border-charcoal/10 rounded-xl focus:ring-sage focus:border-sage placeholder:text-charcoal/20 text-sm p-4" placeholder="Capture your shifts here..."></textarea>
+<div class="mt-4 flex justify-between items-center">
+<span class="mono-font text-[10px] text-charcoal/40 uppercase">Logged to Journey</span>
+<button class="text-sage hover:text-charcoal transition-colors">
+<span class="material-symbols-outlined text-lg">save</span>
+</button>
+</div>
+</div>
+<!-- Visual Decoration -->
+<div class="relative h-48 rounded-3xl overflow-hidden grayscale contrast-125 opacity-40">
+<img class="w-full h-full object-cover" data-alt="Minimalist desk lamp soft warm glow" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBXlvTMpTCJSyNQE72-LokEr0It2MV-lHXIz59zdeLwlPzj4H9MRNpY_uIfOoJ4C5-yCMXvMIORZiE0RBy7H69DhAHBjdb4QB3lLGBmFiHVGVedwFEzFh3ATOHg_Rw6C2UyN4y4mZNlwNDAZC19-OPEk4NbfZUDU0ZjdyYePCUIUsHgOZudgGGu9wmD7COuRLufp8QfZ0r2btp9Uw-8lQCnxLCw7A1osS_lVJEQs1Yf9u1nLitqj6g9OBTLcMG5JsJO4OEGvyPbuOs"/>
+<div class="absolute inset-0 bg-primary/10 mix-blend-overlay"></div>
+</div>
+</div>
+</main>
+<!-- Footer Progress -->
+<footer class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-charcoal/5 py-4 px-12">
+<div class="max-w-[1440px] mx-auto flex items-center justify-between">
+<div class="flex items-center gap-4">
+<span class="mono-font text-[10px] uppercase tracking-widest text-charcoal/40">Overall Progress</span>
+<div class="w-64 h-1.5 bg-charcoal/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full w-[15%]"></div>
+</div>
+<span class="mono-font text-xs text-primary font-bold">15%</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="flex items-center gap-2 text-charcoal/40 hover:text-charcoal transition-colors">
+<span class="material-symbols-outlined text-lg">chevron_left</span>
+<span class="mono-font text-xs uppercase tracking-widest">Previous Day</span>
+</button>
+<button class="flex items-center gap-2 text-charcoal hover:text-primary transition-colors">
+<span class="mono-font text-xs uppercase tracking-widest font-bold">Next Lesson</span>
+<span class="material-symbols-outlined text-lg">chevron_right</span>
+</button>
+</div>
+</div>
+</footer>
+</body></html>

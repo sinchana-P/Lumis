@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Member Profile: Zara</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@1,600&amp;family=Lora:wght@400;500&amp;family=Public+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#C9A58F", // Warm Terracotta
+                        "sage": "#9CAF9E",     // Dusty Sage
+                        "charcoal": "#3D3935", // Warm Charcoal
+                        "cream": "#F8F6F3",    // Soft Warm Cream
+                        "background-light": "#F8F6F3",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "mono": ["DM Mono", "monospace"],
+                        "italic-serif": ["Cormorant Garamond", "serif"],
+                        "body-serif": ["Lora", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: #F8F6F3;
+            color: #3D3935;
+        }
+        .nav-link { font-family: 'DM Mono', monospace; }
+        .serif-title { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+        .body-text { font-family: 'Lora', serif; }
+        .health-arc {
+            stroke-dasharray: 283;
+            stroke-dashoffset: 22; /* Approx 92% */
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="max-w-[1440px] mx-auto min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-12 py-8 border-b border-charcoal/5">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-cream">
+<span class="material-symbols-outlined text-sm">flare</span>
+</div>
+<h2 class="text-charcoal font-bold tracking-tight text-xl">Lumis</h2>
+</div>
+<nav class="flex items-center gap-12">
+<a class="nav-link text-sm uppercase tracking-widest text-charcoal/60 hover:text-charcoal transition-colors" href="#">Dashboard</a>
+<a class="nav-link text-sm uppercase tracking-widest text-charcoal border-b border-charcoal" href="#">Members</a>
+<a class="nav-link text-sm uppercase tracking-widest text-charcoal/60 hover:text-charcoal transition-colors" href="#">Lumen</a>
+<a class="nav-link text-sm uppercase tracking-widest text-charcoal/60 hover:text-charcoal transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-6">
+<button class="p-2 text-charcoal/40 hover:text-charcoal transition-colors">
+<span class="material-symbols-outlined">search</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-sage/20 border border-sage/30 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile thumbnail avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBYaHiBbPEEPDM6QDOvg7UAAPyh9InuIvUKrfR9fhkgHzE7hnoTNO4f1Wgq0z-Bo4mvqZZaYGx0P3ACexWwdqjvYqiTIuglwM47EtM8G_gI0Vo2sOENeAGSIGw2-P6MA7PPfYpv8Z9xxgP2T5mZYZ0MNaGI7SHKqbMN9iEHsuYvOm87dp669cDuXej9YWsqpka8usJ79VJL6AuLcl2ofSaBj3H6tHyXRlKYaSalFiDYxhZ3EDUA24456FuEGnNxIHrlFtb7VwPlr0"/>
+</div>
+</div>
+</header>
+<main class="flex-1 px-12 py-12 grid grid-cols-12 gap-16">
+<!-- Left Column: Profile Focus -->
+<div class="col-span-8 flex flex-col gap-12">
+<!-- Header Section -->
+<section class="flex items-end gap-10">
+<div class="relative w-48 h-48">
+<!-- Relationship Health Arc -->
+<svg class="absolute inset-0 w-full h-full" viewbox="0 0 100 100">
+<circle class="text-charcoal/5" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-width="2"></circle>
+<circle class="text-sage health-arc" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-linecap="round" stroke-width="2"></circle>
+</svg>
+<div class="absolute inset-2 rounded-full overflow-hidden border-4 border-cream shadow-sm">
+<img class="w-full h-full object-cover" data-alt="Portrait of Zara with a soft expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDbnoDZ-TzckQZouudMxuUE4x2vAd_VoWMzWUGcG-bImiwwBD1d12RD9rwy8_wXiIvTHjxWE1MJr8HzFR3wRckdKMN7JzibJp7A9BRsGCNpnxwVibIS58HHakYiUJ2u2JaMmdUpdi0oVop3Q-_9uh1gZ7ZRzQ-LPgUHQz98hnPgP5ouYMzw_BaZFQD-rMQ7LzXxz6NbJNNorz_lKz-D_ADV3QJdMXLkDJ5fLqdViV4tdSLy2z31B8wP5EWqvb91zYCS8h9B1yw1ZzY"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-cream px-3 py-1 rounded-full border border-charcoal/5 shadow-sm">
+<p class="nav-link text-[10px] text-sage font-bold uppercase tracking-tighter">92% Health</p>
+</div>
+</div>
+<div class="flex flex-col gap-1 pb-4">
+<h1 class="serif-title text-7xl text-charcoal">Zara</h1>
+<div class="flex items-center gap-3">
+<p class="nav-link text-xs uppercase tracking-[0.2em] text-charcoal/50">Relationship:</p>
+<p class="nav-link text-xs uppercase tracking-[0.2em] text-primary font-medium">Friend</p>
+</div>
+</div>
+</section>
+<!-- Profile Tabs -->
+<nav class="flex border-b border-charcoal/5 gap-10">
+<a class="nav-link text-[11px] uppercase tracking-widest text-charcoal/40 pb-4 hover:text-charcoal transition-colors" href="#">Traits</a>
+<a class="nav-link text-[11px] uppercase tracking-widest text-charcoal/40 pb-4 hover:text-charcoal transition-colors" href="#">Incidents</a>
+<a class="nav-link text-[11px] uppercase tracking-widest text-charcoal/40 pb-4 hover:text-charcoal transition-colors" href="#">Journal</a>
+<a class="nav-link text-[11px] uppercase tracking-widest text-charcoal/40 pb-4 hover:text-charcoal transition-colors" href="#">Numerology</a>
+<a class="nav-link text-[11px] uppercase tracking-widest text-charcoal/40 pb-4 hover:text-charcoal transition-colors" href="#">Astrology</a>
+<a class="nav-link text-[11px] uppercase tracking-widest text-charcoal pb-4 border-b border-charcoal" href="#">Report</a>
+</nav>
+<!-- Content Area: Report Tab Active -->
+<div class="flex flex-col gap-10">
+<div class="max-w-2xl">
+<h2 class="text-3xl font-display font-medium text-charcoal mb-4">Lumen Relationship Report</h2>
+<p class="body-text text-lg leading-relaxed text-charcoal/70">
+                            The connection with Zara is characterized by a rare intellectual synchronicity. There is a "Quiet, Safe" frequency that allows for deep vulnerability without the need for constant validation. Your bond has transitioned from a situational friendship into a foundational pillar of your social ecosystem.
+                        </p>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-white/50 border border-charcoal/5 p-8 rounded-xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="nav-link text-[10px] uppercase tracking-widest text-charcoal/40">Compatibility Score</span>
+<span class="material-symbols-outlined text-sage">favorite</span>
+</div>
+<p class="text-5xl font-display font-light text-charcoal">88%</p>
+<p class="body-text text-sm text-charcoal/60 leading-snug">High resonance in emotional intelligence and shared long-term values.</p>
+</div>
+<div class="bg-white/50 border border-charcoal/5 p-8 rounded-xl flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="nav-link text-[10px] uppercase tracking-widest text-charcoal/40">Relationship Dynamic</span>
+<span class="material-symbols-outlined text-primary">eco</span>
+</div>
+<p class="text-3xl font-display font-light text-charcoal pt-2">Mutually Nourishing</p>
+<p class="body-text text-sm text-charcoal/60 leading-snug">A balanced exchange of energy where both parties feel seen and replenished.</p>
+</div>
+</div>
+<div class="bg-primary/5 border border-primary/10 p-8 rounded-xl flex flex-col gap-4">
+<h3 class="nav-link text-[11px] uppercase tracking-widest text-primary font-bold">Tension Points</h3>
+<div class="grid grid-cols-2 gap-8">
+<div>
+<p class="body-text text-base text-charcoal/80 font-medium mb-1">Conflict Avoidance</p>
+<p class="body-text text-sm text-charcoal/60">Both parties tend to prioritize harmony over immediate truth-telling, leading to minor build-ups of unsaid feelings.</p>
+</div>
+<div>
+<p class="body-text text-base text-charcoal/80 font-medium mb-1">Time Scarcity</p>
+<p class="body-text text-sm text-charcoal/60">Professional commitments occasionally interrupt the depth of shared "Lumen" moments.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Right Column: Sidebar -->
+<aside class="col-span-4 flex flex-col gap-12 pt-4">
+<!-- Pros & Cons Section -->
+<section class="flex flex-col gap-6">
+<h3 class="nav-link text-[11px] uppercase tracking-[0.25em] text-charcoal/40 font-bold">Pros &amp; Cons</h3>
+<div class="flex flex-col gap-4">
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-2 bg-sage/10 text-sage text-[11px] font-mono rounded-full border border-sage/20">Empathetic Listener</span>
+<span class="px-4 py-2 bg-sage/10 text-sage text-[11px] font-mono rounded-full border border-sage/20">Shared Hobbies</span>
+<span class="px-4 py-2 bg-sage/10 text-sage text-[11px] font-mono rounded-full border border-sage/20">Consistent</span>
+</div>
+<div class="flex flex-wrap gap-2">
+<span class="px-4 py-2 bg-primary/10 text-primary text-[11px] font-mono rounded-full border border-primary/20">Passive-Aggressive</span>
+<span class="px-4 py-2 bg-primary/10 text-primary text-[11px] font-mono rounded-full border border-primary/20">Indecisive</span>
+</div>
+</div>
+</section>
+<!-- Numerological Blueprint -->
+<section class="flex flex-col gap-8 bg-charcoal/5 p-8 rounded-2xl border border-charcoal/5">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-xl">calculate</span>
+<h3 class="nav-link text-[11px] uppercase tracking-[0.2em] text-charcoal font-bold">Numerological Blueprint</h3>
+</div>
+<div class="flex flex-col gap-8">
+<div class="flex justify-between items-start">
+<div>
+<p class="nav-link text-[10px] uppercase text-charcoal/40 mb-1">Life Path</p>
+<p class="text-3xl font-display font-light text-charcoal">Number 7</p>
+</div>
+<div class="w-10 h-10 border border-charcoal/10 rounded-full flex items-center justify-center text-xs font-mono text-charcoal/60 italic">
+                                VII
+                            </div>
+</div>
+<p class="body-text text-sm text-charcoal/70 leading-relaxed italic">
+                            "The seeker of hidden truths. Zara operates on a frequency of deep analysis and spiritual inquiry."
+                        </p>
+<div class="pt-4 border-t border-charcoal/10">
+<p class="nav-link text-[10px] uppercase text-charcoal/40 mb-1">Soul Urge</p>
+<p class="text-2xl font-display font-light text-charcoal">Number 3</p>
+<p class="body-text text-sm text-charcoal/60 mt-2">Driven by creative expression and the need to uplift others through communication.</p>
+</div>
+</div>
+</section>
+<!-- Action Button -->
+<button class="w-full bg-charcoal text-cream py-4 rounded-xl flex items-center justify-center gap-3 hover:bg-charcoal/90 transition-all shadow-lg shadow-charcoal/10">
+<span class="material-symbols-outlined text-sm">auto_awesome</span>
+<span class="nav-link text-xs uppercase tracking-widest font-bold">Deep Dive Analysis</span>
+</button>
+</aside>
+</main>
+<!-- Footer Decoration -->
+<footer class="px-12 py-8 flex items-center justify-between text-[10px] text-charcoal/20 uppercase font-mono tracking-widest">
+<p>© 2024 Lumis System v2.4.0</p>
+<p>Connection Secured: MDN-772-ZA</p>
+</footer>
+</div>
+</body></html>

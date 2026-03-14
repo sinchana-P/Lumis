@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - The Sensory Anchor</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f3",
+                        "background-dark": "#221610",
+                        "amber-accent": "#d97706",
+                        "sage-accent": "#869d8a",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Cormorant Garamond", "serif"],
+                        "mono": ["DM Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: #f8f6f3;
+        }
+        .serif-title { font-family: 'Cormorant Garamond', serif; }
+        .mono-label { font-family: 'DM Mono', monospace; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-[1440px] mx-auto min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-20 py-8 border-b border-primary/10">
+<div class="flex items-center gap-3 text-primary">
+<span class="material-symbols-outlined text-3xl">flare</span>
+<h2 class="text-xl font-bold tracking-tight uppercase mono-label">Lumis</h2>
+</div>
+<nav class="flex items-center gap-12">
+<a class="mono-label text-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="mono-label text-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Members</a>
+<a class="mono-label text-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Lumen</a>
+<a class="mono-label text-sm uppercase tracking-widest hover:text-primary transition-colors" href="#">Profile</a>
+<div class="size-10 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile minimalist portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmhwRdV2AT9oGhCsll9Q-sVxpudcOiLb-D_PEuPvtGInzBuOKj56PUwIMYGZ1MaXccx2HrqzwVpyTMNhylh1i0HA4XNBiauBLj97ly-fK88kqL5zRnDDBB0P8UKIpZ1RkGCsjyaqDD8un9T8P1sbLyFn7ODdMjE2ovYTAL0B7lCVWlSNRRNTJVpIj5OfGYhfy1Qp--8mwVCo469myFoQb9b180HUAG-8ag7kf8dHBdN0Saw29BzsiVrA4Bff4Lq0wZovi-FYH4M2E"/>
+</div>
+</nav>
+</header>
+<main class="flex-grow px-20 py-16 max-w-5xl mx-auto w-full">
+<!-- Hero Section -->
+<div class="mb-20">
+<h1 class="serif-title text-6xl font-normal leading-tight mb-6">The Sensory Anchor: Rooting the Shift</h1>
+<p class="text-xl text-slate-600 dark:text-slate-400 font-light leading-relaxed max-w-2xl">
+                    Exploring how sensory cues anchor the brain to a specific mental state, making transitions feel natural rather than forced.
+                </p>
+</div>
+<!-- Sensory Sections -->
+<div class="space-y-24 mb-32">
+<!-- 01 Lighting -->
+<section class="group">
+<div class="flex items-start gap-12">
+<div class="w-1/3">
+<span class="mono-label text-xs tracking-tighter text-amber-accent/70 block mb-4">01 // LIGHTING</span>
+<h3 class="serif-title text-3xl mb-4">The Lighting Shift</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                                Using light temperature (warm amber) to signal quiet time and prepare the nervous system for a shift in focus.
+                            </p>
+</div>
+<div class="w-2/3 h-64 rounded-xl overflow-hidden relative shadow-sm border border-primary/5">
+<div class="absolute inset-0 bg-gradient-to-tr from-amber-500/20 to-transparent z-10"></div>
+<img class="w-full h-full object-cover" data-alt="Warm amber desk lamp lighting a workspace" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA8nk5GaqGdpsQhJfMx1oj9rueGMyClW_JJRyDCWk4i0kV99JYV8WB56ynW7beperc7SulYyQXK7-Cl1aEWFi-wm7reqFDJ5Noe9LHIJF2k-K99Lu_LXmQLL6q7_0KN_fO7EgIjZsgwX6Qm1xvasAmPcQBqvvqKoARTcO4aUwoHBA7waCUYxlb4VTcB6cwr4jrRv4rcSHdAjlS9xCzZn8NTrJZe9Ajjobz8v_TygR0yNp60rMZFLvj1ESp0anoJaqhvoNLE6u3wN-k"/>
+</div>
+</div>
+</section>
+<!-- 02 Scent -->
+<section class="group">
+<div class="flex items-start gap-12 flex-row-reverse">
+<div class="w-1/3">
+<span class="mono-label text-xs tracking-tighter text-sage-accent block mb-4">02 // SCENT</span>
+<h3 class="serif-title text-3xl mb-4">The Olfactory Cue</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                                How a specific scent (sandalwood, lavender) becomes a trigger for focus or rest. The olfactory bulb has a direct line to the amygdala.
+                            </p>
+</div>
+<div class="w-2/3 h-64 rounded-xl overflow-hidden relative shadow-sm border border-primary/5">
+<div class="absolute inset-0 bg-gradient-to-bl from-sage-accent/10 to-transparent z-10"></div>
+<img class="w-full h-full object-cover" data-alt="Minimalist candle and incense on a tray" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAO_rYqKByg21pZC-grexvBtsK6ao5CJaAneTtf7pAc46r0DwWBi4FTLaIKSTHjnN1j39WhDBRdXR98HJzHIa5Dq3hjvIlManU1U4F9Jea_Ha6EnNVArWNimA3w9PiYWazAl20XDsIWMA4bEjE3K9NQnGwB2LewnsDICELt-MULwVytOftq6b7zt5ieLEwSt6ohtOwwKk-IubVVMTOfiMbV3dFVP4FBClgpj4Q4huKCY7Oh_1-SNdsu71Bs93vJdnAX7c_-gwzQE9w"/>
+</div>
+</div>
+</section>
+<!-- 03 Sound -->
+<section class="group">
+<div class="flex items-start gap-12">
+<div class="w-1/3">
+<span class="mono-label text-xs tracking-tighter text-primary/60 block mb-4">03 // SOUND</span>
+<h3 class="serif-title text-3xl mb-4">The Sonic Boundary</h3>
+<p class="text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                                Using brown noise or a specific playlist to 'shut the door' on the external world. Creating a localized acoustic environment.
+                            </p>
+</div>
+<div class="w-2/3 h-64 rounded-xl overflow-hidden relative shadow-sm border border-primary/5">
+<img class="w-full h-full object-cover" data-alt="Over-ear headphones on a wooden desk" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVrXf3RBYBgUfbS8bNSnWA_NWCKGKI8rqoXYw48YESG-EbWYkGjXUzrln6TbtImzKbWn7ZY6csSGJyxIPZ_dXhnqXbdblP0TljpmiRo-NHYh-HBAqMkG9Shp_JMCkx_CB_BJ13HqNVTTVje7QY3rur5nv7qHPcjXUfxBr7DjrrdKIw1gQ7d2s-A-sV8SBNajea8HmzKhksOCQkXtXmp-c7kqktVZiFqGw-oxS0f06cZEEMyXAtv6n_sqdh9tamY3KJsI34eWgZ_DQ"/>
+</div>
+</div>
+</section>
+</div>
+<!-- Practice Input -->
+<div class="bg-primary/5 p-12 rounded-xl mb-32 border border-primary/10">
+<div class="max-w-xl mx-auto text-center">
+<span class="mono-label text-[10px] uppercase tracking-widest text-primary mb-6 block">Practice</span>
+<h4 class="serif-title text-2xl mb-8">Which sensory cue would you like to anchor your next deep-dive to?</h4>
+<div class="relative">
+<input class="w-full bg-transparent border-b border-primary/30 focus:border-primary border-t-0 border-x-0 py-3 px-0 text-lg serif-title italic placeholder:text-slate-400 focus:ring-0 transition-all" placeholder="e.g., The crackle of a woodfire candle..." type="text"/>
+<button class="absolute right-0 top-1/2 -translate-y-1/2 text-primary hover:text-amber-accent transition-colors">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Reflection Footer -->
+<footer class="text-center pb-24 border-t border-primary/5 pt-16">
+<div class="max-w-2xl mx-auto">
+<span class="material-symbols-outlined text-amber-accent mb-4">auto_awesome</span>
+<p class="serif-title text-3xl italic text-slate-700 dark:text-slate-300 leading-snug">
+                        "Your brain is a pattern-seeking machine. Give it a consistent signal, and it will eventually do the heavy lifting for you."
+                    </p>
+<p class="mono-label text-[10px] uppercase tracking-[0.3em] text-slate-400 mt-6">— LUMEN REFLECTION</p>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

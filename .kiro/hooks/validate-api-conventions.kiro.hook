@@ -1,0 +1,17 @@
+{
+  "enabled": true,
+  "name": "Validate API Conventions",
+  "description": "Ensure API endpoints follow Lumis conventions",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/*.controller.ts",
+      "**/*.service.ts"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Check if this file follows Lumis API conventions: 1) RESTful endpoint naming, 2) Standard response format { success, data, error, meta }, 3) Proper error codes, 4) Service layer pattern, 5) Input validation"
+  }
+}

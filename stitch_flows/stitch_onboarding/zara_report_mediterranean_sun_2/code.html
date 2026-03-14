@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - AI Relationship Report: Zara</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;0,700;1,400&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Cormorant+Garamond:ital,wght@1,600&amp;family=Public+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#C89B7F", // Terracotta Accent
+                        "azure": "#0077B6", // Azure Sea
+                        "background-light": "#FAF7F2", // Warm White
+                        "surface": "#E8DFD0", // Stone/Surface
+                        "text-main": "#3D3528", // Earthy Brown
+                    },
+                    fontFamily: {
+                        "display": ["Crimson Pro", "serif"],
+                        "body": ["Lora", "serif"],
+                        "mono": ["DM Mono", "monospace"],
+                        "italic-heading": ["Cormorant Garamond", "serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Lora', serif;
+            background-color: #FAF7F2;
+            color: #3D3528;
+        }
+        .header-font { font-family: 'Crimson Pro', serif; }
+        .mono-font { font-family: 'DM Mono', monospace; }
+        .italic-display { font-family: 'Cormorant Garamond', serif; font-style: italic; }
+        .bg-terracotta { background-color: #C89B7F; }
+        .text-terracotta { color: #C89B7F; }
+        .border-terracotta { border-color: #C89B7F; }
+        .bg-azure { background-color: #0077B6; }
+        .text-azure { color: #0077B6; }
+    </style>
+</head>
+<body class="bg-background-light text-text-main min-h-screen">
+<div class="max-w-[1440px] mx-auto min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-12 py-6 border-b border-primary/20">
+<div class="flex items-center gap-3">
+<div class="text-azure">
+<span class="material-symbols-outlined text-3xl fill-1">sunny</span>
+</div>
+<h2 class="header-font text-2xl font-bold tracking-tight">LUMIS</h2>
+</div>
+<nav class="flex items-center gap-12">
+<a class="mono-font text-xs tracking-widest text-text-main/60 hover:text-azure transition-colors" href="#">DASHBOARD</a>
+<a class="mono-font text-xs tracking-widest text-text-main/60 hover:text-azure transition-colors" href="#">MEMBERS</a>
+<a class="mono-font text-xs tracking-widest text-azure border-b-2 border-azure/40 pb-1" href="#">LUMEN</a>
+<a class="mono-font text-xs tracking-widest text-text-main/60 hover:text-azure transition-colors" href="#">PROFILE</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-full border-2 border-primary/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Portrait of a woman profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLunkpEyMg2FP_9no7wpYzeCs0zp8iGiPoiJlmHav-4rurrDZhve8Q-6BcNPYIXByUQ5EP2f0Qsh4L9PqH7HO9nORrWTQ9OfnfqHtgzj9ehOIa_hEXcEhfbPsIZbcON1NttTHnArHtZnRGIwU-kHd61ieCXNNXCeXZS-04GE6cddUpJltR_I0760gwurxFoEYIeZA9p7LOY2fnDgzz0NDCdP1O5-mTzYIMGRZHeTgNWroSn7cfZhwb33y4PDAn2F56JkRYaRld2sg"/>
+</div>
+</div>
+</header>
+<main class="flex-grow px-12 py-12">
+<!-- Hero Header Section -->
+<div class="mb-16">
+<p class="mono-font text-[10px] tracking-[0.3em] text-azure font-bold uppercase mb-2">RELATIONSHIP REPORT</p>
+<h1 class="italic-display text-8xl text-text-main">Zara</h1>
+</div>
+<div class="grid grid-cols-12 gap-8">
+<!-- Left Column: Insights & Analysis -->
+<div class="col-span-8 space-y-8">
+<!-- Cards Row -->
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-surface p-8 rounded-xl border border-primary/10">
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 uppercase mb-4">Dynamic Type</p>
+<h3 class="header-font text-3xl font-semibold text-text-main">The Reflective Mirror</h3>
+<p class="mt-4 text-sm text-text-main/80 leading-relaxed">A synergy of introspective depth and shared intellectual discovery.</p>
+</div>
+<div class="bg-surface p-8 rounded-xl border border-primary/10 flex flex-col justify-between">
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 uppercase mb-4">Compatibility Score</p>
+<div class="flex items-end gap-6">
+<div class="relative w-24 h-12 overflow-hidden">
+<div class="absolute top-0 left-0 w-24 h-24 rounded-full border-[6px] border-text-main/10"></div>
+<div class="absolute top-0 left-0 w-24 h-24 rounded-full border-[6px] border-azure border-t-transparent border-r-transparent -rotate-45" style="transform: rotate(140deg);"></div>
+</div>
+<span class="header-font text-5xl font-bold text-azure">78%</span>
+</div>
+<p class="mt-4 text-sm text-text-main/80">Harmonious alignment with minor growth friction.</p>
+</div>
+</div>
+<!-- Lumen's Insight -->
+<section class="bg-white p-10 rounded-xl border border-primary/20 shadow-sm relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-azure/5 rounded-bl-full -mr-16 -mt-16"></div>
+<div class="flex items-center gap-3 mb-6 relative z-10">
+<span class="material-symbols-outlined text-azure fill-1">insights</span>
+<h2 class="header-font text-2xl font-semibold">Lumen's Insight</h2>
+</div>
+<div class="space-y-6 text-text-main/90 leading-relaxed text-lg relative z-10">
+<p>
+                                Your relationship dynamic is uniquely anchored by Zara's <span class="text-azure italic font-medium">Simha Rashi</span> (Leo) influence, which brings a regal warmth and protective loyalty to the core of your connection. This solar energy creates a radiant center, yet it is beautifully tempered by her <span class="text-azure italic font-medium">Life Path 7</span> vibration.
+                            </p>
+<p>
+                                This combination suggests a profound psychological depth. While the Leo placement seeks external expression and validation, the 7 vibration pulls inward toward spiritual mystery and intellectual solitude. In your dynamic, this manifests as a 'Reflective Mirror'—where you both serve as catalysts for each other's inner growth. You find harmony not just in what you say, but in the shared silence between your most high-level discourses.
+                            </p>
+<p>
+                                The Vedic alignment indicates a natural leadership quality in this bond, but one that is quiet and observational rather than dominant. You are building a sanctuary of the mind as much as a partnership of the heart.
+                            </p>
+</div>
+</section>
+<!-- Tension & Growth -->
+<div class="grid grid-cols-2 gap-8">
+<div class="space-y-4">
+<h3 class="mono-font text-[10px] tracking-widest text-primary font-bold uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-sm font-bold">do_not_disturb_on</span> Tension Points
+                            </h3>
+<ul class="space-y-4">
+<li class="bg-white p-5 rounded-lg border-l-4 border-primary/40 shadow-sm">
+<p class="font-bold mb-1">Ego vs. Solitude</p>
+<p class="text-sm text-text-main/70">The need for public recognition (Leo) may occasionally clash with the urgent need for private withdrawal (Path 7).</p>
+</li>
+<li class="bg-white p-5 rounded-lg border-l-4 border-primary/40 shadow-sm">
+<p class="font-bold mb-1">The Silent Wall</p>
+<p class="text-sm text-text-main/70">Over-intellectualizing emotions can lead to a 'cold' phase if warmth isn't intentionally cultivated.</p>
+</li>
+</ul>
+</div>
+<div class="space-y-4">
+<h3 class="mono-font text-[10px] tracking-widest text-azure font-bold uppercase flex items-center gap-2">
+<span class="material-symbols-outlined text-sm font-bold">add_circle</span> Growth Points
+                            </h3>
+<ul class="space-y-4">
+<li class="bg-white p-5 rounded-lg border-l-4 border-azure/40 shadow-sm">
+<p class="font-bold mb-1">Spiritual Alchemy</p>
+<p class="text-sm text-text-main/70">Transforming daily routines into shared rituals deepens the spiritual resonance of the bond.</p>
+</li>
+<li class="bg-white p-5 rounded-lg border-l-4 border-azure/40 shadow-sm">
+<p class="font-bold mb-1">The Sage &amp; The King</p>
+<p class="text-sm text-text-main/70">Merging wisdom with action allows the relationship to achieve significant worldly success.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- Right Column: Sidebar -->
+<div class="col-span-4 space-y-8">
+<!-- Timing Guidance -->
+<section class="bg-primary/10 p-8 rounded-xl border-2 border-primary/20 sticky top-12 shadow-md">
+<div class="flex items-center gap-3 mb-6">
+<span class="material-symbols-outlined text-primary font-bold">explore</span>
+<h3 class="header-font text-xl font-semibold">Timing Guidance</h3>
+</div>
+<div class="space-y-6">
+<div class="border-b border-primary/20 pb-4">
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 mb-2">CURRENT TRANSIT</p>
+<p class="text-sm font-bold mb-1">Venus in Trine with Saturn</p>
+<p class="text-xs text-text-main/70 leading-relaxed">A window of stability. Ideal for discussing long-term commitments or structural changes to your shared life.</p>
+</div>
+<div>
+<p class="mono-font text-[10px] tracking-widest text-text-main/50 mb-2">OPTIMAL CONNECTION WINDOW</p>
+<div class="flex items-center justify-between bg-white p-4 rounded-lg shadow-inner">
+<div class="text-center px-4 border-r border-primary/10">
+<p class="text-[10px] text-text-main/50 font-bold uppercase">Starts</p>
+<p class="font-bold text-azure">Oct 14</p>
+</div>
+<div class="text-center px-4">
+<p class="text-[10px] text-text-main/50 font-bold uppercase">Ends</p>
+<p class="font-bold text-azure">Oct 18</p>
+</div>
+<div class="bg-azure text-white p-2 rounded-full shadow-lg">
+<span class="material-symbols-outlined text-sm fill-1">notifications_active</span>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full mt-8 bg-azure text-white py-4 rounded-xl font-bold hover:bg-azure/90 hover:scale-[1.02] transition-all uppercase tracking-widest text-xs shadow-lg shadow-azure/20">Sync with Calendar</button>
+</section>
+<!-- Profile Quick Stats -->
+<div class="p-8 border border-primary/20 rounded-xl space-y-6 bg-surface shadow-inner">
+<h4 class="mono-font text-[10px] tracking-widest text-text-main/50 font-bold uppercase">Astro-Numerical Profile</h4>
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-white/60 rounded-lg border border-primary/10">
+<p class="text-[10px] text-text-main/50 font-bold uppercase">Sun Sign</p>
+<p class="font-serif font-bold text-primary">Leo</p>
+</div>
+<div class="p-4 bg-white/60 rounded-lg border border-primary/10">
+<p class="text-[10px] text-text-main/50 font-bold uppercase">Rashi</p>
+<p class="font-serif font-bold text-primary">Simha</p>
+</div>
+<div class="p-4 bg-white/60 rounded-lg border border-primary/10">
+<p class="text-[10px] text-text-main/50 font-bold uppercase">Life Path</p>
+<p class="font-serif font-bold text-azure">7</p>
+</div>
+<div class="p-4 bg-white/60 rounded-lg border border-primary/10">
+<p class="text-[10px] text-text-main/50 font-bold uppercase">Element</p>
+<p class="font-serif font-bold text-azure">Fire/Air</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Subtle Footer -->
+<footer class="px-12 py-10 border-t border-primary/20 flex justify-between items-center">
+<p class="mono-font text-[10px] tracking-widest text-text-main/40 font-bold">© LUMIS INTELLIGENCE 2024 — MEDITERRANEAN EXPEDITION</p>
+<div class="flex gap-8 text-text-main/40">
+<span class="material-symbols-outlined text-sm hover:text-azure cursor-pointer transition-colors">sailing</span>
+<span class="material-symbols-outlined text-sm hover:text-primary cursor-pointer transition-colors">waves</span>
+<span class="material-symbols-outlined text-sm hover:text-azure cursor-pointer transition-colors">foundation</span>
+</div>
+</footer>
+</div>
+</body></html>

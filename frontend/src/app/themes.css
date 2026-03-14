@@ -1,0 +1,254 @@
+/* Lumis Multi-Theme System - 23 Themes */
+
+/* 01 — WARM LIGHT (Default) */
+[data-theme="warm-light"] {
+  --bg-primary: #F8F6F3;
+  --bg-secondary: #F2EFE9;
+  --surface: #E8E3D8;
+  --text-primary: #3D3935;
+  --accent-primary: #9CAF9E;
+  --accent-secondary: #C9A58F;
+  --accent-ai: #B5A8C1;
+}
+
+/* 02 — DEEP DARK */
+[data-theme="deep-dark"] {
+  --bg-primary: #1A1816;
+  --bg-secondary: #252220;
+  --surface: #2F2C29;
+  --text-primary: #E8E3D8;
+  --accent-primary: #8A9D8C;
+  --accent-secondary: #B8947D;
+  --accent-ai: #A396AF;
+}
+
+/* 03 — SOFT FEMININE */
+[data-theme="soft-feminine"] {
+  --bg-primary: #FAF5F2;
+  --bg-secondary: #F5EDE8;
+  --surface: #F0E4DD;
+  --text-primary: #4A3F3C;
+  --accent-primary: #D4A5A5;
+  --accent-secondary: #C9A8B8;
+  --accent-ai: #B8A8C8;
+}
+
+/* 04 — REFINED MASCULINE */
+[data-theme="refined-masculine"] {
+  --bg-primary: #E8E4DF;
+  --bg-secondary: #DDD8D0;
+  --surface: #D0C9BE;
+  --text-primary: #2D2A26;
+  --accent-primary: #6B7F6E;
+  --accent-secondary: #8B6F5C;
+  --accent-ai: #6E6B7F;
+}
+
+/* 05 — FOREST CALM */
+[data-theme="forest-calm"] {
+  --bg-primary: #F2F5F0;
+  --bg-secondary: #E8EDE5;
+  --surface: #DFE6DA;
+  --text-primary: #2F3D2E;
+  --accent-primary: #7A9B7E;
+  --accent-secondary: #A8B89A;
+  --accent-ai: #8FA8A0;
+}
+
+/* 06 — OCEAN DEPTH */
+[data-theme="ocean-depth"] {
+  --bg-primary: #F0F4F7;
+  --bg-secondary: #E5EDF2;
+  --surface: #D8E4EB;
+  --text-primary: #2A3840;
+  --accent-primary: #7A9BAF;
+  --accent-secondary: #9AAFBF;
+  --accent-ai: #8FA0B8;
+}
+
+/* 07 — SUNSET WARMTH */
+[data-theme="sunset-warmth"] {
+  --bg-primary: #FAF5EF;
+  --bg-secondary: #F5EDE3;
+  --surface: #EFE3D5;
+  --text-primary: #3D342E;
+  --accent-primary: #D4A574;
+  --accent-secondary: #C9947D;
+  --accent-ai: #B8A08F;
+}
+
+/* 08 — LAVENDER DREAM */
+[data-theme="lavender-dream"] {
+  --bg-primary: #F5F2F7;
+  --bg-secondary: #EDE8F2;
+  --surface: #E3DCEA;
+  --text-primary: #3A3440;
+  --accent-primary: #A89BB8;
+  --accent-secondary: #B8A8C8;
+  --accent-ai: #9B8FAF;
+}
+
+/* 09 — MONOCHROME MINIMAL */
+[data-theme="monochrome-minimal"] {
+  --bg-primary: #FAFAFA;
+  --bg-secondary: #F0F0F0;
+  --surface: #E8E8E8;
+  --text-primary: #1A1A1A;
+  --accent-primary: #6B6B6B;
+  --accent-secondary: #8B8B8B;
+  --accent-ai: #5A5A5A;
+}
+
+/* 10 — VINTAGE SEPIA */
+[data-theme="vintage-sepia"] {
+  --bg-primary: #F2EBE0;
+  --bg-secondary: #E8DFD0;
+  --surface: #DDD2BF;
+  --text-primary: #3D3328;
+  --accent-primary: #9B8B6F;
+  --accent-secondary: #B8A58F;
+  --accent-ai: #8B7F6B;
+}
+
+/* 11 — SOFT PASTEL */
+[data-theme="soft-pastel"] {
+  --bg-primary: #FAF8F5;
+  --bg-secondary: #F5F0EB;
+  --surface: #EFE8E0;
+  --text-primary: #4A4540;
+  --accent-primary: #C8D4C8;
+  --accent-secondary: #D4C8D4;
+  --accent-ai: #C8C8D4;
+}
+
+/* 12 — MIDNIGHT BLUE */
+[data-theme="midnight-blue"] {
+  --bg-primary: #1A1F2E;
+  --bg-secondary: #242938;
+  --surface: #2E3547;
+  --text-primary: #D8E0F0;
+  --accent-primary: #6B7F9B;
+  --accent-secondary: #7F8FA8;
+  --accent-ai: #8F9BB8;
+}
+
+/* 13 — SPRING BLOOM */
+[data-theme="spring-bloom"] {
+  --bg-primary: #F7F9F5;
+  --bg-secondary: #EEF4E8;
+  --surface: #E5EFDD;
+  --text-primary: #3A4235;
+  --accent-primary: #A8C4A0;
+  --accent-secondary: #D4B8C8;
+  --accent-ai: #B8D4C8;
+}
+
+/* 14 — SUMMER GLOW */
+[data-theme="summer-glow"] {
+  --bg-primary: #FBF8F0;
+  --bg-secondary: #F7F0E0;
+  --surface: #F2E8D0;
+  --text-primary: #3D3528;
+  --accent-primary: #E8C490;
+  --accent-secondary: #D4A874;
+  --accent-ai: #C8B490;
+}
+
+/* 15 — AUTUMN HARVEST */
+[data-theme="autumn-harvest"] {
+  --bg-primary: #F5F0E8;
+  --bg-secondary: #EDE5D8;
+  --surface: #E3D8C8;
+  --text-primary: #3D342A;
+  --accent-primary: #C89B6F;
+  --accent-secondary: #B8856F;
+  --accent-ai: #A88F7F;
+}
+
+/* 16 — WINTER FROST */
+[data-theme="winter-frost"] {
+  --bg-primary: #F5F7FA;
+  --bg-secondary: #EDF2F7;
+  --surface: #E2E8F0;
+  --text-primary: #2D3748;
+  --accent-primary: #A0B8D0;
+  --accent-secondary: #B8C8D8;
+  --accent-ai: #9BB0C8;
+}
+
+/* 17 — JAPANESE ZEN */
+[data-theme="japanese-zen"] {
+  --bg-primary: #F8F7F4;
+  --bg-secondary: #EBE9E3;
+  --surface: #DDD9D0;
+  --text-primary: #2A2822;
+  --accent-primary: #8B9B8E;
+  --accent-secondary: #A89B8B;
+  --accent-ai: #8B8B9B;
+}
+
+/* 18 — SCANDINAVIAN HYGGE */
+[data-theme="scandinavian-hygge"] {
+  --bg-primary: #F9F6F2;
+  --bg-secondary: #F0EBE5;
+  --surface: #E5DDD5;
+  --text-primary: #3A3530;
+  --accent-primary: #B8A89B;
+  --accent-secondary: #C8B8A8;
+  --accent-ai: #A8A8B8;
+}
+
+/* 19 — MEDITERRANEAN SUN */
+[data-theme="mediterranean-sun"] {
+  --bg-primary: #FAF7F2;
+  --bg-secondary: #F2EDE3;
+  --surface: #E8DFD0;
+  --text-primary: #3D3528;
+  --accent-primary: #C89B7F;
+  --accent-secondary: #7FA8C8;
+  --accent-ai: #A89BC8;
+}
+
+/* 20 — INTROVERT'S HAVEN */
+[data-theme="introvert-haven"] {
+  --bg-primary: #E8E5E0;
+  --bg-secondary: #DDD8D0;
+  --surface: #D0C8BE;
+  --text-primary: #2A2822;
+  --accent-primary: #8B9B8E;
+  --accent-secondary: #9B8B8E;
+  --accent-ai: #8E8B9B;
+}
+
+/* 21 — EXTROVERT'S ENERGY */
+[data-theme="extrovert-energy"] {
+  --bg-primary: #FBF9F5;
+  --bg-secondary: #F5F0E8;
+  --surface: #EFE5D8;
+  --text-primary: #3D3528;
+  --accent-primary: #D4B890;
+  --accent-secondary: #C8A890;
+  --accent-ai: #B8A8C8;
+}
+
+/* 22 — ANALYST'S CLARITY */
+[data-theme="analyst-clarity"] {
+  --bg-primary: #F7F8FA;
+  --bg-secondary: #EEF0F3;
+  --surface: #E3E6EA;
+  --text-primary: #2A2F35;
+  --accent-primary: #7A8B9B;
+  --accent-secondary: #8B9BAB;
+  --accent-ai: #6B7B8B;
+}
+
+/* 23 — DREAMER'S CANVAS */
+[data-theme="dreamer-canvas"] {
+  --bg-primary: #FAF8F7;
+  --bg-secondary: #F2EDF0;
+  --surface: #E8E0E8;
+  --text-primary: #3D3540;
+  --accent-primary: #C8B8D4;
+  --accent-secondary: #D4C8D4;
+  --accent-ai: #B8C8D4;
+}

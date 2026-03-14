@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Zara's Traits</title>
+<!-- Google Fonts: DM Mono for Nav, Cormorant Garamond for Title -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&amp;family=DM+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            amberBackground: '#F8F6F3',
+            charcoalText: '#3D3935',
+            dustySage: '#9CAF9E',
+            mutedRose: '#C89090',
+          },
+          fontFamily: {
+            mono: ['"DM Mono"', 'monospace'],
+            garamond: ['"Cormorant Garamond"', 'serif'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      background-color: #F8F6F3;
+      color: #3D3935;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+    .trait-pill {
+      transition: transform 0.2s ease;
+    }
+    .trait-pill:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+<!-- BEGIN: MainHeader -->
+<header class="w-full py-6 px-12 border-b border-charcoalText/10">
+<nav class="max-w-[1440px] mx-auto flex justify-between items-center font-mono text-sm uppercase tracking-widest">
+<div class="font-bold text-lg" data-purpose="logo">LUMIS</div>
+<ul class="flex gap-12">
+<li><a class="hover:opacity-60" href="#">Dashboard</a></li>
+<li><a class="opacity-60 hover:opacity-100" href="#">Members</a></li>
+<li><a class="opacity-60 hover:opacity-100" href="#">Lumen</a></li>
+<li><a class="opacity-60 hover:opacity-100" href="#">Profile</a></li>
+</ul>
+<div class="w-10 h-10 rounded-full bg-charcoalText/10 flex items-center justify-center">
+<!-- User Avatar Placeholder -->
+<span class="text-xs">Z</span>
+</div>
+</nav>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: PageContent -->
+<main class="max-w-[1440px] mx-auto px-12 py-12">
+<!-- BEGIN: TitleSection -->
+<section class="mb-16">
+<h1 class="font-garamond text-6xl italic" data-purpose="page-title">Traits</h1>
+<p class="font-mono text-xs mt-2 uppercase tracking-widest opacity-60">Detailed Log • Zara</p>
+</section>
+<!-- END: TitleSection -->
+<div class="grid grid-cols-2 gap-16">
+<!-- BEGIN: ProsColumn -->
+<section data-purpose="pros-container">
+<h2 class="font-mono text-sm uppercase tracking-[0.2em] mb-8 border-b border-dustySage pb-2 inline-block text-dustySage font-bold">Pros</h2>
+<div class="flex flex-col gap-4">
+<!-- Trait Pill: Empathetic Listener -->
+<div class="trait-pill bg-dustySage/15 border border-dustySage/30 p-5 rounded-3xl flex justify-between items-center">
+<div>
+<span class="block font-medium text-lg">Empathetic Listener</span>
+<span class="inline-block mt-2 px-2 py-0.5 rounded bg-dustySage/20 text-[10px] uppercase font-mono tracking-wider">Emotion: Safe</span>
+</div>
+<div class="text-right">
+<span class="block font-mono text-xs opacity-60 uppercase">Intensity</span>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage/20"></div>
+</div>
+</div>
+</div>
+<!-- Trait Pill: Consistent -->
+<div class="trait-pill bg-dustySage/15 border border-dustySage/30 p-5 rounded-3xl flex justify-between items-center">
+<div>
+<span class="block font-medium text-lg">Consistent</span>
+<span class="inline-block mt-2 px-2 py-0.5 rounded bg-dustySage/20 text-[10px] uppercase font-mono tracking-wider">Emotion: Grounded</span>
+</div>
+<div class="text-right">
+<span class="block font-mono text-xs opacity-60 uppercase">Intensity</span>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage/20"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage/20"></div>
+</div>
+</div>
+</div>
+<!-- Trait Pill: Resourceful -->
+<div class="trait-pill bg-dustySage/15 border border-dustySage/30 p-5 rounded-3xl flex justify-between items-center">
+<div>
+<span class="block font-medium text-lg">Resourceful</span>
+<span class="inline-block mt-2 px-2 py-0.5 rounded bg-dustySage/20 text-[10px] uppercase font-mono tracking-wider">Emotion: Confident</span>
+</div>
+<div class="text-right">
+<span class="block font-mono text-xs opacity-60 uppercase">Intensity</span>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage/20"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage/20"></div>
+<div class="w-2 h-2 rounded-full bg-dustySage/20"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ProsColumn -->
+<!-- BEGIN: ConsColumn -->
+<section data-purpose="cons-container">
+<h2 class="font-mono text-sm uppercase tracking-[0.2em] mb-8 border-b border-mutedRose pb-2 inline-block text-mutedRose font-bold">Cons</h2>
+<div class="flex flex-col gap-4">
+<!-- Trait Pill: Passive-Aggressive -->
+<div class="trait-pill bg-mutedRose/15 border border-mutedRose/30 p-5 rounded-3xl flex justify-between items-center">
+<div>
+<span class="block font-medium text-lg">Passive-Aggressive</span>
+<span class="inline-block mt-2 px-2 py-0.5 rounded bg-mutedRose/20 text-[10px] uppercase font-mono tracking-wider">Emotion: Drained</span>
+</div>
+<div class="text-right">
+<span class="block font-mono text-xs opacity-60 uppercase">Intensity</span>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+</div>
+</div>
+</div>
+<!-- Trait Pill: Indecisive -->
+<div class="trait-pill bg-mutedRose/15 border border-mutedRose/30 p-5 rounded-3xl flex justify-between items-center">
+<div>
+<span class="block font-medium text-lg">Indecisive</span>
+<span class="inline-block mt-2 px-2 py-0.5 rounded bg-mutedRose/20 text-[10px] uppercase font-mono tracking-wider">Emotion: Anxious</span>
+</div>
+<div class="text-right">
+<span class="block font-mono text-xs opacity-60 uppercase">Intensity</span>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose/20"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose/20"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose/20"></div>
+</div>
+</div>
+</div>
+<!-- Trait Pill: Perfectionist -->
+<div class="trait-pill bg-mutedRose/15 border border-mutedRose/30 p-5 rounded-3xl flex justify-between items-center">
+<div>
+<span class="block font-medium text-lg">Perfectionist</span>
+<span class="inline-block mt-2 px-2 py-0.5 rounded bg-mutedRose/20 text-[10px] uppercase font-mono tracking-wider">Emotion: Stressed</span>
+</div>
+<div class="text-right">
+<span class="block font-mono text-xs opacity-60 uppercase">Intensity</span>
+<div class="flex gap-1 mt-1">
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose/20"></div>
+<div class="w-2 h-2 rounded-full bg-mutedRose/20"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ConsColumn -->
+</div>
+</main>
+<!-- END: PageContent -->
+<!-- BEGIN: Footer -->
+<footer class="mt-auto py-12 px-12 text-center opacity-40 font-mono text-[10px] tracking-widest uppercase">
+    Lumis System v1.4 © 2023 Midnight Amber Theme
+  </footer>
+<!-- END: Footer -->
+</body></html>

@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "name": "Component Reusability Check",
+  "description": "Ensure components follow reusability principles",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "**/components/**/*.tsx"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Review this component for reusability: 1) Is this duplicating existing shared components? 2) Should this be in shared/ or features/? 3) Are props flexible enough for multiple contexts? 4) Is it following single responsibility principle? 5) Can it be composed with other components?"
+  }
+}

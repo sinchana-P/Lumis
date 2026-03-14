@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&amp;family=DM+Mono:wght@300;400;500&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=Public+Sans:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "astrology-violet": "#6A4A7C",
+                        "astrology-slate": "#4A5A7C",
+                        "background-light": "#F8F6F3",
+                        "background-dark": "#221610",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "mono-alt": ["DM Mono", "monospace"],
+                        "serif-alt": ["Cormorant Garamond", "serif"],
+                        "body-serif": ["Lora", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Public Sans', sans-serif; background-color: #F8F6F3; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+        .font-dm-mono { font-family: 'DM Mono', monospace; }
+        .font-lora { font-family: 'Lora', serif; }
+        .vedic-chart-grid {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* 1:1 Aspect Ratio */
+        }
+        .vedic-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-[1440px] mx-auto min-h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between px-10 py-6 border-b border-primary/10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-sm">flare</span>
+</div>
+<h2 class="font-dm-mono text-lg font-light tracking-tighter uppercase">Lumis</h2>
+</div>
+<nav class="flex items-center gap-12">
+<a class="font-dm-mono text-xs font-light tracking-widest text-slate-500 hover:text-primary transition-colors" href="#">DASHBOARD</a>
+<a class="font-dm-mono text-xs font-medium tracking-widest text-primary border-b border-primary pb-1" href="#">MEMBERS</a>
+<a class="font-dm-mono text-xs font-light tracking-widest text-slate-500 hover:text-primary transition-colors" href="#">LUMEN</a>
+<a class="font-dm-mono text-xs font-light tracking-widest text-slate-500 hover:text-primary transition-colors" href="#">PROFILE</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-primary/5 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600">search</span>
+</button>
+<button class="p-2 hover:bg-primary/5 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600">notifications</span>
+</button>
+</div>
+</header>
+<!-- Member Header -->
+<section class="px-20 pt-16 pb-10 flex flex-col items-center text-center">
+<div class="mb-6 relative">
+<div class="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/20 p-1">
+<img alt="Zara Profile" class="w-full h-full object-cover rounded-full" data-alt="Portrait of a woman with a thoughtful expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7VFH0nwqUihUUYUGtCwg-vADFW51ZR4EEYMoTLFfPU6C85hDMBAV642Xtk1hMPRBbjce0Q2MZFjpKsjJGwgJnE9SYnsh-vqBdDK2gNj11lRdehH7Xb0fEmUyTTyEr0Ua9wvIcNbC__VfflH6N1ojypMxh6ROl2eu9gVjlxCEaQN_UmwqhcRO_uoN5NWLFwmrh6f3NQ_HgWnonHM-no81ozwNua00itpCHpKOlRI-jmVo84fKXI-a6kBkClcZq3j_WAf3DtKvWkDM"/>
+</div>
+<div class="absolute -bottom-2 -right-2 bg-astrology-violet text-white w-8 h-8 rounded-full flex items-center justify-center border-4 border-background-light">
+<span class="material-symbols-outlined text-xs">auto_awesome</span>
+</div>
+</div>
+<h1 class="font-serif-alt italic text-6xl text-slate-800 dark:text-slate-100 mb-2">Zara</h1>
+<p class="font-dm-mono text-xs tracking-[0.4em] text-astrology-slate uppercase">Seeker of Depth</p>
+</section>
+<!-- Sub-tabs -->
+<div class="px-20 mb-10">
+<div class="flex justify-center gap-10 border-b border-slate-200 dark:border-slate-800">
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">TRAITS</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">INCIDENTS</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">JOURNAL</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">NUMEROLOGY</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-primary border-b-2 border-primary" href="#">ASTROLOGY</a>
+<a class="font-dm-mono text-[10px] tracking-widest py-4 text-slate-400 hover:text-slate-600" href="#">REPORT</a>
+</div>
+</div>
+<!-- Main Content Grid -->
+<main class="px-20 pb-20 grid grid-cols-12 gap-8">
+<!-- Side Panel: Transits -->
+<aside class="col-span-3 space-y-8">
+<div class="bg-white/50 dark:bg-slate-900/50 p-6 rounded-xl border border-slate-100 dark:border-slate-800">
+<h3 class="font-dm-mono text-[10px] tracking-[0.2em] uppercase text-astrology-violet mb-6 border-b border-astrology-violet/10 pb-2">Current Transits</h3>
+<div class="space-y-6">
+<div class="group">
+<div class="flex items-center justify-between mb-1">
+<span class="font-serif-alt italic text-lg text-slate-700">Saturn Return</span>
+<span class="material-symbols-outlined text-astrology-violet text-sm">error_outline</span>
+</div>
+<p class="font-lora text-xs leading-relaxed text-slate-500 italic">Structural shifts in career and long-term foundations. Heavy but necessary.</p>
+</div>
+<div class="group">
+<div class="flex items-center justify-between mb-1">
+<span class="font-serif-alt italic text-lg text-slate-700">Jupiter Trine Mars</span>
+<span class="material-symbols-outlined text-primary text-sm">bolt</span>
+</div>
+<p class="font-lora text-xs leading-relaxed text-slate-500 italic">High energy for creative expansion. Luck favors the bold today.</p>
+</div>
+<div class="group">
+<div class="flex items-center justify-between mb-1">
+<span class="font-serif-alt italic text-lg text-slate-700">Mercury Shadow</span>
+<span class="material-symbols-outlined text-astrology-slate text-sm">visibility_off</span>
+</div>
+<p class="font-lora text-xs leading-relaxed text-slate-500 italic">Internal processing. Avoid signing major contracts until next week.</p>
+</div>
+</div>
+</div>
+<div class="bg-white/50 dark:bg-slate-900/50 p-6 rounded-xl border border-slate-100 dark:border-slate-800">
+<h3 class="font-dm-mono text-[10px] tracking-[0.2em] uppercase text-astrology-slate mb-6 border-b border-astrology-slate/10 pb-2">Dominant Element</h3>
+<div class="space-y-4">
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 45%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">FIRE</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-astrology-slate h-full rounded-full" style="width: 30%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">WATER</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-slate-400 h-full rounded-full" style="width: 15%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">AIR</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+<div class="bg-astrology-violet h-full rounded-full" style="width: 10%;"></div>
+</div>
+<span class="font-dm-mono text-[10px] text-slate-500 w-10">EARTH</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content: Vedic Chart -->
+<div class="col-span-9 bg-white dark:bg-slate-900 rounded-3xl p-12 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex justify-between items-start mb-12">
+<div>
+<h2 class="font-serif-alt text-4xl text-slate-800 dark:text-slate-100">Janam Kundli</h2>
+<p class="font-dm-mono text-[10px] tracking-[0.2em] uppercase text-slate-400 mt-2">August 12, 1994 • 11:42 PM • London, UK • Lahiri Ayanamsha</p>
+</div>
+<button class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-full hover:bg-slate-50 transition-colors">
+<span class="material-symbols-outlined text-sm">print</span>
+<span class="font-dm-mono text-[10px] tracking-widest">DOWNLOAD KUNDLI</span>
+</button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<!-- North Indian Chart Visualization -->
+<div class="vedic-chart-grid">
+<svg class="vedic-svg" viewbox="0 0 400 400">
+<!-- Background Diamond Grid -->
+<rect class="fill-none stroke-slate-200 dark:stroke-slate-700" height="400" stroke-width="1" width="400" x="0" y="0"></rect>
+<line class="stroke-slate-200 dark:stroke-slate-700" stroke-width="1" x1="0" x2="400" y1="0" y2="400"></line>
+<line class="stroke-slate-200 dark:stroke-slate-700" stroke-width="1" x1="400" x2="0" y1="0" y2="400"></line>
+<polygon class="fill-none stroke-slate-200 dark:stroke-slate-700" points="200,0 400,200 200,400 0,200" stroke-width="1"></polygon>
+<!-- House Numbers (Rashi) -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="195" y="140">2</text> <!-- 1st House: Taurus -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="95" y="60">3</text> <!-- 2nd House: Gemini -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="55" y="95">4</text> <!-- 3rd House: Cancer -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="135" y="200">5</text> <!-- 4th House: Leo -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="55" y="300">6</text> <!-- 5th House: Virgo -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="95" y="340">7</text> <!-- 6th House: Libra -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="195" y="270">8</text> <!-- 7th House: Scorpio -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="300" y="340">9</text> <!-- 8th House: Sagittarius -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="340" y="300">10</text> <!-- 9th House: Capricorn -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="260" y="200">11</text> <!-- 10th House: Aquarius -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="340" y="95">12</text> <!-- 11th House: Pisces -->
+<text class="fill-slate-400 font-dm-mono text-[10px]" x="300" y="60">1</text> <!-- 12th House: Aries -->
+<!-- Planets -->
+<!-- 1st House (Taurus) -->
+<text class="fill-primary font-dm-mono text-[14px] font-bold" x="185" y="110">Asc</text>
+<!-- 4th House (Leo) -->
+<text class="fill-astrology-violet font-dm-mono text-[14px] font-medium" x="160" y="220">Su</text>
+<text class="fill-slate-600 font-dm-mono text-[14px] font-medium" x="185" y="220">Me</text>
+<!-- 7th House (Scorpio) -->
+<text class="fill-astrology-slate font-dm-mono text-[14px] font-medium" x="190" y="310">Mo</text>
+<!-- 3rd House (Cancer) -->
+<text class="fill-slate-500 font-dm-mono text-[14px] font-medium" x="35" y="125">Ma</text>
+<!-- 6th House (Libra) -->
+<text class="fill-slate-500 font-dm-mono text-[14px] font-medium" x="100" y="370">Ve</text>
+<!-- House Names (Sanskrit Labels) -->
+<text class="fill-slate-300 font-dm-mono text-[8px] tracking-widest uppercase" text-anchor="middle" x="200" y="40">Lagna</text>
+<text class="fill-slate-300 font-dm-mono text-[8px] tracking-widest uppercase" text-anchor="middle" x="330" y="150">Labha</text>
+<text class="fill-slate-300 font-dm-mono text-[8px] tracking-widest uppercase" text-anchor="middle" x="200" y="380">Yuvati</text>
+<text class="fill-slate-300 font-dm-mono text-[8px] tracking-widest uppercase" text-anchor="middle" x="70" y="150">Sahaja</text>
+</svg>
+</div>
+<!-- Vedic Planet Details List -->
+<div class="flex flex-col justify-center space-y-6">
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Surya (Sun)</p>
+<p class="font-serif-alt text-xl italic">Simha Rashi</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Magha Nakshatra.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Chandra (Moon)</p>
+<p class="font-serif-alt text-xl italic">Vrishchika Rashi</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Anuradha Nakshatra.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Shukra (Venus)</p>
+<p class="font-serif-alt text-xl italic">Tula Rashi</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Swati Nakshatra.</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Mangala (Mars)</p>
+<p class="font-serif-alt text-xl italic">Karka Rashi</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Pushya Nakshatra (Debilitated).</p>
+</div>
+<div class="p-4 bg-background-light rounded-xl border border-primary/5">
+<p class="font-dm-mono text-[9px] text-slate-400 uppercase tracking-widest mb-1">Budha (Mercury)</p>
+<p class="font-serif-alt text-xl italic">Simha Rashi</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Purva Phalguni.</p>
+</div>
+<div class="p-4 bg-astrology-violet/5 rounded-xl border border-astrology-violet/20">
+<p class="font-dm-mono text-[9px] text-astrology-violet uppercase tracking-widest mb-1">Lagna (Asc)</p>
+<p class="font-serif-alt text-xl italic">Vrishabha</p>
+<p class="font-lora text-[11px] text-slate-500 mt-2">Rohini Nakshatra.</p>
+</div>
+</div>
+<div class="mt-8 p-6 border-l-2 border-primary/20 bg-primary/5 rounded-r-xl">
+<h4 class="font-dm-mono text-xs uppercase tracking-widest mb-2 text-slate-700">Synthesized Vedic Insight</h4>
+<p class="font-lora text-sm leading-relaxed text-slate-600">Zara, your chart shows a powerful Vrishabha Lagna grounded in Rohini. Your Simha Rashi Surya in the 4th house creates a "Dig Bala" effect, giving you immense inner strength. However, your Vrishchika Chandra in the 7th house suggests intense karmic patterns in partnerships. Balancing the heat of your fire signs with the grounded nature of your Nakshatras is key to your spiritual evolution.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Footer -->
+<footer class="mt-auto px-20 py-8 border-t border-primary/5 text-center">
+<p class="font-dm-mono text-[10px] tracking-widest text-slate-400 uppercase">Lumis Archive © 2024 • Guided by the Stars</p>
+</footer>
+</div>
+</body></html>

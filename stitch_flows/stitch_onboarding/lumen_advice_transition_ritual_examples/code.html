@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Cormorant+Garamond:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#f8f6f6",
+                        "background-dark": "#221610",
+                        "parchment": "#F8F6F3",
+                        "sage": "#7D8C7D",
+                        "terracotta": "#C16646",
+                        "amber-accent": "#D97706"
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif": ["Lora", "serif"],
+                        "mono": ["DM Mono", "monospace"],
+                        "title": ["Cormorant Garamond", "serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: #F8F6F3;
+        }
+        .font-lora { font-family: 'Lora', serif; }
+        .font-mono-dm { font-family: 'DM Mono', monospace; }
+        .font-cormorant { font-family: 'Cormorant Garamond', serif; }
+    </style>
+</head>
+<body class="bg-parchment text-slate-900 min-h-screen">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<!-- Header / Nav -->
+<header class="w-full border-b border-sage/20 px-6 lg:px-20 py-4 flex items-center justify-between font-mono-dm text-xs uppercase tracking-widest text-sage">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-2xl">grain</span>
+</div>
+<h2 class="font-bold text-slate-900 tracking-normal normal-case text-lg">Lumen</h2>
+</div>
+<nav class="hidden md:flex items-center gap-10">
+<a class="hover:text-primary transition-colors" href="#">Dashboard</a>
+<a class="hover:text-primary transition-colors" href="#">Members</a>
+<a class="text-primary border-b border-primary/40" href="#">Lumen</a>
+<a class="hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center">
+<div class="w-8 h-8 rounded-full bg-sage/20 border border-sage/30 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile circular avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBUkLB0JqzdzptReyx6wPB38S7Pk6ogJza7PH1R67QQZ9ENgopkBAPxlHIzgDour1lfY8czO8RfOBP7MAuIWFKBwPEnpf6kXNB_E30k_C0sRGObPB7u9L3mDef7QLK-vGZJrZPEREQntPL1L209KW4btnt4Px6ZbzH-m8KoA2kvwRyNAGvoLETyaOaw5clmWQoIgCJFdgxDtDdk5UZ3QeTqsaoSQwih6jvLAa3slN-mWf4lgVmJncTbO3Xru2E8KKmQM8xU10kN-z8"/>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col items-center px-6 pt-12 pb-32">
+<div class="w-full max-w-[640px] flex flex-col gap-10">
+<!-- Mode Selector -->
+<nav class="flex justify-center border-b border-sage/10 font-mono-dm text-[11px] uppercase tracking-[0.2em] mb-4">
+<a class="px-5 pb-3 text-sage hover:text-slate-900 transition-colors" href="#">Analysis</a>
+<a class="px-5 pb-3 text-sage hover:text-slate-900 transition-colors" href="#">Vent</a>
+<a class="px-5 pb-3 text-sage hover:text-slate-900 transition-colors" href="#">Guided</a>
+<a class="px-5 pb-3 text-primary border-b-2 border-primary" href="#">Advice</a>
+</nav>
+<!-- Conversation Header -->
+<div class="text-center">
+<h1 class="font-cormorant text-5xl text-slate-800 font-light mb-2">Transition Rituals</h1>
+</div>
+<!-- Lumen Response -->
+<div class="flex flex-col gap-8">
+<!-- Lumen Identifier & Intro -->
+<div class="flex items-start gap-4">
+<span class="text-amber-accent mt-1 text-xl leading-none">✦</span>
+<div class="flex-1 space-y-6">
+<p class="font-lora text-lg leading-relaxed text-slate-700">
+                                Transitioning between different mental states requires a bridge. Here are three distinct rituals to help you signal to your psyche that it's time to shift into a deep-focus or quiet-time mode:
+                            </p>
+<!-- Ritual List -->
+<div class="space-y-10">
+<!-- Ritual 1 -->
+<div class="group">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-[1px] bg-terracotta/40"></div>
+<h3 class="font-cormorant text-2xl text-terracotta italic font-medium">The Physical Boundary</h3>
+</div>
+<p class="font-lora text-lg text-slate-700 pl-11">
+                                        Closing a specific door or putting on noise-canceling headphones to signal the shift. It creates a tangible separation between your external environment and your internal workspace.
+                                    </p>
+</div>
+<!-- Ritual 2 -->
+<div class="group">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-[1px] bg-terracotta/40"></div>
+<h3 class="font-cormorant text-2xl text-terracotta italic font-medium">The Narrative Bridge</h3>
+</div>
+<p class="font-lora text-lg text-slate-700 pl-11 italic">
+                                        "I’m heading into the deep-well now."
+                                    </p>
+<p class="font-lora text-lg text-slate-700 pl-11 mt-1">
+                                        A simple phrase used as a vocal cue to provide context for your withdrawal to those around you and to yourself.
+                                    </p>
+</div>
+<!-- Ritual 3 -->
+<div class="group">
+<div class="flex items-center gap-3 mb-2">
+<div class="w-8 h-[1px] bg-terracotta/40"></div>
+<h3 class="font-cormorant text-2xl text-terracotta italic font-medium">The Sensory Anchor</h3>
+</div>
+<p class="font-lora text-lg text-slate-700 pl-11">
+                                        Lighting a specific candle or changing the lighting to mark the start of quiet time. Sensory cues anchor the brain to a specific routine through smell or light temperature.
+                                    </p>
+</div>
+</div>
+<p class="font-lora text-lg text-slate-500 italic pt-4">
+                                Which of these resonates most with your current rhythm?
+                            </p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Input -->
+<footer class="fixed bottom-0 left-0 w-full bg-parchment/90 backdrop-blur-sm px-6 py-8 flex justify-center">
+<div class="w-full max-w-[640px] relative">
+<textarea class="w-full bg-transparent border-none focus:ring-0 font-mono-dm text-sm text-slate-600 placeholder-sage/60 py-4 resize-none" placeholder="Reflect or ask Lumen..." rows="1"></textarea>
+<div class="absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-4">
+<button class="text-sage hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-xl">mic</span>
+</button>
+<button class="bg-primary text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-terracotta transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">arrow_upward</span>
+</button>
+</div>
+<div class="absolute bottom-0 left-0 w-full h-[1px] bg-sage/20"></div>
+</div>
+</footer>
+</div>
+</body></html>

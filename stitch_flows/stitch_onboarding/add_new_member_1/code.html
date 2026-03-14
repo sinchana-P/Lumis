@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=DM+Mono:wght@400;500&amp;family=Public+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#9CAF9E", // Soft Sage
+                        "background-light": "#F8F6F3", // Warm Parchment
+                        "background-dark": "#221610",
+                        "warm-charcoal": "#3D3935",
+                        "cosmic-gold": "rgba(200, 146, 74, 0.12)",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif-display": ["Cormorant Garamond", "serif"],
+                        "serif-body": ["Lora", "serif"],
+                        "mono-label": ["DM Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.85rem",
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Public Sans', sans-serif;
+            background-color: #F8F6F3;
+        }
+        .glass-modal {
+            background: rgba(248, 246, 243, 0.95);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 146, 74, 0.15);
+            box-shadow: 0 10px 40px -10px rgba(61, 57, 53, 0.08);
+        }
+        .pill-selected {
+            background-color: #9CAF9E;
+            color: white;
+        }
+        .light-leak {
+            box-shadow: inset 0 0 20px rgba(200, 146, 74, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-warm-charcoal selection:bg-primary/30">
+<!-- Background Constellation Layer (Dimmed) -->
+<div class="fixed inset-0 z-0 opacity-20 pointer-events-none grayscale-[0.5]" data-location="Celestial Map" style="">
+<div class="absolute inset-0 bg-gradient-to-b from-background-light/80 via-transparent to-background-light/80"></div>
+<img alt="A soft golden star map constellation" class="w-full h-full object-cover" data-alt="Soft golden star map constellation background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDPFPJB4CEt_bNtwqRGaujgWI2xbAPN24ovtUwXBxSLtJXvWi0Imk0_i8AdKarjhJ0PbixKjdVaR4Mh3swZm0-UNCCky7IgTXp2o4EnU0KoWLz7xjJ3tEm0CFbDlX5R-wdnApc_i5J5HqQPRGYrzCsjS9S6yz4oWqXEczCqlF_Y35DwaNEVd8w2I4JaqYhfT_ZBt_5Ct8BGxXAD0pNh6dnBBCTL0XFj3CRyWKcdPYOGzXbO1uZgJl1p5RcXTCtKsKdcgrq0NeBbQU"/>
+</div>
+<!-- Layout Container -->
+<div class="relative z-10 flex min-h-screen items-center justify-center p-6">
+<!-- Main Modal Card -->
+<div class="glass-modal w-full max-w-2xl rounded-2xl p-12 flex flex-col gap-10 light-leak">
+<!-- Header Section -->
+<div class="text-center space-y-3">
+<span class="font-mono-label text-[10px] tracking-[0.2em] uppercase text-warm-charcoal/50">New Luminary</span>
+<h1 class="font-serif-display text-5xl font-light text-warm-charcoal">Who are we bringing into the light?</h1>
+<p class="font-serif-body italic text-warm-charcoal/60 text-lg">Every soul adds a unique frequency to the constellation.</p>
+</div>
+<!-- Form Content -->
+<form class="space-y-10">
+<!-- Full Name -->
+<div class="space-y-3">
+<label class="font-mono-label text-[11px] uppercase tracking-widest text-warm-charcoal/70 px-1">Full Name</label>
+<input class="w-full bg-transparent border-b border-warm-charcoal/10 border-t-0 border-x-0 py-4 px-1 focus:ring-0 focus:border-primary text-2xl font-serif-body placeholder:text-warm-charcoal/20 transition-all outline-none" placeholder="Enter their name in the stars..." type="text"/>
+</div>
+<!-- Relation Type -->
+<div class="space-y-4">
+<label class="font-mono-label text-[11px] uppercase tracking-widest text-warm-charcoal/70 px-1">Connection</label>
+<div class="flex flex-wrap gap-2">
+<button class="px-5 py-2 rounded-full border border-warm-charcoal/10 hover:border-primary/50 text-sm font-serif-body transition-colors" type="button">Family</button>
+<button class="px-5 py-2 rounded-full pill-selected text-sm font-serif-body transition-colors" type="button">Friend</button>
+<button class="px-5 py-2 rounded-full border border-warm-charcoal/10 hover:border-primary/50 text-sm font-serif-body transition-colors" type="button">Partner</button>
+<button class="px-5 py-2 rounded-full border border-warm-charcoal/10 hover:border-primary/50 text-sm font-serif-body transition-colors" type="button">Mentor</button>
+<button class="px-5 py-2 rounded-full border border-warm-charcoal/10 hover:border-primary/50 text-sm font-serif-body transition-colors" type="button">Ancestor</button>
+<button class="px-5 py-2 rounded-full border border-warm-charcoal/10 hover:border-primary/50 text-sm font-serif-body flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">add</span> Other
+                        </button>
+</div>
+</div>
+<!-- Cosmic Metadata: DOB, Time, Place -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="space-y-3">
+<label class="font-mono-label text-[11px] uppercase tracking-widest text-warm-charcoal/70 px-1">Birth Date</label>
+<div class="relative">
+<input class="w-full bg-transparent border-b border-warm-charcoal/10 border-t-0 border-x-0 py-3 px-1 focus:ring-0 focus:border-primary font-serif-body placeholder:text-warm-charcoal/20 transition-all outline-none" placeholder="DD / MM / YYYY" type="text"/>
+<span class="material-symbols-outlined absolute right-2 bottom-3 text-warm-charcoal/30 text-lg">calendar_today</span>
+</div>
+</div>
+<div class="space-y-3">
+<label class="font-mono-label text-[11px] uppercase tracking-widest text-warm-charcoal/70 px-1">Birth Time</label>
+<div class="relative">
+<input class="w-full bg-transparent border-b border-warm-charcoal/10 border-t-0 border-x-0 py-3 px-1 focus:ring-0 focus:border-primary font-serif-body placeholder:text-warm-charcoal/20 transition-all outline-none" placeholder="00:00 AM/PM" type="text"/>
+<span class="material-symbols-outlined absolute right-2 bottom-3 text-warm-charcoal/30 text-lg">schedule</span>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<label class="font-mono-label text-[11px] uppercase tracking-widest text-warm-charcoal/70 px-1">Place of Arrival</label>
+<div class="relative">
+<input class="w-full bg-transparent border-b border-warm-charcoal/10 border-t-0 border-x-0 py-3 px-1 focus:ring-0 focus:border-primary font-serif-body placeholder:text-warm-charcoal/20 transition-all outline-none" placeholder="City, Country" type="text"/>
+<span class="material-symbols-outlined absolute right-2 bottom-3 text-warm-charcoal/30 text-lg">location_on</span>
+</div>
+<p class="font-mono-label text-[9px] text-warm-charcoal/40 pt-1 tracking-wider uppercase">Feeds the cosmic alignment engine</p>
+</div>
+<!-- Footer Navigation -->
+<div class="pt-8 flex items-center justify-between">
+<button class="text-warm-charcoal/50 hover:text-warm-charcoal font-mono-label text-[11px] uppercase tracking-widest transition-colors flex items-center gap-2 group" type="button">
+<span class="material-symbols-outlined text-sm group-hover:-translate-x-1 transition-transform">close</span>
+                        Cancel
+                    </button>
+<button class="bg-primary hover:bg-primary/90 text-white px-8 py-4 rounded-xl font-serif-body text-lg shadow-sm shadow-primary/20 transition-all flex items-center gap-3 active:scale-95" type="submit">
+                        Add to Constellation
+                        <span class="material-symbols-outlined text-xl">colors_spark</span>
+</button>
+</div>
+</form>
+</div>
+</div>
+<!-- Subtle HUD elements for depth -->
+<div class="fixed bottom-10 left-10 z-20 pointer-events-none">
+<div class="flex flex-col gap-1">
+<div class="w-24 h-[1px] bg-warm-charcoal/10"></div>
+<span class="font-mono-label text-[9px] text-warm-charcoal/30 uppercase tracking-[0.3em]">Lumis v2.4</span>
+</div>
+</div>
+<div class="fixed top-10 right-10 z-20">
+<div class="size-12 rounded-full border border-warm-charcoal/5 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+<span class="material-symbols-outlined text-warm-charcoal/40">auto_awesome</span>
+</div>
+</div>
+</body></html>

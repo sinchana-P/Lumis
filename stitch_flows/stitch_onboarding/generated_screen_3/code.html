@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Zara's Incidents</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&amp;family=DM+Mono:wght@400;500&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            parchment: '#F8F6F3',
+            charcoal: '#3D3935',
+            sage: '#9CAF9E',
+            rose: '#C89090',
+            amber: '#E6D5B8',
+          },
+          fontFamily: {
+            'cormorant': ['"Cormorant Garamond"', 'serif'],
+            'lora': ['Lora', 'serif'],
+            'mono': ['"DM Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      font-family: 'Lora', serif;
+      color: #3D3935;
+      background-color: #F8F6F3;
+    }
+    .header-link {
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.875rem;
+    }
+    .active-tab {
+      border-bottom: 2px solid #3D3935;
+    }
+  </style>
+</head>
+<body class="min-h-screen">
+<!-- BEGIN: MainHeader -->
+<header class="w-full border-b border-charcoal/10 bg-parchment sticky top-0 z-50 px-12 py-6 flex justify-between items-center" data-purpose="navigation-bar">
+<div class="logo font-cormorant text-2xl font-semibold tracking-tight">LUMIS</div>
+<nav class="flex gap-12">
+<a class="header-link hover:text-sage transition-colors" href="#">Dashboard</a>
+<a class="header-link text-charcoal border-b border-charcoal" href="#">Members</a>
+<a class="header-link hover:text-sage transition-colors" href="#">Lumen</a>
+<a class="header-link hover:text-sage transition-colors" href="#">Profile</a>
+</nav>
+<div class="w-10 h-10 rounded-full bg-sage/20 border border-sage/40"></div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="max-w-[1440px] mx-auto px-12 py-12 min-h-[calc(100vh-88px)]">
+<!-- BEGIN: ProfileHeader -->
+<section class="mb-12" data-purpose="member-profile-header">
+<div class="flex items-baseline gap-6 mb-2">
+<h1 class="font-cormorant italic text-7xl font-light">Zara</h1>
+<span class="font-mono text-sm tracking-widest text-charcoal/60 uppercase">FRIEND</span>
+</div>
+<p class="font-lora italic text-charcoal/50 text-lg">Connected since June 2022</p>
+</section>
+<!-- END: ProfileHeader -->
+<!-- BEGIN: TabNavigation -->
+<nav class="flex gap-10 border-b border-charcoal/10 mb-12" data-purpose="profile-tabs">
+<a class="pb-4 font-mono text-sm text-charcoal/40 hover:text-charcoal transition-colors" href="#">TRAITS</a>
+<a class="pb-4 font-mono text-sm text-charcoal active-tab relative" href="#">INCIDENTS</a>
+<a class="pb-4 font-mono text-sm text-charcoal/40 hover:text-charcoal transition-colors" href="#">JOURNAL</a>
+<a class="pb-4 font-mono text-sm text-charcoal/40 hover:text-charcoal transition-colors" href="#">NUMEROLOGY</a>
+<a class="pb-4 font-mono text-sm text-charcoal/40 hover:text-charcoal transition-colors" href="#">ASTROLOGY</a>
+<a class="pb-4 font-mono text-sm text-charcoal/40 hover:text-charcoal transition-colors" href="#">REPORT</a>
+</nav>
+<!-- END: TabNavigation -->
+<!-- BEGIN: IncidentLog -->
+<section class="max-w-4xl" data-purpose="incident-timeline">
+<!-- Incident Entry 1 -->
+<div class="group flex gap-12 mb-12" data-purpose="incident-entry">
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-mono text-xs text-charcoal/40 uppercase tracking-tighter">Oct 14, 2023</span>
+</div>
+<div class="flex-grow p-8 bg-white/40 border border-charcoal/5 rounded-2xl hover:bg-white/80 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-lora text-xl text-charcoal">Checked in when I was sick</h3>
+<span class="px-3 py-1 bg-sage/10 text-sage font-mono text-[10px] tracking-widest uppercase rounded-full border border-sage/20">Peaceful</span>
+</div>
+<p class="text-charcoal/70 leading-relaxed max-w-2xl">
+            She brought over soup and didn't mind that I was a mess. Stayed for twenty minutes just to talk through the fog. Felt genuinely seen and cared for without any pressure.
+          </p>
+</div>
+</div>
+<!-- Incident Entry 2 -->
+<div class="group flex gap-12 mb-12" data-purpose="incident-entry">
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-mono text-xs text-charcoal/40 uppercase tracking-tighter">Sep 28, 2023</span>
+</div>
+<div class="flex-grow p-8 bg-white/40 border border-charcoal/5 rounded-2xl hover:bg-white/80 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-lora text-xl text-charcoal">Cancelled plans last minute</h3>
+<span class="px-3 py-1 bg-rose/10 text-rose font-mono text-[10px] tracking-widest uppercase rounded-full border border-rose/20">Anxious</span>
+</div>
+<p class="text-charcoal/70 leading-relaxed max-w-2xl">
+            Texted 15 minutes before our dinner reservation saying she "couldn't make it work anymore." No alternative date offered. Left me feeling undervalued and scrambling for Friday plans.
+          </p>
+</div>
+</div>
+<!-- Incident Entry 3 -->
+<div class="group flex gap-12 mb-12" data-purpose="incident-entry">
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-mono text-xs text-charcoal/40 uppercase tracking-tighter">Aug 12, 2023</span>
+</div>
+<div class="flex-grow p-8 bg-white/40 border border-charcoal/5 rounded-2xl hover:bg-white/80 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-lora text-xl text-charcoal">Deep conversation about future fears</h3>
+<span class="px-3 py-1 bg-sage/10 text-sage font-mono text-[10px] tracking-widest uppercase rounded-full border border-sage/20">Peaceful</span>
+</div>
+<p class="text-charcoal/70 leading-relaxed max-w-2xl">
+            Sat by the river for three hours. She listened without interrupting or trying to "fix" anything. The silence between sentences felt comfortable rather than heavy.
+          </p>
+</div>
+</div>
+<!-- Incident Entry 4 -->
+<div class="group flex gap-12 mb-12" data-purpose="incident-entry">
+<div class="w-32 flex-shrink-0 pt-1">
+<span class="font-mono text-xs text-charcoal/40 uppercase tracking-tighter">Jul 04, 2023</span>
+</div>
+<div class="flex-grow p-8 bg-white/40 border border-charcoal/5 rounded-2xl hover:bg-white/80 transition-all duration-300">
+<div class="flex justify-between items-start mb-4">
+<h3 class="font-lora text-xl text-charcoal">Interrupted three times during lunch</h3>
+<span class="px-3 py-1 bg-amber/20 text-[#B89862] font-mono text-[10px] tracking-widest uppercase rounded-full border border-amber/30">Drained</span>
+</div>
+<p class="text-charcoal/70 leading-relaxed max-w-2xl">
+            Every time I started sharing about the promotion, she pivot the conversation back to her renovation project. I felt like an audience rather than a friend.
+          </p>
+</div>
+</div>
+<!-- BEGIN: ActionButton -->
+<div class="flex justify-center mt-16 pb-12">
+<button class="flex items-center gap-3 px-8 py-4 bg-charcoal text-parchment rounded-full hover:bg-charcoal/90 transition-all group">
+<span class="font-mono text-xs tracking-widest uppercase">Add New Incident</span>
+<svg class="group-hover:rotate-90 transition-transform" fill="currentColor" height="16" viewbox="0 0 16 16" width="16" xmlns="http://www.w3.org/2000/svg">
+<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"></path>
+</svg>
+</button>
+</div>
+<!-- END: ActionButton -->
+</section>
+<!-- END: IncidentLog -->
+</main>
+<!-- END: MainContent -->
+</body></html>

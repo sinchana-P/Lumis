@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Cormorant+Garamond:wght@400;600&amp;family=Lora:ital,wght@0,400;0,500;1,400&amp;family=Public+Sans:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ec5b13",
+                "background-light": "#fcfaf7", // Warm parchment
+                "background-dark": "#221610",
+                "lumis-info-bg": "#e0f2f7", // Soft sky blue
+                "amber-alert": "#d97706",
+              },
+              fontFamily: {
+                "display": ["Public Sans", "sans-serif"],
+                "mono": ["DM Mono", "monospace"],
+                "serif-header": ["Cormorant Garamond", "serif"],
+                "serif-body": ["Lora", "serif"],
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "1rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>.grainy-overlay {
+    position: relative
+    }
+.grainy-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.03;
+    pointer-events: none;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuBTuk450n7WDuDe9dnaUITvkzbqD1war040F3raw6ypUir3cyUsOijXjYyyWiAGqeH3S6c6tRbHvR3_kas6WMcd1JG3VIYP1n8c82nc5-Xncv2v4x9oXV2StSW8oJkBioC7-k1qgHSchMwdIC1_5Pfc1fflZ_7_3yvowA5PE4jc9S5N68x4geLABI87tipRbWAS3bLqZBG9my6WADMJDKiTbVcpQtntgcIzgIHcAEx0X1slIJSg-yRz76FV9d5X8mTbmQv49elxIsU);
+    z-index: 10
+    }
+.light-leak-border {
+    border: 1px solid rgba(236, 91, 19, 0.1);
+    box-shadow: 0 0 15px rgba(236, 91, 19, 0.05)
+    }
+.orbit-container {
+    position: relative;
+    width: 320px;
+    height: 320px
+    }</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display grainy-overlay text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="max-w-[1440px] mx-auto px-12 py-8">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between mb-16 border-b border-primary/10 pb-6">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-full flex items-center justify-center text-white">
+<span class="material-symbols-outlined text-lg">flare</span>
+</div>
+<h1 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-slate-100">Lumis</h1>
+</div>
+<nav class="flex items-center gap-10 font-mono text-xs uppercase tracking-widest">
+<a class="text-primary border-b border-primary pb-1" href="#">Dashboard</a>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Members</a>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Lumen</a>
+<a class="text-slate-500 hover:text-primary transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 overflow-hidden">
+<img alt="Elias profile" class="w-full h-full object-cover" data-alt="Portrait of a young man profile" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLpN36CZTGsEo9VLSAi_Zs7OookV-fhSW4yZrR4SMKDGA5jFuDkSD37KzxtIfo8uUrstVfQg7l4FFX-I-P6lCErfLJlasbr6YheBl1KN4DR5Dt0pYwLIwqSgOscTcAcJFaQbLnvvJuZ2ipQ36tCD2rKDyiGVx1_gjc3UiHM50TMtGjLOMuxN28HhysjS4iYYABJgb0_qzP4uFA5k6MFRcb7lWmfWb3xXdnl1CRF3OP5LhfTnWSXKmr6NMa8B8wr4i-fAVuXchmytQ"/>
+</div>
+</div>
+</header>
+<main class="grid grid-cols-12 gap-10">
+<!-- Header Section -->
+<div class="col-span-12 mb-4">
+<h2 class="font-serif-header text-6xl text-slate-900 dark:text-slate-100">Welcome back, Elias</h2>
+</div>
+<!-- Section 1: Emotional Weather -->
+<section class="col-span-7">
+<h3 class="text-sm font-mono uppercase tracking-widest text-slate-400 mb-4">Emotional Weather</h3>
+<div class="bg-lumis-info-bg dark:bg-sky-900/20 rounded-xl p-10 h-64 flex flex-col justify-center light-leak-border relative overflow-hidden">
+<div class="absolute -right-10 -top-10 w-48 h-48 bg-white/30 rounded-full blur-3xl"></div>
+<p class="font-serif-body text-3xl leading-relaxed text-slate-800 dark:text-slate-200 z-10">
+                        "Mostly peaceful this week, with moments of warmth around <span class="italic border-b border-primary/30">Zara</span>."
+                    </p>
+<div class="mt-6 flex items-center gap-2 text-primary/60">
+<span class="material-symbols-outlined text-sm">filter_drama</span>
+<span class="text-xs font-mono uppercase tracking-tighter">Current Vibe: Serene</span>
+</div>
+</div>
+</section>
+<!-- Section 2: Energy Map -->
+<section class="col-span-5">
+<h3 class="text-sm font-mono uppercase tracking-widest text-slate-400 mb-4">Energy Map</h3>
+<div class="bg-white/50 dark:bg-white/5 rounded-xl p-8 light-leak-border flex items-center justify-center h-64">
+<div class="orbit-container flex items-center justify-center">
+<!-- Orbit Rings -->
+<div class="absolute border border-slate-200 dark:border-slate-700 rounded-full w-24 h-24"></div>
+<div class="absolute border border-slate-200 dark:border-slate-700 rounded-full w-48 h-48"></div>
+<div class="absolute border border-slate-200 dark:border-slate-700 rounded-full w-64 h-64"></div>
+<!-- Center Node: Elias -->
+<div class="z-20 size-12 bg-primary rounded-full flex items-center justify-center text-white shadow-lg ring-4 ring-background-light dark:ring-background-dark">
+<span class="text-xs font-bold uppercase">Me</span>
+</div>
+<!-- Node: Zara (Close/Nourishing) -->
+<div class="absolute top-10 right-20 z-20 flex flex-col items-center gap-1">
+<div class="size-10 bg-green-100 border-2 border-green-500 rounded-full flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Female avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAa3u9dypZ7KnWAyEsi3oTsrIHnj6Y5ss7StasJ_SWfmQFoCG2zGpxUJksSstZHwAj0BpmjyDsVGpeP_sYSJSbic7GgTPQaoCQqC_aYARHZeAvj9bHsmeFvqitPFUA4vrw2gI4QqF_RkYL7i_juJY6dPi6L4RcxNy1Xcx29pyqZxj88ULH1SNVFRU962c9TRzzwliw7IC6P70Bls7WtH7NzI_Wfzg1OHJt_wMaq7gobIuOPCHiW6FYMVxWM0OWI7XvtV0MNocApkw0"/>
+</div>
+<span class="text-[10px] font-mono text-slate-500">Zara</span>
+</div>
+<!-- Node: Mom (Further/Draining) -->
+<div class="absolute bottom-4 left-4 z-20 flex flex-col items-center gap-1">
+<div class="size-10 bg-red-50 border-2 border-red-300 rounded-full flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Older female avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqhev2B8wnApPAtMPaVyjSj01YRve18SzKhHpJJS-3T4Tu4zTLj2Flnw5Fpi9Dw72kRljvgQUDqkLmg3bp3so3moQfLesLfdjQHXEGR-UXzSo1gQ2NF17ml-6UttoQhkZFV5fQpM8J3DUJsQ8w29swQhluizuxQNrC2kbSlAZIFMlG43v5x5ZODr1AH_z2np69oPGJNQya8yrXLAQGEdqV6h3B9ZrcKO5ZOoYN6skCm20nE7HWzokluPVmv1XczWPoVpZezwjTKA8"/>
+</div>
+<span class="text-[10px] font-mono text-slate-500">Mom</span>
+</div>
+<!-- Node: Ben (Middle) -->
+<div class="absolute top-32 left-8 z-20 flex flex-col items-center gap-1">
+<div class="size-8 bg-slate-100 border border-slate-300 rounded-full flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Male avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAaL52OyTwwQZC51nYjj-2FXsM2KT8wG5zZgrvS85HnHc8bnZpNpS8JaWGaJzG7XWsHy-8L5MT7iJqKQlKHmMoWviv49SxfnSD3Hb-P7HxLBDQ9rAse4yp60cQOUZXZ973XcO7JD6Q1XeT2kW71Y5cfkBBsfqCcS3nLQ4eTJMsE2cmfqqbpLtYFOStviMJdM0hJbfiOkz1qQ5Raznljkvb4CgH0KZybgrEA07sLB8YkBKHwzDLnKlfO704GYKZuAaOxuSCJO8yXLI0"/>
+</div>
+<span class="text-[10px] font-mono text-slate-500">Ben</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Section 3: Recent Insights -->
+<section class="col-span-8">
+<h3 class="text-sm font-mono uppercase tracking-widest text-slate-400 mb-4">Recent Insights</h3>
+<div class="grid grid-cols-2 gap-6">
+<div class="bg-white dark:bg-white/5 p-6 rounded-xl border-l-4 border-amber-alert light-leak-border">
+<div class="flex items-center gap-2 mb-3 text-amber-alert">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span class="text-xs font-mono font-medium uppercase tracking-tighter">Pattern Alert</span>
+</div>
+<p class="font-serif-body text-xl text-slate-700 dark:text-slate-200">
+                            You've logged feeling unheard <span class="font-bold">4 times</span> with Mom this week.
+                        </p>
+<button class="mt-4 text-xs font-mono text-primary uppercase tracking-wider hover:underline">Explore Blueprint →</button>
+</div>
+<div class="bg-white dark:bg-white/5 p-6 rounded-xl border-l-4 border-primary/40 light-leak-border">
+<div class="flex items-center gap-2 mb-3 text-primary/60">
+<span class="material-symbols-outlined text-sm">lightbulb</span>
+<span class="text-xs font-mono font-medium uppercase tracking-tighter">Growth Opportunity</span>
+</div>
+<p class="font-serif-body text-xl text-slate-700 dark:text-slate-200">
+                            Energy peaks correlate with evening creative sessions.
+                        </p>
+<button class="mt-4 text-xs font-mono text-primary uppercase tracking-wider hover:underline">Schedule Time →</button>
+</div>
+</div>
+</section>
+<!-- Section 4: Your Blueprint -->
+<section class="col-span-4">
+<h3 class="text-sm font-mono uppercase tracking-widest text-slate-400 mb-4">Your Blueprint</h3>
+<div class="bg-white dark:bg-white/5 p-8 rounded-xl light-leak-border h-full flex flex-col justify-between">
+<div class="space-y-6">
+<div class="flex justify-between items-center border-b border-primary/5 pb-4">
+<div>
+<p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Sun</p>
+<p class="text-lg font-serif-header">Scorpio</p>
+</div>
+<span class="material-symbols-outlined text-primary/40">wb_sunny</span>
+</div>
+<div class="flex justify-between items-center border-b border-primary/5 pb-4">
+<div>
+<p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Moon</p>
+<p class="text-lg font-serif-header">Taurus</p>
+</div>
+<span class="material-symbols-outlined text-primary/40">dark_mode</span>
+</div>
+<div class="flex justify-between items-center">
+<div>
+<p class="text-[10px] font-mono text-slate-400 uppercase tracking-widest">Rising</p>
+<p class="text-lg font-serif-header">Leo</p>
+</div>
+<span class="material-symbols-outlined text-primary/40">altitude</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer Branding -->
+<footer class="mt-24 border-t border-primary/10 pt-8 flex justify-between items-center opacity-50">
+<p class="font-mono text-[10px] uppercase tracking-[0.2em]">Designed for clarity &amp; connection</p>
+<div class="flex gap-4">
+<span class="material-symbols-outlined text-sm">settings</span>
+<span class="material-symbols-outlined text-sm">help_outline</span>
+</div>
+</footer>
+</div>
+</body></html>

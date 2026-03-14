@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Onboarding Step 04</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@1,400&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'midnight-amber-bg': '#F8F6F3',
+            'warm-charcoal': '#3D3935',
+            'sage-green': '#9CAF9E',
+          },
+          fontFamily: {
+            serif: ['"Crimson Pro"', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    .question-text {
+      font-size: 32px;
+      line-height: 1.4;
+    }
+    .btn-letter-spacing {
+      letter-spacing: 2px;
+    }
+    /* Custom styling for inputs to match the journal-like aesthetic */
+    .journal-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #D1CDC7;
+      border-radius: 0;
+      padding-left: 0;
+      padding-right: 0;
+      transition: border-color 0.3s ease;
+    }
+    .journal-input:focus {
+      outline: none;
+      ring: 0;
+      box-shadow: none;
+      border-color: #3D3935;
+    }
+  </style>
+</head>
+<body class="bg-midnight-amber-bg text-warm-charcoal font-sans antialiased min-h-screen flex flex-col">
+<!-- BEGIN: Header Navigation -->
+<header class="w-full px-12 py-10 flex justify-between items-center fixed top-0 left-0">
+<!-- Logo Placeholder -->
+<div class="w-24 h-8 flex items-center" data-purpose="branding" id="logo-container">
+<span class="font-serif italic text-xl tracking-tighter">Lumis</span>
+</div>
+<!-- Progress Indicator -->
+<div class="flex flex-col items-center" data-purpose="progress-tracker">
+<span class="font-sans text-[10px] uppercase tracking-widest text-neutral-400 mb-1">Onboarding</span>
+<span class="font-mono text-xs font-medium">Step 04</span>
+</div>
+<!-- Close Action -->
+<button aria-label="Close" class="w-8 h-8 flex items-center justify-end hover:opacity-60 transition-opacity">
+<svg fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewbox="0 0 24 24" width="24">
+<line x1="18" x2="6" y1="6" y2="18"></line>
+<line x1="6" x2="18" y1="6" y2="18"></line>
+</svg>
+</button>
+</header>
+<!-- END: Header Navigation -->
+<!-- BEGIN: Main Content Area -->
+<main class="flex-grow flex items-center justify-center px-4">
+<div class="max-w-2xl w-full text-center" data-purpose="onboarding-form-container">
+<!-- Question Section -->
+<section class="mb-16">
+<h1 class="question-text font-serif italic mb-2">
+          And when and where were you born?
+        </h1>
+<p class="font-sans text-neutral-400 text-sm">This helps us calculate your astrological precision.</p>
+</section>
+<!-- Form Inputs -->
+<form class="space-y-12" onsubmit="return false;">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+<!-- Time of Birth Input -->
+<div class="flex flex-col group" data-purpose="time-input-group">
+<label class="font-sans text-[10px] uppercase tracking-widest text-neutral-500 mb-2" for="birth-time">Time of Birth</label>
+<div class="relative">
+<input class="journal-input w-full font-mono text-xl py-3" id="birth-time" name="birth-time" placeholder="12:00 PM" type="text"/>
+<!-- Hint/Helper -->
+<span class="absolute right-0 bottom-3 text-[10px] text-neutral-300 pointer-events-none uppercase">HH:MM AM/PM</span>
+</div>
+</div>
+<!-- Place of Birth Input -->
+<div class="flex flex-col group" data-purpose="location-input-group">
+<label class="font-sans text-[10px] uppercase tracking-widest text-neutral-500 mb-2" for="birth-place">Place of Birth</label>
+<div class="relative">
+<input class="journal-input w-full font-sans text-xl py-3" id="birth-place" name="birth-place" placeholder="City, Country" type="text"/>
+<!-- Search Icon Decoration -->
+<div class="absolute right-0 bottom-3 text-neutral-300">
+<svg fill="none" height="18" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="18"><circle cx="11" cy="11" r="8"></circle><line x1="21" x2="16.65" y1="21" y2="16.65"></line></svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Primary Action -->
+<div class="pt-8" data-purpose="form-actions">
+<button class="bg-sage-green text-white px-12 py-4 rounded-full font-sans text-[14px] btn-letter-spacing font-medium shadow-sm hover:brightness-105 active:scale-95 transition-all duration-200" type="submit">
+            CONTINUE
+          </button>
+</div>
+</form>
+</div>
+</main>
+<!-- END: Main Content Area -->
+<!-- BEGIN: Footer Branding -->
+<footer class="p-12 text-center fixed bottom-0 left-0 w-full pointer-events-none">
+<div class="opacity-20 max-w-xs mx-auto">
+<p class="font-serif italic text-sm tracking-widest">Quiet. Safe. Intelligent.</p>
+</div>
+</footer>
+<!-- END: Footer Branding -->
+<script data-purpose="form-interactivity">
+    // Simple script to format time input as users type (Optional helper)
+    const timeInput = document.getElementById('birth-time');
+    if (timeInput) {
+      timeInput.addEventListener('input', (e) => {
+        // Log to console for development tracking
+        console.log('User typing time:', e.target.value);
+      });
+    }
+  </script>
+</body></html>

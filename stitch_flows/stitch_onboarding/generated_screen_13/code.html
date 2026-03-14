@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Combined Transition Flow</title>
+<!-- Tailwind CSS v3 CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Lora (Serif) and DM Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&amp;family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'parchment': '#F8F6F3',
+            'ink': '#3D3935',
+            'amber-glow': '#E67E22',
+            'border-subtle': '#E8E4E1',
+          },
+          fontFamily: {
+            serif: ['Lora', 'serif'],
+            mono: ['DM Mono', 'monospace'],
+          },
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      background-color: #F8F6F3;
+      color: #3D3935;
+      font-family: 'Lora', serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .mono-label {
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+    }
+    .chat-container {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    /* Subtle scrollbar for the chat area if needed */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #E8E4E1;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+<!-- BEGIN: Navigation Header -->
+<header class="w-full py-8 px-12 flex justify-between items-center border-b border-border-subtle bg-parchment sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="w-3 h-3 rounded-full bg-amber-glow"></div>
+<span class="mono-label font-bold text-lg tracking-widest">LUMIS</span>
+</div>
+<nav class="flex gap-8">
+<a class="mono-label hover:text-amber-glow transition-colors" href="#">Dashboard</a>
+<a class="mono-label hover:text-amber-glow transition-colors" href="#">Members</a>
+<a class="mono-label text-amber-glow border-b border-amber-glow" href="#">Lumen</a>
+<a class="mono-label hover:text-amber-glow transition-colors" href="#">Profile</a>
+</nav>
+</header>
+<!-- END: Navigation Header -->
+<!-- BEGIN: Main Content Area -->
+<main class="flex-grow pt-16 pb-32 px-6">
+<div class="chat-container">
+<!-- BEGIN: Synthesis Intro -->
+<section class="mb-12" data-purpose="lumen-response-header">
+<div class="flex items-start gap-4 mb-6">
+<div class="w-2 h-2 mt-2 rounded-full bg-amber-glow shrink-0"></div>
+<div>
+<h1 class="text-4xl font-medium mb-4 leading-tight">The Three-Layer Shift: A Combined Transition Flow</h1>
+<p class="text-lg italic opacity-80 leading-relaxed">
+              Synthesizing your previous steps into a single, cohesive rhythm to protect your focus and your relationships.
+            </p>
+</div>
+</div>
+</section>
+<!-- END: Synthesis Intro -->
+<!-- BEGIN: The Three Layers -->
+<section class="space-y-16" data-purpose="three-layer-flow">
+<!-- Layer 1: Narrative Bridge -->
+<article class="relative pl-8 border-l border-amber-glow/30">
+<span class="mono-label text-amber-glow absolute -left-0.5 top-0 bg-parchment py-1">01 // The Narrative Bridge</span>
+<div class="pt-8">
+<h3 class="text-2xl font-semibold mb-3">The Verbal Signal</h3>
+<p class="leading-relaxed opacity-90">
+              Before moving, provide context. Use your "Deep-Well" script to signal that you are crossing a bridge into solitude, ensuring your partner knows it is a temporary structural withdrawal, not an emotional closing.
+            </p>
+</div>
+</article>
+<!-- Layer 2: Physical Boundary -->
+<article class="relative pl-8 border-l border-amber-glow/30">
+<span class="mono-label text-amber-glow absolute -left-0.5 top-0 bg-parchment py-1">02 // The Physical Boundary</span>
+<div class="pt-8">
+<h3 class="text-2xl font-semibold mb-3">The Environmental Shift</h3>
+<p class="leading-relaxed opacity-90">
+              Close the physical door or clear the workspace. This visceral action signals your nervous system that the "threshold" has been crossed. Your external environment now matches your internal intent.
+            </p>
+</div>
+</article>
+<!-- Layer 3: Sensory Anchor -->
+<article class="relative pl-8 border-l border-amber-glow/30">
+<span class="mono-label text-amber-glow absolute -left-0.5 top-0 bg-parchment py-1">03 // The Sensory Anchor</span>
+<div class="pt-8">
+<h3 class="text-2xl font-semibold mb-3">The Internal Alignment</h3>
+<p class="leading-relaxed opacity-90">
+              Trigger the final shift with a consistent sensory cue—a specific scent or lighting temperature. This anchors your brain to the state of deep work, making the transition feel automatic rather than forced.
+            </p>
+</div>
+</article>
+</section>
+<!-- END: The Three Layers -->
+</div>
+</main>
+<!-- END: Main Content Area -->
+<!-- BEGIN: Interaction Footer -->
+<footer class="fixed bottom-0 left-0 w-full bg-parchment border-t border-border-subtle py-8">
+<div class="chat-container px-6">
+<div class="relative">
+<input class="w-full bg-transparent border-none border-b border-ink/20 focus:ring-0 focus:border-amber-glow pb-2 italic text-lg font-serif placeholder:opacity-40 transition-all" placeholder="How does this combined rhythm feel?" type="text"/>
+<div class="absolute right-0 bottom-2">
+<svg class="h-5 w-5 text-amber-glow" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: Interaction Footer -->
+</body></html>

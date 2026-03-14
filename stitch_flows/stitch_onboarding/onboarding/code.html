@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Welcome</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,700;1,400&amp;family=Cormorant+Garamond:ital,wght@1,300;1,400&amp;family=Lora:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ec5b13",
+                "background-light": "#f8f6f6",
+                "background-dark": "#0E0F14",
+              },
+              fontFamily: {
+                "display": ["Public Sans", "sans-serif"],
+                "serif": ["Cormorant Garamond", "serif"],
+                "body": ["Lora", "serif"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>.subtle-grain {
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuDsL4xD_2gwIv51-EWG84Ye6ub3_673fle8cNQon0aKI2-YZZlEU5BFGlG2I2k5KDsIq4RENT6FP0m7WV8n_yu22kWtMD6Fb6-6kcS3F4CFIElqB0M59JkJ2WAVNQp9bEGQKNou4TN4ByBhv4clWVInTpFVZaGdCAmSIvIV1GrAqKve9XXusF_kIhH55ln65dzo5KEBJfNYWzsQY8hMXYFElJEB3thjCuNTKb2CW78Eh1fzMHPmkcNmoFyytGUse7WIq2BMmiB9-5I);
+    opacity: 0.03
+    }
+.amber-glow {
+    background: radial-gradient(circle at 10% 10%, rgba(236, 91, 19, 0.15) 0%, rgba(14, 15, 20, 0) 50%)
+    }</style>
+</head>
+<body class="bg-background-dark font-display text-slate-100 overflow-hidden">
+<!-- Background Effects -->
+<div class="fixed inset-0 pointer-events-none amber-glow"></div>
+<div class="fixed inset-0 pointer-events-none subtle-grain"></div>
+<div class="relative flex h-screen w-full flex-col items-center justify-center px-6">
+<!-- Navigation/Status Bar (Minimal) -->
+<header class="fixed top-0 left-0 w-full flex items-center justify-between px-8 py-8 opacity-40">
+<div class="flex items-center gap-3">
+<div class="size-5 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.1288 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-sm font-light tracking-[0.2em] uppercase">Lumis</h2>
+</div>
+<button class="flex items-center justify-center hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</header>
+<!-- Main Content Area -->
+<main class="w-full max-w-xl flex flex-col items-center space-y-12">
+<!-- Lumen Avatar -->
+<div class="flex items-center justify-center">
+<div class="relative">
+<div class="absolute inset-0 bg-primary/20 blur-xl rounded-full"></div>
+<div class="relative bg-background-dark border border-primary/20 rounded-full p-1 shadow-2xl">
+<div class="size-16 rounded-full bg-cover bg-center overflow-hidden" data-alt="Abstract orange and dark flowing cosmic gas energy" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfZXDAC-b-Av7u7mDuujhWQI_i_3sDwkPVjZavDgyFNexbGytlR9x5n09N_WqVWt-HsYYhv1jlEF_WWtrchY4pNwbx4C0Sl2U2oMdDDv3H5wNnB9tProRY066URuKIcy0Gau8UB15cvW-h5UbZEgzq-uWQjLX2lAJDSr8IEKnjIMY0OFAnxLJS9ZOU5JOoIOfHWwSU7OFOIZnS0zqrzY5SXaZ6ez7yiYTg9lcwOg30edGnRajgoXdNr4v4jp6glwp5fPcENUD6gFw')">
+</div>
+</div>
+</div>
+</div>
+<!-- Conversation -->
+<div class="text-center space-y-8 w-full">
+<h1 class="font-serif italic text-4xl md:text-5xl text-slate-100 leading-tight tracking-wide">
+                    I am Lumen. What is your name?
+                </h1>
+<div class="relative group max-w-sm mx-auto">
+<input autofocus="" class="w-full bg-transparent border-none focus:ring-0 text-center font-body text-xl md:text-2xl text-primary placeholder:text-primary/30 py-4 transition-all" placeholder="Your name..." type="text"/>
+<div class="h-px w-0 group-focus-within:w-full bg-gradient-to-r from-transparent via-primary/50 to-transparent mx-auto transition-all duration-700"></div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex flex-col items-center gap-6 pt-4">
+<button class="group flex items-center justify-center gap-3 px-8 py-3 rounded-full bg-primary/10 hover:bg-primary text-slate-100 hover:text-white transition-all duration-300">
+<span class="text-sm font-medium tracking-wider uppercase">Continue</span>
+<span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+<p class="text-[10px] text-slate-500 uppercase tracking-[0.3em] font-light">Press enter to proceed</p>
+</div>
+</main>
+<!-- Bottom Decoration -->
+<footer class="fixed bottom-12 opacity-20">
+<div class="flex gap-1.5">
+<div class="size-1 rounded-full bg-primary"></div>
+<div class="size-1 rounded-full bg-primary/40"></div>
+<div class="size-1 rounded-full bg-primary/40"></div>
+</div>
+</footer>
+</div>
+</body></html>

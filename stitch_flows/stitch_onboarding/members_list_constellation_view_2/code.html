@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&amp;family=Space+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "primary": "#ec5b13",
+                "background-light": "#f8f6f3",
+                "background-dark": "#221610",
+                "sage": "#7e9083",
+                "rose": "#c48d8d",
+                "parchment-dark": "#efedea"
+              },
+              fontFamily: {
+                "display": ["Public Sans", "sans-serif"],
+                "serif": ["Cormorant Garamond", "serif"],
+                "mono": ["Space Mono", "monospace"]
+              },
+              borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            },
+          },
+        }
+    </script>
+<style>
+        .constellation-bg {
+            background-image: radial-gradient(circle at 2px 2px, rgba(236, 91, 19, 0.05) 1px, transparent 0);
+            background-size: 40px 40px;
+        }
+        .node-pulse {
+            position: relative;
+        }
+        .node-pulse::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            border-radius: 9999px;
+            border: 1px solid currentColor;
+            opacity: 0.2;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-primary/10 px-8 py-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">adjust</span>
+</div>
+<h2 class="text-xl font-serif font-semibold tracking-tight">Lumis</h2>
+</div>
+<nav class="hidden md:flex flex-1 justify-center items-center gap-10">
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-primary text-sm font-semibold border-b-2 border-primary pb-1" href="#">Members</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Lumen</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary text-sm font-medium transition-colors" href="#">Profile</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="p-2 hover:bg-primary/5 rounded-full transition-colors">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-400">search</span>
+</button>
+<div class="h-9 w-9 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDcS2vvDQlD7vDPmL7g9QIarx0Rb3AGddOD59EWCP7zXrY85T-HstQlwRZHPdTvI80rBeNUsro8sN1kaIYWin7S92RC8uwFaujPvV1n3ligtuIfEe7EpzfTSX6qa-vxZP-LyOv8HImXcp6kpr7wMRhZZ7jR42z-hnQdNT_leRvyDUT-_wd0XOOARONOp_jcTLUKTgpe4WnpWOxc9T7m8fZyGjx_SudFZvYCtovRyqgDVENWodGWPYTxlZXDF24rz6ksAbghOLw9xiw"/>
+</div>
+</div>
+</header>
+<main class="flex-1 flex flex-col">
+<!-- Hero Title Area -->
+<div class="px-8 pt-10 pb-6">
+<div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h1 class="text-4xl md:text-5xl font-serif italic text-slate-800 dark:text-slate-100">Members Constellation</h1>
+<p class="mt-2 text-slate-500 dark:text-slate-400 max-w-xl font-light">
+                            A quiet map of your relational energy. Larger nodes represent higher relationship health.
+                        </p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-medium hover:border-primary/40 transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            Filter Energy
+                        </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition-all shadow-md">
+<span class="material-symbols-outlined text-sm">person_add</span>
+                            New Node
+                        </button>
+</div>
+</div>
+</div>
+<!-- Constellation Map View -->
+<div class="flex-1 relative overflow-hidden constellation-bg min-h-[600px] border-t border-slate-100 dark:border-slate-800">
+<!-- Floating Map Controls -->
+<div class="absolute right-8 top-8 flex flex-col gap-2 z-10">
+<button class="w-10 h-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center rounded-t-xl hover:text-primary">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-10 h-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-sm border-x border-b border-slate-200 dark:border-slate-700 flex items-center justify-center rounded-b-xl hover:text-primary">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<button class="w-10 h-10 mt-2 bg-white/90 dark:bg-slate-800/90 backdrop-blur shadow-sm border border-slate-200 dark:border-slate-700 flex items-center justify-center rounded-xl hover:text-primary">
+<span class="material-symbols-outlined">near_me</span>
+</button>
+</div>
+<!-- Constellation Nodes (Simulated placement) -->
+<div class="relative w-full h-full max-w-7xl mx-auto p-12">
+<!-- Sage Node (High Health) -->
+<div class="absolute left-[15%] top-[25%] flex flex-col items-center group cursor-pointer">
+<div class="w-24 h-24 rounded-full border-2 border-sage p-1 node-pulse text-sage transition-transform group-hover:scale-110">
+<div class="w-full h-full rounded-full overflow-hidden bg-sage/10">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Woman smiling gently in nature" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCL-JXmnA6N0hBnYBUv9MkopHDdzJqbPtpKXt5jFXduAuI7IGMwXoHvQ6-ygW6ov1c065DGA_FEJUPnMmcf4OYVENKPwSesOpQJZ3L6lIQufkiiatVirA9chK8475yK3--B0TPS5qf-hKFZilGiTOBI9ZzzSOdA4iA_3soj0EYUQterUo-2HRvaCsJRjdUwqmUKtBGJsOBLf0ByzvdGAZoal0hIo2ykuBaUNAHvYRiPxBD6l4UgbT7CJ6b5XolVkf4YsuVh3nahbXE"/>
+</div>
+</div>
+<p class="mt-3 font-serif text-lg text-slate-800 dark:text-slate-200">Aris</p>
+<p class="font-mono text-[10px] uppercase tracking-widest text-sage font-semibold">Sage • Health 92</p>
+</div>
+<!-- Rose Node (Medium Health) -->
+<div class="absolute right-[20%] top-[15%] flex flex-col items-center group cursor-pointer">
+<div class="w-16 h-16 rounded-full border-2 border-rose p-1 node-pulse text-rose transition-transform group-hover:scale-110">
+<div class="w-full h-full rounded-full overflow-hidden bg-rose/10">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Man with thoughtful expression portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDqVRkV9bkrwHlznws_0_PGM6QUI7anOFgSSEimR9GhybamvFBNCLoN5nyFh8ZcY5f4wpcRzdjm5ZBlIc_RbbOrWAvuvNEb2_jjOvNe_BHF3JloUppyiaOgEmwJ0YE30p2sKsZz-WfB5_B9CSwm1CrBbCioCRIgD6VPlLghpXKv-iwjlyyjGvAv0wkS-_3TXzWh4J2N2IyywUM6_s5Zt5xhI84LspvcuV8c2GRg9_2wzxIK76XFuSjLoXyq5k026b3C3runxlYWTec"/>
+</div>
+</div>
+<p class="mt-3 font-serif text-lg text-slate-800 dark:text-slate-200">Elena</p>
+<p class="font-mono text-[10px] uppercase tracking-widest text-rose font-semibold">Rose • Health 45</p>
+</div>
+<!-- Sage Node (Medium-High Health) -->
+<div class="absolute left-[40%] top-[45%] flex flex-col items-center group cursor-pointer">
+<div class="w-20 h-20 rounded-full border-2 border-sage p-1 node-pulse text-sage transition-transform group-hover:scale-110">
+<div class="w-full h-full rounded-full overflow-hidden bg-sage/10">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Woman with professional neutral expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCrZ5FVLqMcCzXQm4Bsv5ACVJbLRqaBj5S7B0HTjGJt6ppbtqRKlzQoMVoC1999Q1YPAfoKhKugdPO2JrZ7IgnK0pTQZpg8BJY8rz3Nvb5LQZ8uWqWJ7qtqKTd3kGRbEh6yEI8aPUFsKUF5mvYkUEgU9ZWAvpOUyVs23q3Jj9lwENcXevWrds2jLEC0H8siyMc9CjdjiRRrC0NRVlC_wos-rJh0suzmNUcvaa2dx96vJFC1_fq5MyypteQpLv3DBSuId_SySHbdJHw"/>
+</div>
+</div>
+<p class="mt-3 font-serif text-lg text-slate-800 dark:text-slate-200">Julian</p>
+<p class="font-mono text-[10px] uppercase tracking-widest text-sage font-semibold">Sage • Health 78</p>
+</div>
+<!-- Rose Node (Low Health) -->
+<div class="absolute left-[25%] bottom-[20%] flex flex-col items-center group cursor-pointer">
+<div class="w-12 h-12 rounded-full border-2 border-rose p-1 node-pulse text-rose transition-transform group-hover:scale-110">
+<div class="w-full h-full rounded-full overflow-hidden bg-rose/10">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Man looking down pensively" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9zzDOcRbjFDFV-irbEAfHl72XpWbZZBonwSXEbOkO22vZKZBdjS81tNHGk5EeU_OtRVuB7KH_gUkIOVfVE9pdDS2d_SnEFHNswxLfJLZVWcpc024gtU_vJaTKn9tQQID4IJZxNbJBejn6-bqOEn4zxfuxqf6ii4z4WYbp2HyilK-MFrcAiHIiguRcZo3kstrrVGhStoFOEkTmwqJbwoqv0WoUGn0UTzS_CCHouVZkSLYf7hGCk0AbTx_0v0VTAUqw7O-IxLS2Z6A"/>
+</div>
+</div>
+<p class="mt-2 font-serif text-base text-slate-800 dark:text-slate-200">Marcus</p>
+<p class="font-mono text-[9px] uppercase tracking-widest text-rose font-semibold">Rose • Health 32</p>
+</div>
+<!-- Sage Node (Very High Health) -->
+<div class="absolute right-[35%] bottom-[15%] flex flex-col items-center group cursor-pointer">
+<div class="w-28 h-28 rounded-full border-2 border-sage p-1 node-pulse text-sage transition-transform group-hover:scale-110">
+<div class="w-full h-full rounded-full overflow-hidden bg-sage/10">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" data-alt="Young woman with peaceful expression" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFPcSD49eJrGq_rUpu1Phy9uI-GeNb5cLE-YnCrmTAkCD4ptCwB3YMBR6ITT1x7BxCAgaQYwxSLV0CwadSfsDwaIVDE2XetbHsOeLqBu0jZWcHPXLbP5umZvs00ukHN22-jlM3MkYP5vkvo6MIRvS4gRPrpj0c55MECzJaeRgDZnHdbtOsIrRuecUdAaC5ZmEd1nLjlKy25H0d-DxKGHwwkjYFMYeptdzGI8tVJV6PlnUuvT8UIG3IOHBvtPM-LwNJ9rIDOXQihzA"/>
+</div>
+</div>
+<p class="mt-4 font-serif text-xl text-slate-800 dark:text-slate-200">Lila</p>
+<p class="font-mono text-[10px] uppercase tracking-widest text-sage font-semibold">Sage • Health 95</p>
+</div>
+<!-- Connective Lines (SVG Decoration) -->
+<svg class="absolute inset-0 w-full h-full -z-10 pointer-events-none opacity-20 dark:opacity-10" fill="none" stroke="currentColor">
+<path class="text-slate-400" d="M15% 25% L40% 45% M40% 45% L65% 85% M15% 25% L25% 80% M80% 15% L40% 45%" stroke-dasharray="4 4" stroke-width="0.5"></path>
+</svg>
+</div>
+</div>
+<!-- Footer Legend -->
+<footer class="p-6 border-t border-slate-200 dark:border-slate-800 bg-parchment-dark dark:bg-background-dark/50">
+<div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-6">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-sage"></span>
+<span class="text-xs font-mono uppercase tracking-widest text-slate-500">Nourishing (Sage)</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-rose"></span>
+<span class="text-xs font-mono uppercase tracking-widest text-slate-500">Draining (Rose)</span>
+</div>
+</div>
+<div class="flex items-center gap-4 px-4 py-2 bg-white/50 dark:bg-slate-800/50 rounded-full border border-slate-200/50 dark:border-slate-700/50">
+<span class="text-[10px] font-mono uppercase tracking-tighter text-slate-400">Relationship Scale</span>
+<div class="flex items-center gap-1">
+<div class="w-2 h-2 rounded-full bg-primary/20"></div>
+<div class="w-3 h-3 rounded-full bg-primary/40"></div>
+<div class="w-4 h-4 rounded-full bg-primary/60"></div>
+<div class="w-5 h-5 rounded-full bg-primary"></div>
+</div>
+</div>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

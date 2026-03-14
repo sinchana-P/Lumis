@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Onboarding</title>
+<!-- Fonts: Crimson Pro (Serif), Inter (Sans), JetBrains Mono (Mono) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&amp;family=Inter:wght@400;500&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'lumis-warm-cream': '#F8F6F3',
+            'lumis-dusty-sage': '#9CAF9E',
+            'lumis-text-dark': '#2D2D2D',
+            'lumis-text-muted': '#706D69',
+          },
+          fontFamily: {
+            serif: ['Crimson Pro', 'serif'],
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          borderRadius: {
+            'lumis': '12px',
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-transitions">
+    /* Subtle fade-in for the atmosphere */
+    .fade-in {
+      animation: fadeIn 1.2s ease-out forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Custom focus ring for the input to match the sage theme */
+    .input-focus-ring:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(156, 175, 158, 0.3);
+      border-color: #9CAF9E;
+    }
+  </style>
+</head>
+<body class="bg-lumis-warm-cream text-lumis-text-dark font-sans min-h-screen flex flex-col items-center justify-between p-8 overflow-hidden">
+<!-- BEGIN: ProgressIndicator -->
+<nav class="mt-4" data-purpose="onboarding-progress">
+<div class="flex space-x-3">
+<!-- Step 1 Complete -->
+<div class="w-2 h-2 rounded-full bg-lumis-dusty-sage opacity-40"></div>
+<!-- Step 2 Active -->
+<div class="w-2 h-2 rounded-full bg-lumis-dusty-sage"></div>
+<!-- Future Steps -->
+<div class="w-2 h-2 rounded-full bg-lumis-dusty-sage opacity-20"></div>
+<div class="w-2 h-2 rounded-full bg-lumis-dusty-sage opacity-20"></div>
+</div>
+</nav>
+<!-- END: ProgressIndicator -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 flex flex-col items-center justify-center w-full max-w-xl fade-in">
+<!-- Question Section -->
+<header class="text-center mb-12">
+<h1 class="font-serif text-4xl md:text-5xl lg:text-6xl text-lumis-text-dark leading-tight tracking-tight">
+        I am Lumen. <br/>
+<span class="italic">What is your name?</span>
+</h1>
+</header>
+<!-- Interaction Section -->
+<section class="w-full space-y-8 flex flex-col items-center" data-purpose="name-input-container">
+<div class="w-full max-w-sm">
+<input autofocus="" class="w-full px-6 py-4 bg-white/50 border-none rounded-lumis shadow-sm text-xl font-serif italic placeholder:text-lumis-text-muted/50 input-focus-ring transition-all duration-300" id="user-name-input" placeholder="Your name..." type="text"/>
+</div>
+<button class="group flex items-center justify-between px-8 py-4 bg-lumis-dusty-sage text-white rounded-lumis shadow-md hover:bg-[#8B9E8D] transition-all duration-300 w-full max-w-sm" data-purpose="continue-button">
+<span class="font-sans font-medium tracking-widest text-sm">CONTINUE</span>
+<!-- Subtle Arrow Icon -->
+<svg class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"></path>
+</svg>
+</button>
+</section>
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: TechnicalFooter -->
+<footer class="mb-4" data-purpose="meta-navigation-hint">
+<p class="font-mono text-[10px] tracking-[0.2em] text-lumis-text-muted opacity-60 uppercase">
+      PRESS ENTER TO PROCEED
+    </p>
+</footer>
+<!-- END: TechnicalFooter -->
+<script data-purpose="keyboard-interaction">
+    // Simple script to handle 'Enter' key press to simulate the proceed action
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        const input = document.getElementById('user-name-input');
+        if (input.value.trim() !== "") {
+          console.log("Proceeding with name:", input.value);
+          // Visual feedback
+          document.querySelector('[data-purpose="continue-button"]').style.transform = 'scale(0.98)';
+          setTimeout(() => {
+            document.querySelector('[data-purpose="continue-button"]').style.transform = 'scale(1)';
+          }, 100);
+        }
+      }
+    });
+  </script>
+</body></html>

@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "name": "Run Tests After Task Completion",
+  "description": "Automatically run test suite when a spec task is marked complete",
+  "version": "1",
+  "when": {
+    "type": "postTaskExecution"
+  },
+  "then": {
+    "type": "runCommand",
+    "command": "npm run test"
+  }
+}

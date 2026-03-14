@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&amp;family=Crimson+Pro:ital,wght@0,400;0,600;1,400&amp;family=JetBrains+Mono:wght@400;500&amp;family=DM+Mono:wght@400;500&amp;family=Cormorant+Garamond:wght@400;500;600&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ec5b13",
+                        "background-light": "#F8F6F3",
+                        "background-dark": "#221610",
+                        "parchment": "#F8F6F3",
+                        "ink": "#2D2926",
+                        "accent-warm": "#D4A373",
+                    },
+                    fontFamily: {
+                        "display": ["Public Sans", "sans-serif"],
+                        "serif-title": ["Crimson Pro", "serif"],
+                        "mono-data": ["JetBrains Mono", "monospace"],
+                        "mono-ui": ["DM Mono", "monospace"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F6F3;
+        }
+        .serif-question {
+            font-family: 'Crimson Pro', serif;
+        }
+        .mono-label {
+            font-family: 'DM Mono', monospace;
+        }
+        .mono-input {
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-ink selection:bg-primary/20">
+<div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Navigation Header -->
+<header class="flex items-center justify-between px-6 py-6 md:px-20 border-b border-primary/10">
+<div class="flex items-center gap-3">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">flare</span>
+</div>
+<h2 class="text-ink font-display text-xl font-semibold tracking-tight uppercase">Lumis</h2>
+</div>
+<!-- Progress Indicator -->
+<div class="flex items-center gap-3">
+<div class="flex gap-2">
+<div class="h-1.5 w-6 rounded-full bg-primary/20"></div>
+<div class="h-1.5 w-12 rounded-full bg-primary"></div>
+<div class="h-1.5 w-6 rounded-full bg-primary/20"></div>
+</div>
+<span class="mono-label text-[10px] text-primary/60 uppercase tracking-widest ml-2">Step 03</span>
+</div>
+<button class="flex size-10 items-center justify-center rounded-full hover:bg-primary/5 transition-colors border border-primary/10">
+<span class="material-symbols-outlined text-ink/60">close</span>
+</button>
+</header>
+<!-- Main Content Area: Centered Conversation -->
+<main class="flex flex-1 items-center justify-center px-6 py-12">
+<div class="max-w-[540px] w-full flex flex-col items-center text-center space-y-12">
+<!-- AI Interaction Element -->
+<div class="space-y-4">
+<div class="inline-flex items-center justify-center p-3 rounded-full bg-primary/5 mb-2">
+<span class="material-symbols-outlined text-primary scale-110">auto_awesome</span>
+</div>
+<h1 class="serif-question text-4xl md:text-5xl text-ink leading-[1.15] font-medium italic">
+                            And when did you first enter the light?
+                        </h1>
+<p class="mono-label text-sm text-ink/40 uppercase tracking-widest">
+                            (Your date of birth)
+                        </p>
+</div>
+<!-- Minimalist Date Inputs -->
+<div class="w-full space-y-16">
+<div class="flex justify-center gap-6 md:gap-10">
+<!-- Day Field -->
+<div class="flex flex-col items-center gap-3 group">
+<label class="mono-label text-[10px] text-ink/30 uppercase tracking-[0.2em] group-focus-within:text-primary transition-colors">Day</label>
+<input class="mono-input w-16 md:w-20 text-center text-3xl md:text-4xl bg-transparent border-0 border-b-2 border-primary/10 focus:border-primary focus:ring-0 text-ink placeholder:text-ink/10 py-2 transition-all" maxlength="2" placeholder="01" type="text"/>
+</div>
+<span class="text-ink/20 text-4xl self-end pb-2 font-light">/</span>
+<!-- Month Field -->
+<div class="flex flex-col items-center gap-3 group">
+<label class="mono-label text-[10px] text-ink/30 uppercase tracking-[0.2em] group-focus-within:text-primary transition-colors">Month</label>
+<input class="mono-input w-16 md:w-20 text-center text-3xl md:text-4xl bg-transparent border-0 border-b-2 border-primary/10 focus:border-primary focus:ring-0 text-ink placeholder:text-ink/10 py-2 transition-all" maxlength="2" placeholder="01" type="text"/>
+</div>
+<span class="text-ink/20 text-4xl self-end pb-2 font-light">/</span>
+<!-- Year Field -->
+<div class="flex flex-col items-center gap-3 group">
+<label class="mono-label text-[10px] text-ink/30 uppercase tracking-[0.2em] group-focus-within:text-primary transition-colors">Year</label>
+<input class="mono-input w-24 md:w-32 text-center text-3xl md:text-4xl bg-transparent border-0 border-b-2 border-primary/10 focus:border-primary focus:ring-0 text-ink placeholder:text-ink/10 py-2 transition-all" maxlength="4" placeholder="1990" type="text"/>
+</div>
+</div>
+<!-- CTA Button -->
+<div class="flex flex-col items-center gap-6">
+<button class="mono-label bg-primary hover:bg-primary/90 text-white px-12 py-4 rounded-full flex items-center gap-3 tracking-widest text-sm transition-all hover:translate-y-[-2px] shadow-lg shadow-primary/20">
+                                CONTINUE
+                                <span class="material-symbols-outlined text-lg">arrow_forward</span>
+</button>
+<p class="text-ink/40 text-xs italic serif-question">
+                                This helps Lumis align with your celestial progression.
+                            </p>
+</div>
+</div>
+</div>
+</main>
+<!-- Footer Decorative Element -->
+<footer class="p-10 flex justify-center opacity-30 pointer-events-none">
+<div class="w-1 h-1 rounded-full bg-primary mx-1"></div>
+<div class="w-1 h-1 rounded-full bg-primary mx-1"></div>
+<div class="w-1 h-1 rounded-full bg-primary mx-1"></div>
+</footer>
+</div>
+</div>
+<!-- Subtle Grain Overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-multiply bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" data-alt="Subtle paper texture overlay"></div>
+</body></html>

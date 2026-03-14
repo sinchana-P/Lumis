@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Lumis - Incidents Log (Zara)</title>
+<!-- Fonts: Cormorant Garamond for Serifs, DM Mono for UI elements -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&amp;family=DM+Mono:wght@300;400;500&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            midnightAmber: {
+              background: '#F8F6F3',
+              text: '#3D3935',
+              border: '#E2DED8',
+              muted: '#8C8882'
+            },
+            emotions: {
+              hurt: '#D4A5A5',
+              safe: '#A5C4B4',
+              confused: '#D4C5A5',
+              distant: '#B6B3AF'
+            }
+          },
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'serif'],
+            mono: ['"DM Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+<style data-purpose="custom-typography">
+    body {
+      background-color: #F8F6F3;
+      color: #3D3935;
+      font-smoothing: antialiased;
+    }
+    .incident-entry {
+      border-bottom: 1px solid #E2DED8;
+      transition: background-color 0.3s ease;
+    }
+    .incident-entry:hover {
+      background-color: rgba(226, 222, 216, 0.2);
+    }
+    /* Fade effect for top and bottom to enhance "journal" feel */
+    .journal-gradient {
+      mask-image: linear-gradient(to bottom, transparent, black 5%, black 95%, transparent);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-serif">
+<!-- BEGIN: Navigation -->
+<nav class="w-full py-8 px-12 flex justify-between items-center border-b border-midnightAmber-border bg-midnightAmber-background/80 backdrop-blur-sm sticky top-0 z-50" data-purpose="main-navigation">
+<div class="text-xl font-medium tracking-tight font-serif">Lumis</div>
+<ul class="flex space-x-10 font-mono text-sm uppercase tracking-widest text-midnightAmber-muted">
+<li><a class="hover:text-midnightAmber-text transition-colors" href="#">Dashboard</a></li>
+<li><a class="hover:text-midnightAmber-text transition-colors" href="#">Members</a></li>
+<li><a class="hover:text-midnightAmber-text transition-colors" href="#">Lumen</a></li>
+<li><a class="text-midnightAmber-text border-b border-midnightAmber-text pb-1" href="#">Profile</a></li>
+</ul>
+<div class="w-10 h-10 rounded-full border border-midnightAmber-border flex items-center justify-center font-mono text-xs">
+      ZA
+    </div>
+</nav>
+<!-- END: Navigation -->
+<!-- BEGIN: Main Content -->
+<main class="flex-grow max-w-4xl mx-auto w-full px-6 py-16" data-purpose="incident-log-container">
+<!-- Header Section -->
+<header class="mb-16 text-center">
+<h1 class="text-6xl font-medium mb-4" id="page-title">Incidents</h1>
+<p class="font-mono text-xs uppercase tracking-[0.2em] text-midnightAmber-muted">A private chronicle for Zara</p>
+</header>
+<!-- Incident List -->
+<section class="space-y-0" data-purpose="chronological-log">
+<!-- Entry 1 -->
+<article class="incident-entry py-10 flex items-start gap-8" data-purpose="log-item">
+<div class="w-32 pt-1 font-mono text-xs text-midnightAmber-muted uppercase tracking-tighter">
+          Oct 22, 2023
+        </div>
+<div class="flex-grow">
+<p class="text-xl leading-relaxed mb-4">
+            The conversation drifted toward the old apartment. I felt a sudden tightening in my chest when the mention of the hallway light came up. No one noticed the shift in my tone.
+          </p>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-emotions-hurt/20 text-[#8E5E5E] font-mono text-[10px] uppercase tracking-wider">Hurt</span>
+<span class="px-3 py-1 rounded-full bg-emotions-confused/20 text-[#8E7E5E] font-mono text-[10px] uppercase tracking-wider">Confused</span>
+</div>
+</div>
+</article>
+<!-- Entry 2 -->
+<article class="incident-entry py-10 flex items-start gap-8" data-purpose="log-item">
+<div class="w-32 pt-1 font-mono text-xs text-midnightAmber-muted uppercase tracking-tighter">
+          Oct 18, 2023
+        </div>
+<div class="flex-grow">
+<p class="text-xl leading-relaxed mb-4">
+            A quiet afternoon in the garden. For the first time in weeks, the noise in my head subsided. The smell of damp earth felt grounding rather than overwhelming.
+          </p>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-emotions-safe/20 text-[#5E7E6E] font-mono text-[10px] uppercase tracking-wider">Safe</span>
+</div>
+</div>
+</article>
+<!-- Entry 3 -->
+<article class="incident-entry py-10 flex items-start gap-8" data-purpose="log-item">
+<div class="w-32 pt-1 font-mono text-xs text-midnightAmber-muted uppercase tracking-tighter">
+          Oct 12, 2023
+        </div>
+<div class="flex-grow">
+<p class="text-xl leading-relaxed mb-4">
+            Met with the group for the monthly review. I felt like I was watching the room through a thick pane of glass. Their voices were distant, melodic but unintelligible.
+          </p>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-emotions-distant/20 text-[#6B6865] font-mono text-[10px] uppercase tracking-wider">Distant</span>
+</div>
+</div>
+</article>
+<!-- Entry 4 -->
+<article class="incident-entry py-10 flex items-start gap-8" data-purpose="log-item">
+<div class="w-32 pt-1 font-mono text-xs text-midnightAmber-muted uppercase tracking-tighter">
+          Oct 05, 2023
+        </div>
+<div class="flex-grow">
+<p class="text-xl leading-relaxed mb-4">
+            The prompt in the Lumis module was too direct today. I closed the app and didn't return for six hours. The reflection felt like an intrusion.
+          </p>
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-emotions-hurt/20 text-[#8E5E5E] font-mono text-[10px] uppercase tracking-wider">Hurt</span>
+</div>
+</div>
+</article>
+</section>
+<!-- Pagination / Load More -->
+<footer class="mt-20 text-center pb-20">
+<button class="font-mono text-xs uppercase tracking-[0.3em] text-midnightAmber-muted hover:text-midnightAmber-text transition-all duration-500 border-b border-transparent hover:border-midnightAmber-text pb-2">
+        View Archived Reflections
+      </button>
+</footer>
+</main>
+<!-- END: Main Content -->
+</body></html>
