@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase';
 
 export interface GoogleSignInButtonProps {
   onSuccess?: () => void;
@@ -31,6 +30,8 @@ export function GoogleSignInButton({ onSuccess, onError }: GoogleSignInButtonPro
     setIsLoading(true);
 
     try {
+      // Lazy import supabase to avoid build-time initialization
+      const { supabase } = await import('@/lib/supabase');
       
       // Redirect to Google authorization URL
       const { data, error } = await supabase.auth.signInWithOAuth({

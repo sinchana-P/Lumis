@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useAppDispatch } from '@/store/hooks';
 import { clearUser } from '@/store/slices/authSlice';
 import { clearTokens } from '@/lib/tokenStorage';
-import { supabase } from '@/lib/supabase';
 import { ThemeSelector } from '@/components/ui/ThemeSelector';
 import { Header } from '@/components/layout/Header';
 
@@ -16,7 +15,11 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    
+    // Lazy import supabase to avoid build-time initialization
+    const { supabase } = await import('@/lib/supabase');
     await supabase.auth.signOut();
+    
     clearTokens();
     dispatch(clearUser());
     router.push('/login');

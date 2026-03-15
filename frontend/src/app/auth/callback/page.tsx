@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { AuthErrorDisplay } from '@/components/auth/AuthErrorDisplay';
 
 /**
@@ -21,6 +20,9 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     const handleCallback = async () => {
       try {
+        // Lazy import supabase to avoid build-time initialization
+        const { supabase } = await import('@/lib/supabase');
+        
         // Handle Supabase OAuth callback (tokens in URL fragment)
         const { data, error } = await supabase.auth.getSession();
         
