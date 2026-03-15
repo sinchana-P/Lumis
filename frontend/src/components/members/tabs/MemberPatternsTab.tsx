@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   useGetPatternsQuery,
   useCreatePatternMutation,
@@ -14,6 +14,8 @@ import {
 } from '@/store/api/patternsApi';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import { DottedDivider } from '@/components/ui/DottedDivider';
+import { TwoColumnModal } from '@/components/ui/TwoColumnModal';
+import { SpeechTextarea } from '@/components/ui/SpeechTextarea';
 
 interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberPatternsTabProps {
@@ -52,44 +54,6 @@ function categoryColor(cat?: string | null) {
 
 function impactColor(impact?: string | null) {
   return IMPACTS.find(i => i.value === impact)?.color ?? 'var(--text-tertiary)';
-}
-
-// ── Mic button ───────────────────────────────────────────────────────────────
-
-function MicButton({ onTranscript }: { onTranscript: (t: string) => void }) {
-  const [listening, setListening] = useState(false);
-  const ref = useRef<any>(null);
-
-  const toggle = () => {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) return;
-    if (listening) { ref.current?.stop(); setListening(false); return; }
-    const rec = new SR();
-    rec.continuous = false; rec.interimResults = false; rec.lang = 'en-US';
-    rec.onresult = (e: any) => { onTranscript(e.results[0][0].transcript); setListening(false); };
-    rec.onerror = () => setListening(false);
-    rec.onend   = () => setListening(false);
-    ref.current = rec; rec.start(); setListening(true);
-  };
-
-  return (
-    <button type="button" onClick={toggle} title={listening ? 'Stop' : 'Speak'}
-      style={{
-        position: 'absolute', bottom: 10, right: 10, width: 28, height: 28,
-        borderRadius: '50%', border: 'none', cursor: 'pointer',
-        background: listening ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
-        color: listening ? '#fff' : 'var(--text-tertiary)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 200ms, color 200ms',
-      }}>
-      {listening
-        ? <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1" /></svg>
-        : <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
-          </svg>}
-    </button>
-  );
 }
 
 // ── Pattern modal (add + edit) ────────────────────────────────────────────────
@@ -138,14 +102,6 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
     }
   }, [isOpen, editing]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    if (isOpen) document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [isOpen, onClose]);
-
-  if (!isOpen) return null;
-
   const handleSave = async () => {
     if (!form.title.trim() || !form.description.trim() || saving) return;
     const triggerList = form.triggers.split(',').map(t => t.trim()).filter(Boolean);
@@ -166,150 +122,138 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
   const canSave = !!form.title.trim() && !!form.description.trim() && !saving;
   const catColor = categoryColor(form.category);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
-      <div className="relative w-full scrollbar-thin overflow-y-auto" style={{ maxWidth: 460, maxHeight: '92vh', background: 'var(--bg-primary)', border: '1px solid var(--bg-tertiary)', borderRadius: 16, boxShadow: '0 20px 48px rgba(0,0,0,0.12)', padding: '24px 24px 20px' }}>
-
-        {/* Header */}
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 20 }}>
-          {editing ? 'Edit Pattern' : 'Identify a Pattern'}
-        </p>
-
-        <div style={{ height: 1, background: 'var(--bg-tertiary)', marginBottom: 20 }} />
-
-        {/* Title */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Pattern Name</p>
-          <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-            placeholder="What recurring dynamic have you noticed?" className="w-full font-serif"
-            style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
-          />
-        </div>
-
-        {/* Category */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Category</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {CATEGORIES.map(c => (
-              <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
-                className="font-mono uppercase tracking-widest"
-                style={{
-                  fontSize: 9, padding: '4px 12px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
-                  borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
-                  background: form.category === c.value ? c.color : 'transparent',
-                  color: form.category === c.value ? '#fff' : 'var(--text-tertiary)',
-                  transition: 'all 150ms',
-                }}>{c.label}</button>
-            ))}
-          </div>
-        </div>
-
-        {/* Frequency + Impact row */}
-        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: 16 }}>
-          <div>
-            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Frequency</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
-              {FREQUENCIES.map(f => (
-                <button key={f.value} type="button" onClick={() => setForm(fm => ({ ...fm, frequency: f.value }))}
-                  className="font-mono uppercase tracking-widest"
-                  style={{
-                    fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
-                    background: form.frequency === f.value ? 'var(--bg-primary)' : 'transparent',
-                    color: form.frequency === f.value ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                    boxShadow: form.frequency === f.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                    transition: 'all 180ms',
-                  }}>{f.label}</button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Impact</p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
-              {IMPACTS.map(i => (
-                <button key={i.value} type="button" onClick={() => setForm(fm => ({ ...fm, impact: i.value }))}
-                  className="font-mono uppercase tracking-widest"
-                  style={{
-                    fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
-                    background: form.impact === i.value ? 'var(--bg-primary)' : 'transparent',
-                    color: form.impact === i.value ? i.color : 'var(--text-tertiary)',
-                    boxShadow: form.impact === i.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                    transition: 'all 180ms',
-                  }}>{i.label}</button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Description */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Description</p>
-          <div style={{ position: 'relative' }}>
-            <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              placeholder="Describe the pattern. What happens? When does it occur? How does it manifest?"
-              rows={4} className="w-full font-serif"
-              style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '10px 40px 10px 12px', resize: 'none', outline: 'none', lineHeight: 1.55 }}
-            />
-            <MicButton onTranscript={t => setForm(f => ({ ...f, description: f.description ? f.description + ' ' + t : t }))} />
-          </div>
-        </div>
-
-        {/* Triggers */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
-            Common Triggers <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— comma separated</span>
-          </p>
-          <input type="text" value={form.triggers} onChange={e => setForm(f => ({ ...f, triggers: e.target.value }))}
-            placeholder="disagreement, raised voices, criticism" className="w-full font-mono"
-            style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
-          />
-        </div>
-
-        {/* Examples */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
-            Examples <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— one per line</span>
-          </p>
-          <div style={{ position: 'relative' }}>
-            <textarea value={form.examples} onChange={e => setForm(f => ({ ...f, examples: e.target.value }))}
-              placeholder={"Last week when I brought up the dishes, they walked away\nDuring the budget talk, they stopped responding"}
-              rows={3} className="w-full font-serif"
-              style={{ fontSize: 13, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '10px 40px 10px 12px', resize: 'none', outline: 'none', lineHeight: 1.55 }}
-            />
-            <MicButton onTranscript={t => setForm(f => ({ ...f, examples: f.examples ? f.examples + '\n' + t : t }))} />
-          </div>
-        </div>
-
-        {/* Tags */}
-        <div style={{ marginBottom: 20 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
-            Tags <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— e.g. theme:trust, pattern:withdrawal</span>
-          </p>
-          <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
-            placeholder="theme:conflict, pattern:avoidance" className="w-full font-mono"
-            style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
-          />
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-2">
-          <button type="button" onClick={onClose} className="font-mono uppercase tracking-widest"
-            style={{ flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-            Cancel
-          </button>
-          <button type="button" onClick={handleSave} disabled={!canSave} className="font-mono uppercase tracking-widest"
-            style={{
-              flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: 'none',
-              cursor: canSave ? 'pointer' : 'default',
-              background: canSave ? catColor : 'var(--bg-tertiary)',
-              color: canSave ? '#fff' : 'var(--text-tertiary)',
-              transition: 'background 200ms',
-            }}>
-            {saving ? 'Saving…' : editing ? 'Save Changes' : 'Log Pattern'}
-          </button>
+  const leftPanel = (
+    <>
+      {/* Category */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Category</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {CATEGORIES.map(c => (
+            <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
+              className="font-mono uppercase tracking-widest"
+              style={{
+                fontSize: 8, padding: '3px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
+                borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
+                background:  form.category === c.value ? c.color : 'transparent',
+                color:       form.category === c.value ? '#fff'  : 'var(--text-tertiary)',
+                transition: 'all 150ms',
+              }}>{c.label}</button>
+          ))}
         </div>
       </div>
-    </div>
+
+      {/* Frequency */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Frequency</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
+          {FREQUENCIES.map(f => (
+            <button key={f.value} type="button" onClick={() => setForm(fm => ({ ...fm, frequency: f.value }))}
+              className="font-mono uppercase tracking-widest"
+              style={{
+                fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
+                background: form.frequency === f.value ? 'var(--bg-primary)' : 'transparent',
+                color:      form.frequency === f.value ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                boxShadow:  form.frequency === f.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 180ms',
+              }}>{f.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Impact */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Impact</p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
+          {IMPACTS.map(i => (
+            <button key={i.value} type="button" onClick={() => setForm(fm => ({ ...fm, impact: i.value }))}
+              className="font-mono uppercase tracking-widest"
+              style={{
+                fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
+                background: form.impact === i.value ? 'var(--bg-primary)' : 'transparent',
+                color:      form.impact === i.value ? i.color : 'var(--text-tertiary)',
+                boxShadow:  form.impact === i.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 180ms',
+              }}>{i.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Triggers */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Triggers <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>comma sep</span>
+        </p>
+        <input type="text" value={form.triggers} onChange={e => setForm(f => ({ ...f, triggers: e.target.value }))}
+          placeholder="disagreement, criticism…" className="w-full font-mono"
+          style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+        />
+      </div>
+
+      {/* Tags */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>e.g. theme:trust</span>
+        </p>
+        <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
+          placeholder="theme:conflict, pattern:avoidance" className="w-full font-mono"
+          style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+        />
+      </div>
+    </>
+  );
+
+  const rightPanel = (
+    <>
+      {/* Pattern Name */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Pattern Name</p>
+        <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+          placeholder="What recurring dynamic have you noticed?" className="w-full font-serif"
+          style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
+        />
+      </div>
+
+      {/* Description */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Description</p>
+        <SpeechTextarea
+          value={form.description}
+          onChange={v => setForm(f => ({ ...f, description: v }))}
+          placeholder="Describe the pattern. What happens? When does it occur? How does it manifest?"
+          minHeight={160}
+          accentColor={catColor}
+        />
+      </div>
+
+      {/* Examples */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Examples <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>one per line</span>
+        </p>
+        <SpeechTextarea
+          value={form.examples}
+          onChange={v => setForm(f => ({ ...f, examples: v }))}
+          placeholder={"Last week when I brought up the dishes, they walked away\nDuring the budget talk, they stopped responding"}
+          rows={3}
+          accentColor={catColor}
+        />
+      </div>
+    </>
+  );
+
+  return (
+    <TwoColumnModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onSave={handleSave}
+      header={editing ? 'Edit Pattern' : 'Identify a Pattern'}
+      saveLabel={editing ? 'Save Changes' : 'Log Pattern'}
+      saveColor={catColor}
+      canSave={canSave}
+      saving={saving}
+      left={leftPanel}
+      right={rightPanel}
+    />
   );
 }
 
@@ -424,7 +368,7 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
                     <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 5 }} />
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0" style={{ paddingBottom: 28 }}>
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 4, lineHeight: 1.4 }}>
@@ -512,7 +456,7 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
 
                   {/* Dotted divider between items */}
                   {index < patterns.length - 1 && (
-                    <DottedDivider style={{ marginLeft: 15, marginTop: -20, marginBottom: 8 }} />
+                    <DottedDivider style={{ marginLeft: 15, marginTop: 20, marginBottom: 20 }} />
                   )}
                 </div>
               );

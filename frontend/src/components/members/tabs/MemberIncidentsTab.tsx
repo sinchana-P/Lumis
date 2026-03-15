@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   useGetIncidentsQuery,
   useCreateIncidentMutation,
@@ -13,6 +13,8 @@ import {
 } from '@/store/api/incidentsApi';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import { DottedDivider } from '@/components/ui/DottedDivider';
+import { TwoColumnModal } from '@/components/ui/TwoColumnModal';
+import { SpeechTextarea } from '@/components/ui/SpeechTextarea';
 
 interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberIncidentsTabProps {
@@ -42,44 +44,6 @@ const EMOTION_TAGS = ['joyful', 'safe', 'loved', 'energized', 'peaceful', 'anxio
 
 function categoryColor(cat?: string | null) {
   return CATEGORIES.find(c => c.value === cat)?.color ?? 'var(--text-tertiary)';
-}
-
-// ── Mic button ───────────────────────────────────────────────────────────────
-
-function MicButton({ onTranscript }: { onTranscript: (t: string) => void }) {
-  const [listening, setListening] = useState(false);
-  const ref = useRef<any>(null);
-
-  const toggle = () => {
-    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    if (!SR) return;
-    if (listening) { ref.current?.stop(); setListening(false); return; }
-    const rec = new SR();
-    rec.continuous = false; rec.interimResults = false; rec.lang = 'en-US';
-    rec.onresult = (e: any) => { onTranscript(e.results[0][0].transcript); setListening(false); };
-    rec.onerror = () => setListening(false);
-    rec.onend   = () => setListening(false);
-    ref.current = rec; rec.start(); setListening(true);
-  };
-
-  return (
-    <button type="button" onClick={toggle} title={listening ? 'Stop' : 'Speak'}
-      style={{
-        position: 'absolute', bottom: 10, right: 10, width: 28, height: 28,
-        borderRadius: '50%', border: 'none', cursor: 'pointer',
-        background: listening ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
-        color: listening ? '#fff' : 'var(--text-tertiary)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'background 200ms, color 200ms',
-      }}>
-      {listening
-        ? <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1" /></svg>
-        : <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
-          </svg>}
-    </button>
-  );
 }
 
 // ── Incident modal (add + edit) ───────────────────────────────────────────────
@@ -127,12 +91,6 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
     }
   }, [isOpen, editing]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
-    if (isOpen) document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [isOpen, onClose]);
-
   if (!isOpen) return null;
 
   const toggleEmotion = (tag: string) =>
@@ -153,151 +111,134 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
     });
   };
 
-  const canSave = !!form.title.trim() && !!form.description.trim() && !saving;
+  const canSave  = !!form.title.trim() && !!form.description.trim() && !saving;
   const catColor = categoryColor(form.category);
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
-      <div className="relative w-full scrollbar-thin overflow-y-auto" style={{ maxWidth: 460, maxHeight: '92vh', background: 'var(--bg-primary)', border: '1px solid var(--bg-tertiary)', borderRadius: 16, boxShadow: '0 20px 48px rgba(0,0,0,0.12)', padding: '24px 24px 20px' }}>
+  const leftPanel = (
+    <>
+      {/* Date */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>When</p>
+        <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+          className="w-full font-mono"
+          style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+        />
+      </div>
 
-        {/* Header */}
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 20 }}>
-          {editing ? 'Edit Incident' : 'Chronicle a Moment'}
-        </p>
-
-        <div style={{ height: 1, background: 'var(--bg-tertiary)', marginBottom: 20 }} />
-
-        {/* Title */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>What Happened</p>
-          <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
-            placeholder="A brief, honest title…" className="w-full font-serif"
-            style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
-          />
-        </div>
-
-        {/* Date + Severity row */}
-        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: 16 }}>
-          <div>
-            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>When</p>
-            <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-              className="w-full font-mono"
-              style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
-            />
-          </div>
-          <div>
-            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Weight</p>
-            <div style={{ display: 'flex', gap: 4, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
-              {SEVERITIES.map(s => (
-                <button key={s.value} type="button" onClick={() => setForm(f => ({ ...f, severity: s.value }))}
-                  className="font-mono uppercase tracking-widest"
-                  style={{
-                    flex: 1, fontSize: 9, padding: '5px 0', borderRadius: 6, border: 'none', cursor: 'pointer',
-                    background: form.severity === s.value ? 'var(--bg-primary)' : 'transparent',
-                    color: form.severity === s.value ? 'var(--text-primary)' : 'var(--text-tertiary)',
-                    boxShadow: form.severity === s.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
-                    transition: 'all 180ms',
-                  }}>{s.label}</button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Category */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Nature</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {CATEGORIES.map(c => (
-              <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
-                className="font-mono uppercase tracking-widest"
-                style={{
-                  fontSize: 9, padding: '4px 12px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
-                  borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
-                  background: form.category === c.value ? c.color : 'transparent',
-                  color: form.category === c.value ? '#fff' : 'var(--text-tertiary)',
-                  transition: 'all 150ms',
-                }}>{c.label}</button>
-            ))}
-          </div>
-        </div>
-
-        {/* Description */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>The Full Story</p>
-          <div style={{ position: 'relative' }}>
-            <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              placeholder="What happened? How did it make you feel? Be honest with yourself…"
-              rows={4} className="w-full font-serif"
-              style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '10px 40px 10px 12px', resize: 'none', outline: 'none', lineHeight: 1.55 }}
-            />
-            <MicButton onTranscript={t => setForm(f => ({ ...f, description: f.description ? f.description + ' ' + t : t }))} />
-          </div>
-        </div>
-
-        {/* Emotions */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Emotions</p>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-            {EMOTION_TAGS.map(tag => (
-              <button key={tag} type="button" onClick={() => toggleEmotion(tag)}
-                className="font-mono uppercase tracking-widest"
-                style={{
-                  fontSize: 9, padding: '4px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
-                  borderColor: form.emotions.includes(tag) ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
-                  background: form.emotions.includes(tag) ? 'var(--accent-primary)' : 'transparent',
-                  color: form.emotions.includes(tag) ? '#fff' : 'var(--text-tertiary)',
-                  transition: 'all 150ms',
-                }}>{tag}</button>
-            ))}
-          </div>
-        </div>
-
-        {/* Outcome */}
-        <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
-            Resolution <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— optional</span>
-          </p>
-          <div style={{ position: 'relative' }}>
-            <textarea value={form.outcome} onChange={e => setForm(f => ({ ...f, outcome: e.target.value }))}
-              placeholder="How was it resolved? What did you learn?"
-              rows={2} className="w-full font-serif"
-              style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '10px 40px 10px 12px', resize: 'none', outline: 'none', lineHeight: 1.55 }}
-            />
-            <MicButton onTranscript={t => setForm(f => ({ ...f, outcome: f.outcome ? f.outcome + ' ' + t : t }))} />
-          </div>
-        </div>
-
-        {/* Tags */}
-        <div style={{ marginBottom: 20 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
-            Tags <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— e.g. theme:trust, context:work</span>
-          </p>
-          <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
-            placeholder="theme:conflict, context:social" className="w-full font-mono"
-            style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
-          />
-        </div>
-
-        {/* Actions — Cancel LEFT, Save RIGHT */}
-        <div className="flex gap-2">
-          <button type="button" onClick={onClose} className="font-mono uppercase tracking-widest"
-            style={{ flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-            Cancel
-          </button>
-          <button type="button" onClick={handleSave} disabled={!canSave} className="font-mono uppercase tracking-widest"
-            style={{
-              flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: 'none',
-              cursor: canSave ? 'pointer' : 'default',
-              background: canSave ? catColor : 'var(--bg-tertiary)',
-              color: canSave ? '#fff' : 'var(--text-tertiary)',
-              transition: 'background 200ms',
-            }}>
-            {saving ? 'Saving…' : editing ? 'Save Changes' : 'Chronicle It'}
-          </button>
+      {/* Severity */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Weight</p>
+        <div style={{ display: 'flex', gap: 3, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
+          {SEVERITIES.map(s => (
+            <button key={s.value} type="button" onClick={() => setForm(f => ({ ...f, severity: s.value }))}
+              className="font-mono uppercase tracking-widest"
+              style={{
+                flex: 1, fontSize: 9, padding: '5px 0', borderRadius: 6, border: 'none', cursor: 'pointer',
+                background: form.severity === s.value ? 'var(--bg-primary)' : 'transparent',
+                color:      form.severity === s.value ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                boxShadow:  form.severity === s.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                transition: 'all 160ms',
+              }}>{s.label}</button>
+          ))}
         </div>
       </div>
-    </div>
+
+      {/* Category */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Nature</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {CATEGORIES.map(c => (
+            <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
+              className="font-mono uppercase tracking-widest"
+              style={{
+                fontSize: 8, padding: '3px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
+                borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
+                background:  form.category === c.value ? c.color : 'transparent',
+                color:       form.category === c.value ? '#fff'  : 'var(--text-tertiary)',
+                transition: 'all 140ms',
+              }}>{c.label}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Emotions */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotions</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {EMOTION_TAGS.map(tag => (
+            <button key={tag} type="button" onClick={() => toggleEmotion(tag)}
+              className="font-mono uppercase tracking-widest"
+              style={{
+                fontSize: 8, padding: '3px 9px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
+                borderColor: form.emotions.includes(tag) ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
+                background:  form.emotions.includes(tag) ? 'var(--accent-primary)' : 'transparent',
+                color:       form.emotions.includes(tag) ? '#fff' : 'var(--text-tertiary)',
+                transition: 'all 140ms',
+              }}>{tag}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tags */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>e.g. theme:trust</span>
+        </p>
+        <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
+          placeholder="theme:conflict, context:social" className="w-full font-mono"
+          style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+        />
+      </div>
+    </>
+  );
+
+  const rightPanel = (
+    <>
+      {/* Title */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What Happened</p>
+        <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+          placeholder="A brief, honest title…" className="w-full font-serif"
+          style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
+        />
+      </div>
+
+      {/* Description */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>The Full Story</p>
+        <SpeechTextarea
+          value={form.description}
+          onChange={v => setForm(f => ({ ...f, description: v }))}
+          placeholder="What happened? How did it make you feel? Be honest with yourself…"
+          minHeight={160}
+          accentColor={catColor}
+        />
+      </div>
+
+      {/* Resolution */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Resolution <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>— optional</span>
+        </p>
+        <SpeechTextarea
+          value={form.outcome}
+          onChange={v => setForm(f => ({ ...f, outcome: v }))}
+          placeholder="How was it resolved? What did you learn?"
+          rows={3}
+          accentColor={catColor}
+        />
+      </div>
+    </>
+  );
+
+  return (
+    <TwoColumnModal
+      isOpen={isOpen} onClose={onClose} onSave={handleSave}
+      header={editing ? 'Edit Incident' : 'Chronicle a Moment'}
+      saveLabel={saving ? 'Saving…' : editing ? 'Save Changes' : 'Chronicle It'}
+      saveColor={catColor} canSave={canSave} saving={saving}
+      left={leftPanel} right={rightPanel}
+    />
   );
 }
 
@@ -411,7 +352,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
                     <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 5 }} />
 
                     {/* Content */}
-                    <div className="flex-1 min-w-0" style={{ paddingBottom: 28 }}>
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                           <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 4, lineHeight: 1.4 }}>
@@ -489,7 +430,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
 
                   {/* Dashed divider between items */}
                   {index < incidents.length - 1 && (
-                    <DottedDivider style={{ marginLeft: 15, marginTop: -20, marginBottom: 8 }} />
+                    <DottedDivider style={{ marginLeft: 15, marginTop: 20, marginBottom: 20 }} />
                   )}
                 </div>
               );

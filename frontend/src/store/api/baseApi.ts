@@ -132,6 +132,7 @@ export const baseApi = createApi({
     'MemberIncidents',
     'Patterns',
     'MemberPatterns',
+    'Interactions',
     'MemberInteractions',
     'MemberJournal',
     'MemberReport',

@@ -93,7 +93,8 @@ export default function MemberDetailPage() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [showEditModal, setShowEditModal] = useState(false);
   const [incidentsAddOpen, setIncidentsAddOpen] = useState(false);
-  const [patternsAddOpen, setPatternsAddOpen]   = useState(false);
+  const [patternsAddOpen, setPatternsAddOpen]         = useState(false);
+  const [interactionsAddOpen, setInteractionsAddOpen] = useState(false);
   
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
@@ -162,7 +163,7 @@ export default function MemberDetailPage() {
       case 'patterns':
         return <MemberPatternsTab member={member} externalAddOpen={patternsAddOpen} onExternalAddClose={() => setPatternsAddOpen(false)} />;
       case 'interactions':
-        return <MemberInteractionsTab member={member} />;
+        return <MemberInteractionsTab member={member} externalAddOpen={interactionsAddOpen} onExternalAddClose={() => setInteractionsAddOpen(false)} />;
       case 'journal':
         return <MemberJournalTab member={member} />;
       case 'numerology':
@@ -296,8 +297,7 @@ export default function MemberDetailPage() {
             } else if (activeTab === 'patterns') {
               setPatternsAddOpen(true);
             } else if (activeTab === 'interactions') {
-              // Trigger log interaction
-              console.log('Open log interaction');
+              setInteractionsAddOpen(true);
             } else if (activeTab === 'incidents') {
               setIncidentsAddOpen(true);
             } else if (activeTab === 'traits') {
