@@ -93,6 +93,7 @@ export default function MemberDetailPage() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [showEditModal, setShowEditModal] = useState(false);
   const [incidentsAddOpen, setIncidentsAddOpen] = useState(false);
+  const [patternsAddOpen, setPatternsAddOpen]   = useState(false);
   
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
@@ -159,7 +160,7 @@ export default function MemberDetailPage() {
       case 'incidents':
         return <MemberIncidentsTab member={member} externalAddOpen={incidentsAddOpen} onExternalAddClose={() => setIncidentsAddOpen(false)} />;
       case 'patterns':
-        return <MemberPatternsTab member={member} />;
+        return <MemberPatternsTab member={member} externalAddOpen={patternsAddOpen} onExternalAddClose={() => setPatternsAddOpen(false)} />;
       case 'interactions':
         return <MemberInteractionsTab member={member} />;
       case 'journal':
@@ -293,8 +294,7 @@ export default function MemberDetailPage() {
               // Trigger journal new entry
               console.log('Open new journal entry');
             } else if (activeTab === 'patterns') {
-              // Trigger add pattern
-              console.log('Open add pattern');
+              setPatternsAddOpen(true);
             } else if (activeTab === 'interactions') {
               // Trigger log interaction
               console.log('Open log interaction');

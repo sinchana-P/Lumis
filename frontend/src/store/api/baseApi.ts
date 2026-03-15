@@ -130,6 +130,7 @@ export const baseApi = createApi({
     'MemberTraits',
     'Incidents',
     'MemberIncidents',
+    'Patterns',
     'MemberPatterns',
     'MemberInteractions',
     'MemberJournal',
