@@ -228,7 +228,7 @@ export default function MemberDetailPage() {
           </div>
 
           {/* Minimal Navigation - Centered */}
-          <nav className="pl-10 pr-4 flex-1 flex items-center">
+          <nav className="pl-14 pr-0 flex-1 flex items-center">
             <div className="space-y-3 w-full">
               {tabs.map((tab) => (
                 <button

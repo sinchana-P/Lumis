@@ -28,11 +28,11 @@ function FieldRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
       <p className="font-mono uppercase tracking-widest"
-        style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>
+        style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>
         {label}
       </p>
       <p className="font-serif"
-        style={{ fontSize: 14, color: value ? 'var(--text-primary)' : 'var(--text-tertiary)', fontStyle: value ? 'normal' : 'italic' }}>
+        style={{ fontSize: 15, color: value ? 'var(--text-primary)' : 'var(--text-tertiary)', fontStyle: value ? 'normal' : 'italic' }}>
         {value || 'not set'}
       </p>
     </div>
@@ -46,14 +46,14 @@ function EditRow({ label, value, onChange, placeholder }: {
   return (
     <div>
       <p className="font-mono uppercase tracking-widest"
-        style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>
+        style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>
         {label}
       </p>
       <input
         type="text" value={value} onChange={e => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full bg-transparent outline-none font-serif"
-        style={{ fontSize: 14, color: 'var(--text-primary)', border: 'none', padding: 0 }}
+        style={{ fontSize: 15, color: 'var(--text-primary)', border: 'none', padding: 0 }}
       />
     </div>
   );
@@ -242,18 +242,18 @@ export default function ProfilePage() {
               {editing ? (
                 <>
                   <button onClick={cancelEdit} className="font-mono uppercase tracking-widest"
-                    style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                    style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>
                     Cancel
                   </button>
                   <button onClick={handleSave} disabled={isSaving} className="font-mono uppercase tracking-widest"
-                    style={{ fontSize: 10, padding: '6px 18px', borderRadius: 999, background: 'var(--accent-primary)', color: '#fff', border: 'none', cursor: isSaving ? 'default' : 'pointer', opacity: isSaving ? 0.7 : 1 }}>
+                    style={{ fontSize: 11, padding: '6px 18px', borderRadius: 999, background: 'var(--accent-primary)', color: '#fff', border: 'none', cursor: isSaving ? 'default' : 'pointer', opacity: isSaving ? 0.7 : 1 }}>
                     {isSaving ? 'Saving...' : 'Save'}
                   </button>
                 </>
               ) : (
                 <button onClick={() => setEditing(true)}
                   className="flex items-center gap-1.5 font-mono uppercase tracking-widest transition-colors"
-                  style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
+                  style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
                   <PencilIcon size={10} /> Edit
@@ -267,7 +267,7 @@ export default function ProfilePage() {
 
             {/* LEFT: Identity */}
             <div>
-              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 20 }}>Identity</p>
+              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 20 }}>Identity</p>
 
               {editing ? (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
@@ -282,16 +282,16 @@ export default function ProfilePage() {
                   ))}
 
                   <div style={{ paddingBottom: 16, borderBottom: '1px solid var(--bg-tertiary)', marginBottom: 16 }}>
-                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Date</p>
+                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Date</p>
                     <DatePicker label="" value={form.date_of_birth} onChange={v => setForm(p => ({ ...p, date_of_birth: v }))} />
                   </div>
                   <div style={{ paddingBottom: 16, borderBottom: '1px solid var(--bg-tertiary)', marginBottom: 16 }}>
-                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Time</p>
+                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Time</p>
                     <TimePicker label="" value={form.time_of_birth} onChange={v => setForm(p => ({ ...p, time_of_birth: v }))} />
                   </div>
 
                   <div style={{ gridColumn: '1 / -1', paddingBottom: 4 }}>
-                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Place of Birth</p>
+                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Place of Birth</p>
                     <div className="relative" ref={placeRef}>
                       <input type="text" value={form.place_of_birth}
                         onChange={e => handlePlaceInput(e.target.value)}
@@ -305,7 +305,7 @@ export default function ProfilePage() {
                         }}
                         placeholder="City, Country" autoComplete="off"
                         className="w-full bg-transparent outline-none font-serif pr-5"
-                        style={{ fontSize: 14, color: 'var(--text-primary)', border: 'none', padding: 0 }}
+                        style={{ fontSize: 15, color: 'var(--text-primary)', border: 'none', padding: 0 }}
                       />
                       <div className="absolute right-0 top-0.5" style={{ color: 'var(--text-tertiary)', pointerEvents: 'none' }}>
                         {placeLoading
@@ -320,7 +320,7 @@ export default function ProfilePage() {
                               className="w-full text-left transition-colors"
                               style={{ padding: '8px 14px', background: activePlaceIdx === i ? 'var(--bg-tertiary)' : 'transparent', border: 'none', borderBottom: i < placeResults.length - 1 ? '1px solid var(--bg-tertiary)' : 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
                               <svg className="w-3 h-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--accent-primary)' }}><path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5C10.62,11.5 9.5,10.38 9.5,9C9.5,7.62 10.62,6.5 12,6.5C13.38,6.5 14.5,7.62 14.5,9C14.5,10.38 13.38,11.5 12,11.5Z" /></svg>
-                              <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-primary)' }}>{place.name}</span>
+                              <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-primary)' }}>{place.name}</span>
                               {(place.state || place.country) && (
                                 <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{[place.state, place.country].filter(Boolean).join(', ')}</span>
                               )}
@@ -355,7 +355,7 @@ export default function ProfilePage() {
 
               {/* Theme */}
               <div style={{ marginBottom: 28 }}>
-                <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 16 }}>Theme</p>
+                <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 16 }}>Theme</p>
                 <ThemeSelector />
               </div>
 
@@ -364,11 +364,11 @@ export default function ProfilePage() {
               {/* Security */}
               <div style={{ marginBottom: 28 }}>
                 <div className="flex items-center justify-between" style={{ marginBottom: showPwForm ? 16 : 8 }}>
-                  <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Security</p>
+                  <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Security</p>
                   {!showPwForm && (
                     <button onClick={() => setShowPwForm(true)}
                       className="font-mono uppercase tracking-widest transition-colors"
-                      style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
+                      style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
                       onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent-primary)')}
                       onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
                       Change Password
@@ -380,33 +380,34 @@ export default function ProfilePage() {
                   <form onSubmit={handlePasswordChange}>
                     {pwError && <p className="font-serif italic" style={{ fontSize: 12, color: '#ef4444', marginBottom: 12 }}>{pwError}</p>}
                     {[
-                      { key: 'current', label: 'Current Password' },
-                      { key: 'next',    label: 'New Password' },
-                      { key: 'confirm', label: 'Confirm' },
-                    ].map(({ key, label }, idx) => (
+                      { key: 'current', label: 'Current Password', placeholder: 'the one you remember' },
+                      { key: 'next',    label: 'New Password',     placeholder: 'something only you know' },
+                      { key: 'confirm', label: 'Confirm',          placeholder: 'say it again' },
+                    ].map(({ key, label, placeholder }, idx) => (
                       <div key={key} style={{ paddingBottom: 12, borderBottom: '1px solid var(--bg-tertiary)', marginBottom: 12 }}>
-                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>{label}</p>
+                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>{label}</p>
                         <input type="password" value={pwForm[key as keyof typeof pwForm]}
                           onChange={e => { setPwForm(p => ({ ...p, [key]: e.target.value })); setPwError(''); }}
+                          placeholder={placeholder}
                           className="w-full bg-transparent outline-none font-serif"
-                          style={{ fontSize: 14, color: 'var(--text-primary)', border: 'none', padding: 0 }} />
+                          style={{ fontSize: 15, color: 'var(--text-primary)', border: 'none', padding: 0, boxShadow: 'none' }} />
                       </div>
                     ))}
                     <div className="flex items-center gap-4 pt-1">
                       <button type="button"
                         onClick={() => { setShowPwForm(false); setPwForm({ current: '', next: '', confirm: '' }); setPwError(''); }}
                         className="font-mono uppercase tracking-widest"
-                        style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>
+                        style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>
                         Cancel
                       </button>
                       <button type="submit" disabled={pwSaving} className="font-mono uppercase tracking-widest"
-                        style={{ fontSize: 10, padding: '6px 18px', borderRadius: 999, background: 'var(--accent-primary)', color: '#fff', border: 'none', cursor: pwSaving ? 'default' : 'pointer', opacity: pwSaving ? 0.7 : 1 }}>
+                        style={{ fontSize: 11, padding: '6px 18px', borderRadius: 999, background: 'var(--accent-primary)', color: '#fff', border: 'none', cursor: pwSaving ? 'default' : 'pointer', opacity: pwSaving ? 0.7 : 1 }}>
                         {pwSaving ? 'Updating...' : 'Update'}
                       </button>
                     </div>
                   </form>
                 ) : (
-                  <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+                  <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
                     Your password keeps your light private.
                   </p>
                 )}
@@ -416,12 +417,12 @@ export default function ProfilePage() {
 
               {/* Sign out */}
               <div className="flex items-center justify-between">
-                <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+                <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
                   Your theme travels with you.
                 </p>
                 <button onClick={handleSignOut} disabled={signingOut}
                   className="font-mono uppercase tracking-widest transition-colors"
-                  style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: signingOut ? 'default' : 'pointer', opacity: signingOut ? 0.5 : 1 }}
+                  style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: signingOut ? 'default' : 'pointer', opacity: signingOut ? 0.5 : 1 }}
                   onMouseEnter={e => { if (!signingOut) (e.currentTarget.style.color = '#ef4444'); }}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
                   {signingOut ? 'Leaving...' : 'Sign Out'}

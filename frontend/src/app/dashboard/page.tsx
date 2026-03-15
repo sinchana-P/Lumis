@@ -33,7 +33,7 @@ const ORBIT_POSITIONS = [
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <p className="font-mono uppercase tracking-widest"
-      style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 12 }}>
+      style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 12 }}>
       {children}
     </p>
   );
@@ -81,7 +81,7 @@ export default function DashboardPage() {
             {/* Left — greeting */}
             <div>
               <p className="font-mono uppercase tracking-widest"
-                style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
+                style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 6 }}>
                 {dateStr}
               </p>
               <h1 className="font-serif font-light"
@@ -89,7 +89,7 @@ export default function DashboardPage() {
                 {greeting}, {firstName}
               </h1>
               <p className="font-serif italic"
-                style={{ fontSize: 14, color: 'var(--text-tertiary)', letterSpacing: '0.01em' }}>
+                style={{ fontSize: 15, color: 'var(--text-tertiary)', letterSpacing: '0.01em' }}>
                 Every person in your orbit is a window into yourself.
               </p>
             </div>
@@ -110,7 +110,7 @@ export default function DashboardPage() {
                         {value}
                       </p>
                       <p className="font-mono uppercase tracking-widest"
-                        style={{ fontSize: 9, color: 'var(--text-tertiary)', marginTop: 4 }}>
+                        style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
                         {label}
                       </p>
                     </div>
@@ -155,7 +155,7 @@ export default function DashboardPage() {
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-primary)' }} />
                     <span className="font-mono uppercase tracking-widest"
-                      style={{ fontSize: 10, color: 'var(--accent-primary)' }}>
+                      style={{ fontSize: 11, color: 'var(--accent-primary)' }}>
                       Current vibe: Serene
                     </span>
                   </div>
@@ -182,16 +182,16 @@ export default function DashboardPage() {
                         <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, marginTop: 6, flexShrink: 0 }} />
                         <div className="flex-1">
                           <p className="font-mono uppercase tracking-widest"
-                            style={{ fontSize: 9, color, marginBottom: 5 }}>
+                            style={{ fontSize: 11, color, marginBottom: 5 }}>
                             {tag}
                           </p>
                           <p className="font-serif"
-                            style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.6 }}>
+                            style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>
                             {text}
                           </p>
                           <button
                             className="font-mono uppercase tracking-widest transition-colors"
-                            style={{ fontSize: 9, color: 'var(--text-tertiary)', background: 'none', border: 'none', padding: 0, marginTop: 8, cursor: 'pointer' }}
+                            style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', padding: 0, marginTop: 8, cursor: 'pointer' }}
                             onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
                             onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
                             {action} →
@@ -217,7 +217,7 @@ export default function DashboardPage() {
                   ].map(({ label, path }) => (
                     <button key={label} onClick={() => router.push(path)}
                       className="font-mono uppercase tracking-widest transition-all"
-                      style={{ fontSize: 10, padding: '7px 16px', borderRadius: 20, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                      style={{ fontSize: 11, padding: '7px 16px', borderRadius: 20, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-secondary)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-tertiary)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--bg-tertiary)'; }}>
                       {label}
@@ -274,7 +274,7 @@ export default function DashboardPage() {
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                           boxShadow: '0 0 0 3px var(--bg-secondary), 0 0 16px color-mix(in srgb, var(--accent-primary) 40%, transparent)',
                         }}>
-                          <span className="font-mono" style={{ fontSize: 9, color: '#fff', letterSpacing: '0.05em' }}>ME</span>
+                          <span className="font-mono" style={{ fontSize: 11, color: '#fff', letterSpacing: '0.05em' }}>ME</span>
                         </div>
                       </div>
 
@@ -303,7 +303,7 @@ export default function DashboardPage() {
                             }}>
                               {member.photoUrl
                                 ? <img src={member.photoUrl} alt={member.fullName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                : <span className="font-serif font-medium" style={{ fontSize: 13, color: '#fff' }}>{member.fullName.charAt(0)}</span>
+                                : <span className="font-serif font-medium" style={{ fontSize: 14, color: '#fff' }}>{member.fullName.charAt(0)}</span>
                               }
                             </div>
                           </div>
@@ -321,7 +321,7 @@ export default function DashboardPage() {
                       </p>
                       <button onClick={() => router.push('/orbit/add')}
                         className="font-mono uppercase tracking-widest"
-                        style={{ fontSize: 9, padding: '5px 12px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                        style={{ fontSize: 11, padding: '5px 12px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                         Add Luminary
                       </button>
                     </div>
@@ -331,7 +331,7 @@ export default function DashboardPage() {
                 {members.length > 0 && (
                   <button onClick={() => router.push('/orbit')}
                     className="font-mono uppercase tracking-widest w-full transition-colors"
-                    style={{ fontSize: 9, color: 'var(--text-tertiary)', background: 'none', border: 'none', padding: '8px 0 0', cursor: 'pointer', textAlign: 'right' }}
+                    style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', padding: '8px 0 0', cursor: 'pointer', textAlign: 'right' }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
                     onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
                     View all {members.length} luminaries →
@@ -354,22 +354,22 @@ export default function DashboardPage() {
                         style={{ padding: '12px 16px', borderBottom: i < arr.length - 1 ? '1px solid var(--bg-tertiary)' : 'none', background: 'var(--bg-primary)' }}>
                         <div>
                           <p className="font-mono uppercase tracking-widest"
-                            style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 3 }}>
+                            style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 3 }}>
                             {label}
                           </p>
-                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-primary)' }}>{value}</p>
+                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)' }}>{value}</p>
                         </div>
                         <span style={{ fontSize: 18, color, opacity: 0.8 }}>{symbol}</span>
                       </div>
                     ))
                   ) : (
                     <div style={{ padding: '22px 18px', textAlign: 'center' }}>
-                      <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)', marginBottom: 14, lineHeight: 1.6 }}>
+                      <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 14, lineHeight: 1.6 }}>
                         Add your birth details to unlock your cosmic blueprint.
                       </p>
                       <button onClick={() => router.push('/profile')}
                         className="font-mono uppercase tracking-widest"
-                        style={{ fontSize: 9, padding: '6px 14px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+                        style={{ fontSize: 11, padding: '6px 14px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                         Complete Profile
                       </button>
                     </div>

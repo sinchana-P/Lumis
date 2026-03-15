@@ -538,7 +538,7 @@ export default function MembersPage() {
                     {member.photoUrl ? (
                       <img src={member.photoUrl} alt={member.fullName} className="w-full h-full object-cover" />
                     ) : (
-                      <span className="font-serif font-medium" style={{ fontSize: 13, color: '#fff' }}>
+                      <span className="font-serif font-medium" style={{ fontSize: 14, color: '#fff' }}>
                         {member.fullName.charAt(0).toUpperCase()}
                       </span>
                     )}
@@ -546,15 +546,15 @@ export default function MembersPage() {
 
                   {/* Name + meta */}
                   <div className="flex-1 min-w-0">
-                    <span className="font-serif truncate block" style={{ fontSize: 14, color: 'var(--text-primary)' }}>
+                    <span className="font-serif truncate block" style={{ fontSize: 15, color: 'var(--text-primary)' }}>
                       {member.fullName}
                     </span>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                         {getRelationshipType(member)}
                       </span>
-                      <span style={{ color: 'var(--text-tertiary)', fontSize: 10 }}>•</span>
-                      <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                      <span style={{ color: 'var(--text-tertiary)', fontSize: 11 }}>•</span>
+                      <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                         Added {new Date(member.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
                       </span>
                     </div>
@@ -563,13 +563,13 @@ export default function MembersPage() {
                   {/* Health */}
                   <div className="text-right flex-shrink-0" style={{ width: 48 }}>
                     <span className="font-serif font-medium" style={{ fontSize: 16, color: 'var(--text-primary)' }}>{health}</span>
-                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginTop: 1 }}>Health</p>
+                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>Health</p>
                   </div>
 
                   {/* Energy */}
                   <div className="flex flex-col items-center flex-shrink-0" style={{ width: 64 }}>
                     <div className="w-2 h-2 rounded-full" style={{ background: energyColor }} />
-                    <span className="font-mono uppercase tracking-widest mt-1" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>
+                    <span className="font-mono uppercase tracking-widest mt-1" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                       {energyLabel}
                     </span>
                   </div>
@@ -606,16 +606,16 @@ export default function MembersPage() {
               style={{ height: 44, border: '1px solid var(--bg-tertiary)', borderTop: '1px solid var(--bg-tertiary)', background: 'var(--bg-secondary)' }}>
               {/* Left: count + per-page */}
               <div className="flex items-center gap-3">
-                <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                   {sortedMembers.length === 0 ? '0' : `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, sortedMembers.length)}`} of {sortedMembers.length}
                 </span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono" style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Per page</span>
+                  <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Per page</span>
                   <select
                     value={pageSize}
                     onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
                     className="font-mono focus:outline-none"
-                    style={{ fontSize: 10, padding: '2px 4px', borderRadius: 5, border: '1px solid var(--bg-tertiary)', background: 'var(--bg-primary)', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                    style={{ fontSize: 11, padding: '2px 4px', borderRadius: 5, border: '1px solid var(--bg-tertiary)', background: 'var(--bg-primary)', color: 'var(--text-secondary)', cursor: 'pointer' }}
                   >
                     {[5, 10, 20, 50].map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
@@ -636,7 +636,7 @@ export default function MembersPage() {
                   </button>
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
                     <button key={p} onClick={() => setPage(p)} className="font-mono"
-                      style={{ width: 26, height: 26, borderRadius: 6, fontSize: 10, border: p === page ? 'none' : '1px solid var(--bg-tertiary)', background: p === page ? 'var(--accent-primary)' : 'transparent', color: p === page ? '#fff' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                      style={{ width: 26, height: 26, borderRadius: 6, fontSize: 11, border: p === page ? 'none' : '1px solid var(--bg-tertiary)', background: p === page ? 'var(--accent-primary)' : 'transparent', color: p === page ? '#fff' : 'var(--text-secondary)', cursor: 'pointer' }}>
                       {p}
                     </button>
                   ))}

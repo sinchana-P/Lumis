@@ -237,7 +237,7 @@ function MessageBubble({ msg }: { msg: Message }) {
                 </span>
                 <span
                   className="font-mono uppercase tracking-wider"
-                  style={{ fontSize: 'clamp(10px, 0.85vw, 10px)', color: 'var(--text-tertiary)' }}
+                  style={{ fontSize: 'clamp(11px, 0.85vw, 11px)', color: 'var(--text-tertiary)' }}
                 >
                   {mode?.label}
                 </span>
@@ -628,7 +628,7 @@ export default function LumenPage() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
-                    <span style={{ color: 'var(--bg-tertiary)', fontSize: 10 }}>/</span>
+                    <span style={{ color: 'var(--bg-tertiary)', fontSize: 11 }}>/</span>
                   </div>
                 ))}
               </div>

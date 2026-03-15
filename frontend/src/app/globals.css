@@ -13,13 +13,14 @@
     --font-mono: 'JetBrains Mono', monospace;
 
     /* Type scale — consistent across the whole app */
-    --text-label: 12px;   /* mono uppercase section labels — minimum readable */
-    --text-meta: 12px;    /* timestamps, badges, counts */
-    --text-body-sm: 14px; /* secondary body text */
-    --text-body: 16px;    /* primary body text */
-    --text-lg: 20px;      /* card headings */
+    --text-micro: 11px;   /* mono uppercase field labels (FIRST NAME, BIRTH DATE) */
+    --text-label: 11px;   /* mono uppercase section labels (IDENTITY, THEME) */
+    --text-meta: 12px;    /* timestamps, badges, counts, button text */
+    --text-body-sm: 14px; /* secondary serif / italic text */
+    --text-body: 15px;    /* primary body / field values */
+    --text-lg: 20px;      /* card headings, names */
     --text-xl: 24px;      /* page section headings */
-    --text-2xl: 30px;     /* page titles */
+    --text-2xl: 32px;     /* page titles / greetings */
 }
 
   body {
@@ -220,10 +221,18 @@
   transition: none !important;
 }
 
-/* Focus states */
+/* Focus states — no outlines, no glow rings on inputs */
 *:focus-visible {
   outline: none;
-  box-shadow: var(--glow-focus);
+  box-shadow: none;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Thin themed scrollbar */
