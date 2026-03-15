@@ -5,6 +5,7 @@ import { Crimson_Pro } from 'next/font/google';
 import { ReduxProvider } from '@/store/Provider';
 import { AuthInitializer } from '@/components/auth/AuthInitializer';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { BottomNav } from '@/components/layout/BottomNav';
 import './globals.css';
 
 const crimsonPro = Crimson_Pro({
@@ -32,6 +33,7 @@ export default function RootLayout({
           <ReduxProvider>
             <AuthInitializer>
               {children}
+              <BottomNav />
             </AuthInitializer>
           </ReduxProvider>
         </ThemeProvider>
