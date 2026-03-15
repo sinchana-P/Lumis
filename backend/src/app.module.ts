@@ -8,6 +8,7 @@ import { TraitsModule } from './modules/traits/traits.module';
 import { IncidentsModule } from './modules/incidents/incidents.module';
 import { PatternsModule } from './modules/patterns/patterns.module';
 import { InteractionsModule } from './modules/interactions/interactions.module';
+import { JournalModule } from './modules/journal/journal.module';
 import { SupabaseModule } from './common/modules/supabase.module';
 import configuration from './config/configuration';
 
@@ -25,6 +26,7 @@ import configuration from './config/configuration';
     IncidentsModule,
     PatternsModule,
     InteractionsModule,
+    JournalModule,
   ],
   controllers: [AppController],
   providers: [AppService],

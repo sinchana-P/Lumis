@@ -35,6 +35,10 @@ export function MemberPageHeader({ tabs, activeTab, onActionClick, onSecondaryAc
         return <Button onClick={onActionClick}>Log Interaction</Button>;
       case 'incidents':
         return <Button onClick={onActionClick}>Add Incident</Button>;
+      case 'numerology':
+        return <Button onClick={onActionClick}>Generate Numerology</Button>;
+      case 'astrology':
+        return <Button onClick={onActionClick}>Generate Astrology</Button>;
       // case 'traits':
       //   return <Button onClick={onActionClick}>Add Trait</Button>;
       case 'report':

@@ -20,15 +20,73 @@ const ORBIT_COLORS = [
   '#C8B8B0', // blush stone
 ];
 
-// Positions guaranteed to stay inside the map (distance ≤ 36, accounting for label)
-const ORBIT_POSITIONS = [
-  { d: 22, a: 270 }, // top-center
-  { d: 22, a: 30  }, // right
-  { d: 22, a: 150 }, // left
-  { d: 36, a: 330 }, // top-right outer
-  { d: 36, a: 210 }, // top-left outer
-  { d: 34, a: 90  }, // bottom outer (slightly closer for label room)
-];
+// Generate positions based on relationship health scores
+const generateHealthBasedPositions = (members: any[]): { [key: string]: { d: number; a: number } } => {
+  if (members.length === 0) return {};
+  
+  // Simple seeded random function for consistent positioning
+  const seededRandom = (seed: number) => {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  };
+  
+  // Calculate health scores for all members
+  const membersWithHealth = members.map(member => ({
+    ...member,
+    health: getRelationshipHealth(member)
+  }));
+  
+  // Sort by health score (highest first)
+  const sortedMembers = [...membersWithHealth].sort((a, b) => b.health - a.health);
+  
+  const positions: { [key: string]: { d: number; a: number } } = {};
+  
+  sortedMembers.forEach((member, i) => {
+    const health = member.health;
+    
+    // Use member ID as seed for consistent randomness
+    const seed = member.id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+    
+    // Determine distance based on health score
+    let distance;
+    if (health >= 80) {
+      distance = 15; // Very close - excellent relationships
+    } else if (health >= 70) {
+      distance = 20; // Close - good relationships
+    } else if (health >= 60) {
+      distance = 25; // Medium - okay relationships
+    } else if (health >= 50) {
+      distance = 30; // Further - challenging relationships
+    } else {
+      distance = 35; // Furthest - difficult relationships
+    }
+    
+    // Add some randomness to avoid perfect circles (but consistent)
+    const randomOffset = (seededRandom(seed) - 0.5) * 4;
+    distance += randomOffset;
+    
+    // Calculate angle with some spacing
+    const baseAngle = (i * 360) / sortedMembers.length;
+    const angleVariation = (seededRandom(seed + 1) - 0.5) * 30; // ±15 degrees variation
+    const angle = baseAngle + angleVariation;
+    
+    positions[member.id] = { d: Math.max(12, Math.min(38, distance)), a: angle };
+  });
+  
+  return positions;
+};
+
+// Helper function to get relationship health (same as in orbit page)
+const getRelationshipHealth = (member: any) => {
+  const healthMap: Record<string, number> = {
+    'partner': Math.floor(Math.random() * 20) + 80,
+    'family': Math.floor(Math.random() * 30) + 60,
+    'friend': Math.floor(Math.random() * 40) + 50,
+    'colleague': Math.floor(Math.random() * 30) + 40,
+    'acquaintance': Math.floor(Math.random() * 20) + 30,
+  };
+  return healthMap[member.relationType] || 65;
+};
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
@@ -245,70 +303,85 @@ export default function DashboardPage() {
                 }}>
                   {members.length > 0 ? (
                     <>
-                      {/* SVG: rings + colored lines */}
-                      <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-                        {[38, 26, 13].map(r => (
-                          <circle key={r} cx="50%" cy="50%" r={`${r}%`}
-                            fill="none" stroke="var(--text-tertiary)"
-                            strokeWidth="1" strokeDasharray="3,6" opacity="0.35" />
-                        ))}
-                        {members.slice(0, 6).map((_, i) => {
-                          const { d, a } = ORBIT_POSITIONS[i] ?? { d: 0, a: 0 };
-                          const rad = (a * Math.PI) / 180;
-                          const x = 50 + d * Math.cos(rad);
-                          const y = 50 + d * Math.sin(rad);
-                          return (
-                            <line key={i} x1="50%" y1="50%"
-                              x2={`${x}%`} y2={`${y}%`}
-                              stroke={ORBIT_COLORS[i % ORBIT_COLORS.length]}
-                              strokeWidth="1" opacity="0.3" />
-                          );
-                        })}
-                      </svg>
-
-                      {/* Center ME */}
-                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 2 }}>
-                        <div style={{
-                          width: 36, height: 36, borderRadius: '50%',
-                          background: 'var(--accent-primary)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          boxShadow: '0 0 0 3px var(--bg-secondary), 0 0 16px color-mix(in srgb, var(--accent-primary) 40%, transparent)',
-                        }}>
-                          <span className="font-mono" style={{ fontSize: 11, color: '#fff', letterSpacing: '0.05em' }}>ME</span>
-                        </div>
-                      </div>
-
-                      {/* Member nodes — no labels, clean circles */}
-                      {members.slice(0, 6).map((member, i) => {
-                        const { d, a } = ORBIT_POSITIONS[i] ?? { d: 0, a: 0 };
-                        const rad = (a * Math.PI) / 180;
-                        const x = 50 + d * Math.cos(rad);
-                        const y = 50 + d * Math.sin(rad);
-                        const color = ORBIT_COLORS[i % ORBIT_COLORS.length];
+                      {(() => {
+                        // Calculate positions once and reuse for both lines and nodes
+                        const positions = generateHealthBasedPositions(members);
+                        
                         return (
-                          <div key={member.id} title={member.fullName}
-                            style={{
-                              position: 'absolute',
-                              left: `${x}%`, top: `${y}%`,
-                              transform: 'translate(-50%,-50%)',
-                              zIndex: 2, cursor: 'pointer',
-                            }}
-                            onClick={() => router.push(`/orbit/${member.id}`)}>
-                            <div style={{
-                              width: 32, height: 32, borderRadius: '50%',
-                              background: color,
-                              display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              overflow: 'hidden',
-                              boxShadow: `0 0 0 2px var(--bg-secondary), 0 4px 14px ${color}70`,
-                            }}>
-                              {member.photoUrl
-                                ? <img src={member.photoUrl} alt={member.fullName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                : <span className="font-serif font-medium" style={{ fontSize: 14, color: '#fff' }}>{member.fullName.charAt(0)}</span>
-                              }
+                          <>
+                            {/* SVG: rings + colored lines */}
+                            <svg style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+                              {[38, 26, 13].map(r => (
+                                <circle key={r} cx="50%" cy="50%" r={`${r}%`}
+                                  fill="none" stroke="var(--text-tertiary)"
+                                  strokeWidth="1" strokeDasharray="3,6" opacity="0.35" />
+                              ))}
+                              {members.map((member, i) => {
+                                const position = positions[member.id];
+                                if (!position) return null;
+                                const { d, a } = position;
+                                const rad = (a * Math.PI) / 180;
+                                const x = 50 + d * Math.cos(rad);
+                                const y = 50 + d * Math.sin(rad);
+                                return (
+                                  <line key={member.id} x1="50%" y1="50%"
+                                    x2={`${x}%`} y2={`${y}%`}
+                                    stroke={ORBIT_COLORS[i % ORBIT_COLORS.length]}
+                                    strokeWidth="1" opacity="0.3" />
+                                );
+                              })}
+                            </svg>
+
+                            {/* Center ME */}
+                            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 2 }}>
+                              <div style={{
+                                width: 36, height: 36, borderRadius: '50%',
+                                background: 'var(--accent-primary)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                boxShadow: '0 0 0 3px var(--bg-secondary), 0 0 16px color-mix(in srgb, var(--accent-primary) 40%, transparent)',
+                              }}>
+                                <span className="font-mono" style={{ fontSize: 11, color: '#fff', letterSpacing: '0.05em' }}>ME</span>
+                              </div>
                             </div>
-                          </div>
+
+                            {/* Member nodes — all members displayed with health-based positioning */}
+                            {members.map((member, i) => {
+                              const position = positions[member.id];
+                              if (!position) return null;
+                              const { d, a } = position;
+                              const rad = (a * Math.PI) / 180;
+                              const x = 50 + d * Math.cos(rad);
+                              const y = 50 + d * Math.sin(rad);
+                              const color = ORBIT_COLORS[i % ORBIT_COLORS.length];
+                              return (
+                                <div key={member.id} title={member.fullName}
+                                  style={{
+                                    position: 'absolute',
+                                    left: `${x}%`, top: `${y}%`,
+                                    transform: 'translate(-50%,-50%)',
+                                    zIndex: 2, cursor: 'pointer',
+                                  }}
+                                  onClick={() => router.push(`/orbit/${member.id}`)}>
+                                  <div style={{
+                                    width: members.length > 10 ? 28 : 32, 
+                                    height: members.length > 10 ? 28 : 32, 
+                                    borderRadius: '50%',
+                                    background: color,
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    overflow: 'hidden',
+                                    boxShadow: `0 0 0 2px var(--bg-secondary), 0 4px 14px ${color}70`,
+                                  }}>
+                                    {member.photoUrl
+                                      ? <img src={member.photoUrl} alt={member.fullName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                      : <span className="font-serif font-medium" style={{ fontSize: members.length > 10 ? 12 : 14, color: '#fff' }}>{member.fullName.charAt(0)}</span>
+                                    }
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </>
                         );
-                      })}
+                      })()}
                     </>
                   ) : (
                     <div className="flex flex-col items-center justify-center" style={{ height: '100%', gap: 12 }}>

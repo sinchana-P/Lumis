@@ -95,6 +95,7 @@ export default function MemberDetailPage() {
   const [incidentsAddOpen, setIncidentsAddOpen] = useState(false);
   const [patternsAddOpen, setPatternsAddOpen]         = useState(false);
   const [interactionsAddOpen, setInteractionsAddOpen] = useState(false);
+  const [journalAddOpen, setJournalAddOpen]           = useState(false);
   
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
@@ -165,7 +166,7 @@ export default function MemberDetailPage() {
       case 'interactions':
         return <MemberInteractionsTab member={member} externalAddOpen={interactionsAddOpen} onExternalAddClose={() => setInteractionsAddOpen(false)} />;
       case 'journal':
-        return <MemberJournalTab member={member} />;
+        return <MemberJournalTab member={member} externalAddOpen={journalAddOpen} onExternalAddClose={() => setJournalAddOpen(false)} />;
       case 'numerology':
         return <MemberNumerologyTab member={member} />;
       case 'astrology':
@@ -292,14 +293,21 @@ export default function MemberDetailPage() {
           onActionClick={() => {
             // Handle tab-specific actions
             if (activeTab === 'journal') {
-              // Trigger journal new entry
-              console.log('Open new journal entry');
+              setJournalAddOpen(true);
             } else if (activeTab === 'patterns') {
               setPatternsAddOpen(true);
             } else if (activeTab === 'interactions') {
               setInteractionsAddOpen(true);
             } else if (activeTab === 'incidents') {
               setIncidentsAddOpen(true);
+            } else if (activeTab === 'numerology') {
+              // Handle numerology generation
+              console.log('Generate numerology data for member:', member.fullName);
+              // TODO: Implement numerology generation logic
+            } else if (activeTab === 'astrology') {
+              // Handle astrology generation
+              console.log('Generate astrology data for member:', member.fullName);
+              // TODO: Implement astrology generation logic
             } else if (activeTab === 'traits') {
               // Trigger add trait
               console.log('Open add trait');

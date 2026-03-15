@@ -1,585 +1,613 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { useSpeechToText, Waveform } from '@/components/ui/SpeechInput';
+import { useState, useEffect } from 'react';
+import {
+  useGetJournalEntriesQuery,
+  useCreateJournalEntryMutation,
+  useUpdateJournalEntryMutation,
+  useDeleteJournalEntryMutation,
+  type JournalEntry,
+  type CreateJournalEntryRequest,
+} from '@/store/api/journalApi';
+import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
+import { DottedDivider } from '@/components/ui/DottedDivider';
+import { TwoColumnModal } from '@/components/ui/TwoColumnModal';
+import { SpeechTextarea } from '@/components/ui/SpeechTextarea';
 
-interface Member {
-  id: string;
-  fullName: string;
-  [key: string]: any;
-}
-
+interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberJournalTabProps {
   member: Member;
+  externalAddOpen?: boolean;
+  onExternalAddClose?: () => void;
 }
 
-interface JournalEntry {
-  id: string;
-  title?: string;
-  content: string;
-  mood: string[];
-  tags: string[];
-  isPrivate: boolean;
-  createdAt: string;
-  updatedAt?: string;
-}
+// ── Constants ─────────────────────────────────────────────────────────────────
 
-// Mock data
-const mockJournalEntries: JournalEntry[] = [
-  {
-    id: '1',
-    title: 'The Lighthouse Story',
-    content: 'Something felt different today. She mentioned the childhood story again, the one about the lighthouse.',
-    mood: ['thoughtful', 'protective', 'understanding'],
-    tags: ['vulnerability', 'patterns', 'childhood'],
-    isPrivate: false,
-    createdAt: '2024-03-12T21:30:00Z'
-  },
-  {
-    id: '2',
-    title: 'Patterns of Withdrawal',
-    content: 'Lumen suggested I look at the pattern of her withdrawing after deep conversations.',
-    mood: ['insightful', 'patient', 'accepting'],
-    tags: ['patterns', 'communication', 'growth'],
-    isPrivate: true,
-    createdAt: '2024-03-10T23:15:00Z'
-  },
-  {
-    id: '3',
-    title: 'Morning Coffee Ritual',
-    content: 'She makes coffee like it\'s a meditation.',
-    mood: ['grateful', 'loved', 'peaceful'],
-    tags: ['rituals', 'care', 'daily life'],
-    isPrivate: false,
-    createdAt: '2024-03-08T20:45:00Z'
-  }
+const EMOTION_OPTIONS = [
+  'joyful', 'loved', 'safe', 'grateful', 'peaceful', 'energized', 'hopeful', 'connected',
+  'neutral', 'pensive', 'anxious', 'confused', 'frustrated', 'hurt', 'drained', 'distant',
 ];
 
-export function MemberJournalTab({ member }: MemberJournalTabProps) {
-  const journalTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedEntry, setSelectedEntry] = useState<string | null>(mockJournalEntries[0]?.id || null);
-  const [isPageTurning, setIsPageTurning] = useState(false);
-  const [pageDirection, setPageDirection] = useState<'forward' | 'backward'>('forward');
-  const [newEntry, setNewEntry] = useState({
-    title: '',
-    content: '',
-    mood: [] as string[],
-    tags: [] as string[],
-    isPrivate: false
-  });
+const EMOTION_COLOR: Record<string, string> = {
+  joyful:     'var(--accent-gold)',
+  loved:      'var(--accent-secondary)',
+  safe:       '#7FA87A',
+  grateful:   '#7FA87A',
+  peaceful:   'var(--accent-primary)',
+  energized:  '#7FA87A',
+  hopeful:    'var(--accent-ai)',
+  connected:  'var(--accent-secondary)',
+  neutral:    'var(--text-tertiary)',
+  pensive:    'var(--accent-ai)',
+  anxious:    '#C4A87A',
+  confused:   '#C4A87A',
+  frustrated: '#C47A7A',
+  hurt:       '#C47A7A',
+  drained:    '#C47A7A',
+  distant:    'var(--text-tertiary)',
+};
 
-  const journalSpeech = useSpeechToText({
-    context: 'journal',
-    memberId: member.id,
-    onCapture: (data) => {
-      setNewEntry((prev) => ({
-        ...prev,
-        content: prev.content ? prev.content + ' ' + data.text : data.text,
-      }));
-      setTimeout(() => journalTextareaRef.current?.focus(), 50);
-    },
-  });
-  const isJournalListening = journalSpeech.state === 'listening';
+function emotionColor(e: string) {
+  return EMOTION_COLOR[e] ?? 'var(--text-tertiary)';
+}
 
-  const getMoodStyle = (mood: string): React.CSSProperties => {
-    const styles: Record<string, React.CSSProperties> = {
-      thoughtful:    { background: 'var(--accent-ai-light)',        color: 'var(--accent-ai)',        border: '1px solid var(--accent-ai)' },
-      protective:    { background: 'var(--accent-secondary-light)', color: 'var(--accent-secondary)', border: '1px solid var(--accent-secondary)' },
-      understanding: { background: 'var(--accent-primary-light)',   color: 'var(--accent-primary)',   border: '1px solid var(--accent-primary)' },
-      insightful:    { background: 'var(--accent-ai-light)',        color: 'var(--accent-ai)',        border: '1px solid var(--accent-ai)' },
-      patient:       { background: 'var(--accent-gold-light)',      color: 'var(--accent-gold)',      border: '1px solid var(--accent-gold)' },
-      accepting:     { background: 'var(--success-bg)',             color: 'var(--success)',          border: '1px solid var(--success-border)' },
-      grateful:      { background: 'var(--success-bg)',             color: 'var(--success)',          border: '1px solid var(--success-border)' },
-      loved:         { background: 'var(--accent-secondary-light)', color: 'var(--accent-secondary)', border: '1px solid var(--accent-secondary)' },
-      peaceful:      { background: 'var(--accent-primary-light)',   color: 'var(--accent-primary)',   border: '1px solid var(--accent-primary)' },
-    };
-    return styles[mood] ?? { background: 'var(--surface)', color: 'var(--text-tertiary)', border: '1px solid var(--bg-tertiary)' };
+// ── Journal modal ─────────────────────────────────────────────────────────────
+
+interface ModalForm {
+  title: string;
+  content: string;
+  date: string;
+  emotions: string[];
+  tags: string;
+  isPrivate: boolean;
+}
+
+const EMPTY_FORM: ModalForm = {
+  title: '', content: '',
+  date: new Date().toISOString().split('T')[0],
+  emotions: [], tags: '', isPrivate: false,
+};
+
+function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
+  isOpen: boolean;
+  editing: JournalEntry | null;
+  onClose: () => void;
+  onSave: (payload: CreateJournalEntryRequest) => Promise<void>;
+  saving: boolean;
+}) {
+  const [form, setForm] = useState<ModalForm>(EMPTY_FORM);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (editing) {
+      setForm({
+        title:     editing.title    ?? '',
+        content:   editing.content,
+        date:      editing.date,
+        emotions:  editing.emotions ?? [],
+        tags:      (editing.tags ?? []).join(', '),
+        isPrivate: editing.isPrivate,
+      });
+    } else {
+      setForm(EMPTY_FORM);
+    }
+  }, [isOpen, editing]);
+
+  const handleSave = async () => {
+    if (!form.content.trim() || saving) return;
+    await onSave({
+      content:   form.content.trim(),
+      title:     form.title.trim()  || undefined,
+      date:      form.date,
+      emotions:  form.emotions,
+      tags:      form.tags.split(',').map(t => t.trim()).filter(Boolean),
+      isPrivate: form.isPrivate,
+    });
   };
 
-  const handleEntrySelection = (entryId: string) => {
-    if (entryId === selectedEntry) return;
+  const toggleEmotion = (e: string) => {
+    setForm(f => ({
+      ...f,
+      emotions: f.emotions.includes(e)
+        ? f.emotions.filter(x => x !== e)
+        : [...f.emotions, e],
+    }));
+  };
 
-    const currentEntry = mockJournalEntries.find(entry => entry.id === selectedEntry);
-    const newEntryData = mockJournalEntries.find(entry => entry.id === entryId);
-    
-    if (!currentEntry || !newEntryData) return;
-    
-    const currentDate = new Date(currentEntry.createdAt);
-    const newDate = new Date(newEntryData.createdAt);
-    
-    const direction = newDate < currentDate ? 'backward' : 'forward';
-    
+  const canSave = !!form.content.trim() && !saving;
+
+  const leftPanel = (
+    <>
+      {/* Date */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Date</p>
+        <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+          className="w-full font-mono"
+          style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+        />
+      </div>
+
+      {/* Emotions */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotions</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {EMOTION_OPTIONS.map(e => {
+            const active = form.emotions.includes(e);
+            const color  = emotionColor(e);
+            return (
+              <button key={e} type="button" onClick={() => toggleEmotion(e)}
+                className="font-mono uppercase tracking-widest"
+                style={{
+                  fontSize: 8, padding: '3px 9px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
+                  borderColor: active ? color : 'var(--bg-tertiary)',
+                  background:  active ? color : 'transparent',
+                  color:       active ? '#fff' : 'var(--text-tertiary)',
+                  transition: 'all 140ms',
+                }}>{e}</button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Tags */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>comma sep</span>
+        </p>
+        <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
+          placeholder="vulnerability, growth…" className="w-full font-mono"
+          style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+        />
+      </div>
+
+      {/* Private toggle */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setForm(f => ({ ...f, isPrivate: !f.isPrivate }))}
+          className="flex items-center gap-2"
+          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+        >
+          <div style={{
+            width: 32, height: 18, borderRadius: 999, position: 'relative', transition: 'background 200ms',
+            background: form.isPrivate ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
+            flexShrink: 0,
+          }}>
+            <div style={{
+              position: 'absolute', top: 3, left: form.isPrivate ? 17 : 3, width: 12, height: 12,
+              borderRadius: '50%', background: '#fff', transition: 'left 200ms',
+            }} />
+          </div>
+          <span className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: form.isPrivate ? 'var(--accent-primary)' : 'var(--text-tertiary)' }}>
+            Private
+          </span>
+        </button>
+        {form.isPrivate && (
+          <p className="font-serif" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4, fontStyle: 'italic' }}>
+            Only visible to you
+          </p>
+        )}
+      </div>
+    </>
+  );
+
+  const rightPanel = (
+    <>
+      {/* Title */}
+      <div>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+          Title <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>optional</span>
+        </p>
+        <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+          placeholder="Give your entry a title…" className="w-full font-serif"
+          style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
+        />
+      </div>
+
+      {/* Content */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What's on your mind</p>
+        <SpeechTextarea
+          value={form.content}
+          onChange={v => setForm(f => ({ ...f, content: v }))}
+          placeholder="Write freely. This is just for you."
+          minHeight={220}
+        />
+      </div>
+    </>
+  );
+
+  return (
+    <TwoColumnModal
+      isOpen={isOpen}
+      onClose={onClose}
+      onSave={handleSave}
+      header={editing ? 'Edit Entry' : 'New Journal Entry'}
+      saveLabel={editing ? 'Save Changes' : 'Save Entry'}
+      canSave={canSave}
+      saving={saving}
+      left={leftPanel}
+      right={rightPanel}
+    />
+  );
+}
+
+// ── Main Tab ──────────────────────────────────────────────────────────────────
+
+export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }: MemberJournalTabProps) {
+  const [modalOpen, setModalOpen]          = useState(false);
+  const [editing, setEditing]              = useState<JournalEntry | null>(null);
+  const [selectedId, setSelectedId]        = useState<string | null>(null);
+  const [deletingEntry, setDeleting]       = useState<JournalEntry | null>(null);
+  const [isPageTurning, setIsPageTurning]  = useState(false);
+  const [pageDirection, setPageDirection]  = useState<'forward' | 'backward'>('forward');
+
+  useEffect(() => {
+    if (externalAddOpen) {
+      setEditing(null);
+      setModalOpen(true);
+      onExternalAddClose?.();
+    }
+  }, [externalAddOpen, onExternalAddClose]);
+
+  const { data, isLoading, isError } = useGetJournalEntriesQuery({ memberId: member.id });
+  const [createEntry, { isLoading: creating }] = useCreateJournalEntryMutation();
+  const [updateEntry, { isLoading: updating }] = useUpdateJournalEntryMutation();
+  const [deleteEntry, { isLoading: deleting }] = useDeleteJournalEntryMutation();
+
+  const entries = data?.data ?? [];
+  const selected = entries.find(e => e.id === selectedId) ?? entries[0] ?? null;
+
+  useEffect(() => {
+    if (entries.length && !selectedId) setSelectedId(entries[0].id);
+  }, [entries.length]);
+
+  const openAdd  = () => { setEditing(null); setModalOpen(true); };
+  const openEdit = (e: JournalEntry) => { setEditing(e); setModalOpen(true); };
+
+  const handleSave = async (payload: CreateJournalEntryRequest) => {
+    if (editing) {
+      await updateEntry({ memberId: member.id, id: editing.id, data: payload });
+    } else {
+      const result = await createEntry({ memberId: member.id, ...payload });
+      if ('data' in result) setSelectedId((result.data as JournalEntry).id);
+    }
+    setModalOpen(false);
+    setEditing(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingEntry) return;
+    await deleteEntry({ memberId: member.id, id: deletingEntry.id });
+    if (selectedId === deletingEntry.id) setSelectedId(entries.find(e => e.id !== deletingEntry.id)?.id ?? null);
+    setDeleting(null);
+  };
+
+  const handleSelectEntry = (entry: JournalEntry) => {
+    if (entry.id === selectedId || isPageTurning) return;
+    const currentEntry = entries.find(e => e.id === selectedId);
+    // Newer date = going forward in book (toward front); older = going backward
+    const direction = currentEntry && new Date(entry.date) > new Date(currentEntry.date) ? 'forward' : 'backward';
     setIsPageTurning(true);
     setPageDirection(direction);
-    
-    setTimeout(() => {
-      setSelectedEntry(entryId);
-    }, 500);
-    
-    setTimeout(() => {
-      setIsPageTurning(false);
-    }, 1000);
+    setTimeout(() => setSelectedId(entry.id), 500);
+    setTimeout(() => setIsPageTurning(false), 1100);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Adding new journal entry:', newEntry);
-    setNewEntry({
-      title: '',
-      content: '',
-      mood: [],
-      tags: [],
-      isPrivate: false
-    });
-    setShowAddForm(false);
-  };
+  if (isLoading) return (
+    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading journal…</p>
+    </div>
+  );
 
-  const selectedEntryData = mockJournalEntries.find(entry => entry.id === selectedEntry);
+  if (isError) return (
+    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+      <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Could not load journal. Please try again.</p>
+    </div>
+  );
 
   return (
     <div className="w-full">
-      <style jsx>{`
-        .journal-scrollbar::-webkit-scrollbar {
-          width: 3px;
-        }
-        .journal-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .journal-scrollbar::-webkit-scrollbar-thumb {
-          background: var(--bg-tertiary);
-          border-radius: 99px;
-        }
-        .journal-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: var(--accent-gold);
-        }
-        .journal-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: var(--bg-tertiary) transparent;
-        }
+      {/* Custom scrollbar styles */}
+      <style>{`
+        .journal-page-scroll::-webkit-scrollbar { width: 4px; }
+        .journal-page-scroll::-webkit-scrollbar-track { background: transparent; }
+        .journal-page-scroll::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 999px; }
+        .journal-list-scroll::-webkit-scrollbar { width: 3px; }
+        .journal-list-scroll::-webkit-scrollbar-track { background: transparent; }
+        .journal-list-scroll::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 999px; }
       `}</style>
-      <div className="relative max-w-6xl mx-auto">
-        <div className="absolute inset-0 rounded-2xl transform rotate-1 opacity-10" style={{ background: 'var(--bg-tertiary)' }}></div>
-        
-        <div className="relative rounded-2xl shadow-theme-xl border overflow-hidden" style={{ backgroundColor: 'var(--surface-elevated)', borderColor: 'var(--border-tertiary)' }}>
-          <div className="absolute left-0 top-0 bottom-0 w-6 border-r" style={{ backgroundColor: 'var(--accent-secondary)', borderColor: 'var(--accent-secondary)' }}>
-            <div className="h-full flex flex-col justify-center items-center">
-              <div className="transform -rotate-90 text-xs font-mono uppercase tracking-widest whitespace-nowrap" style={{ color: 'var(--text-inverse)' }}>
-                {member.fullName}
-              </div>
-            </div>
-          </div>
 
-          <div className="ml-6 grid grid-cols-12 h-[70vh] min-h-[500px] max-h-[700px]">
-            <div className="col-span-5 p-6 border-r" style={{ borderColor: 'var(--border-tertiary)', backgroundColor: 'var(--surface)' }}>
-              <div className="mb-6">
-                <div className="text-center mb-3">
-                  <h2 className="font-serif text-lg mb-2" style={{ color: 'var(--text-primary)' }}>
-                    Journal Entries
-                  </h2>
-                  <div className="w-12 h-px mx-auto" style={{ backgroundColor: 'var(--accent-secondary)' }}></div>
-                </div>
-                <p className="font-serif text-xs text-center italic" style={{ color: 'var(--text-secondary)' }}>
-                  "The unexamined life is not worth living" — Socrates
+      <JournalModal
+        isOpen={modalOpen}
+        editing={editing}
+        onClose={() => { setModalOpen(false); setEditing(null); }}
+        onSave={handleSave}
+        saving={creating || updating}
+      />
+
+      {deletingEntry && (
+        <ConfirmDeleteModal
+          title="Delete Entry"
+          itemLabel={deletingEntry.title ?? new Date(deletingEntry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleting(null)}
+          deleting={deleting}
+        />
+      )}
+
+      {entries.length === 0 ? (
+        /* ── Empty state ── */
+        <div style={{ paddingTop: 40, textAlign: 'center' }}>
+          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No journal entries yet</p>
+          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
+            Start writing private reflections about your relationship with {member.fullName}.
+          </p>
+          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            Write First Entry
+          </button>
+        </div>
+      ) : (
+        /* ── Book container with depth layers ── */
+        <div style={{ position: 'relative', maxWidth: 860 }}>
+
+          {/* Shadow layer 3 — deepest */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: 18,
+            transform: 'rotate(2.2deg) translateY(6px)',
+            background: 'var(--bg-tertiary)', opacity: 0.25,
+          }} />
+          {/* Shadow layer 2 */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: 18,
+            transform: 'rotate(1.1deg) translateY(3px)',
+            background: 'var(--bg-tertiary)', opacity: 0.4,
+          }} />
+          {/* Shadow layer 1 — closest */}
+          <div style={{
+            position: 'absolute', inset: 0, borderRadius: 16,
+            transform: 'rotate(0.4deg) translateY(1px)',
+            background: 'var(--bg-tertiary)', opacity: 0.55,
+          }} />
+
+          {/* Book body */}
+          <div style={{
+            position: 'relative', borderRadius: 14, overflow: 'hidden',
+            height: 'min(68vh, 650px)',
+            display: 'flex',
+            border: '1px solid var(--bg-tertiary)',
+            background: 'var(--bg-secondary)',
+            boxShadow: '0 8px 40px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.12)',
+          }}>
+
+            {/* Book spine */}
+            <div style={{
+              width: 22, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%)',
+              boxShadow: 'inset -3px 0 6px rgba(0,0,0,0.15)',
+            }}>
+              <span className="font-mono uppercase tracking-widest whitespace-nowrap" style={{
+                transform: 'rotate(-90deg)', color: 'rgba(255,255,255,0.85)', fontSize: 8,
+                letterSpacing: '0.2em', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis',
+              }}>
+                {member.fullName}
+              </span>
+            </div>
+
+            {/* Left panel — entry list */}
+            <div style={{
+              width: 168, flexShrink: 0, display: 'flex', flexDirection: 'column',
+              borderRight: '1px solid var(--bg-tertiary)',
+              background: 'var(--bg-primary)',
+            }}>
+              {/* List header */}
+              <div style={{ padding: '14px 12px 10px', flexShrink: 0, borderBottom: '1px solid var(--bg-tertiary)' }}>
+                <p className="font-serif text-center" style={{ fontSize: 11, color: 'var(--text-primary)', marginBottom: 4 }}>
+                  Entries
+                </p>
+                <div style={{ width: 24, height: 1, background: 'var(--accent-secondary)', margin: '0 auto 8px' }} />
+                <p className="font-serif italic text-center" style={{ fontSize: 9, color: 'var(--text-tertiary)', lineHeight: 1.4, padding: '0 4px' }}>
+                  "The unexamined life is not worth living"
                 </p>
               </div>
 
-              <div className="space-y-2 overflow-y-auto journal-scrollbar" style={{ maxHeight: 'calc(70vh - 200px)' }}>
-                {mockJournalEntries.map((entry) => (
-                  <div
-                    key={entry.id}
-                    onClick={() => handleEntrySelection(entry.id)}
-                    className={`cursor-pointer p-3 rounded-lg border transition-all duration-300 ${
-                      selectedEntry === entry.id
-                        ? 'shadow-sm'
-                        : 'hover:opacity-80'
-                    }`}
-                    style={{
-                      backgroundColor: selectedEntry === entry.id ? 'var(--accent-primary-light)' : 'var(--surface-elevated)',
-                      borderColor: selectedEntry === entry.id ? 'var(--accent-primary)' : 'var(--border-tertiary)'
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1 min-w-0">
-                        <div className="font-mono text-xs mb-1" style={{ 
-                          color: selectedEntry === entry.id ? '#2A2622' : 'var(--text-tertiary)' 
-                        }}>
-                          {new Date(entry.createdAt).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric',
-                            year: 'numeric'
-                          })}
-                        </div>
-                        {entry.title ? (
-                          <h4 className="font-serif text-sm font-medium truncate" style={{ 
-                            color: selectedEntry === entry.id ? '#1A1816' : 'var(--text-primary)' 
-                          }}>
-                            {entry.title}
-                          </h4>
-                        ) : (
-                          <h4 className="font-serif text-sm italic truncate" style={{ 
-                            color: selectedEntry === entry.id ? '#1A1816' : 'var(--text-secondary)' 
-                          }}>
-                            Untitled Entry
-                          </h4>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 ml-2 flex-shrink-0">
-                        {entry.mood.length > 0 && (
-                          <div className="flex gap-1">
-                            {entry.mood.slice(0, 1).map((mood, idx) => (
-                              <div key={idx} className="w-2 h-2 rounded-full" style={{ background: getMoodStyle(mood).color }}></div>
-                            ))}
-                            {entry.mood.length > 1 && (
-                              <span className="text-xs" style={{ color: 'var(--text-tertiary)' }}>+{entry.mood.length - 1}</span>
-                            )}
-                          </div>
-                        )}
+              {/* Scrollable entries */}
+              <div className="journal-list-scroll" style={{ flex: 1, overflowY: 'auto', padding: '8px 8px 6px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  {entries.map(entry => (
+                    <button
+                      key={entry.id}
+                      type="button"
+                      onClick={() => handleSelectEntry(entry)}
+                      className="text-left w-full"
+                      style={{
+                        padding: '7px 8px', borderRadius: 7, border: '1px solid',
+                        borderColor: selectedId === entry.id ? 'var(--accent-primary)' : 'transparent',
+                        background: selectedId === entry.id ? 'var(--accent-primary-light)' : 'transparent',
+                        cursor: 'pointer', transition: 'all 180ms',
+                      }}
+                      onMouseEnter={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'var(--bg-secondary)'; }}
+                      onMouseLeave={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'transparent'; }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
+                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', flex: 1 }}>
+                          {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
                         {entry.isPrivate && (
-                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20" style={{ color: 'var(--text-tertiary)' }}>
-                            <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clipRule="evenodd" />
+                          /* Lock icon */
+                          <svg width="8" height="9" viewBox="0 0 10 12" fill="none" style={{ flexShrink: 0, color: 'var(--text-tertiary)' }}>
+                            <rect x="1" y="5" width="8" height="6.5" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
+                            <path d="M3 5V3.5a2 2 0 0 1 4 0V5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                            <circle cx="5" cy="8.2" r="0.9" fill="currentColor" />
                           </svg>
                         )}
                       </div>
-                    </div>
-                  </div>
-                ))}
-                
-                <button
-                  onClick={() => setShowAddForm(true)}
-                  className="w-full p-3 border-2 border-dashed border-secondary rounded-lg text-center hover:border-accent-primary hover:bg-accent-primary-light transition-all duration-300 group"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <svg className="w-4 h-4 text-tertiary group-hover:text-accent-primary" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-                    </svg>
-                    <span className="font-mono text-xs uppercase tracking-widest text-tertiary group-hover:text-accent-primary">
-                      New Entry
-                    </span>
-                  </div>
+                      <p className="font-serif truncate" style={{ fontSize: 11, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                        {entry.title || <span style={{ fontStyle: 'italic', color: 'var(--text-tertiary)' }}>Untitled</span>}
+                      </p>
+                      {entry.emotions.length > 0 && (
+                        <div style={{ display: 'flex', gap: 3, marginTop: 4, flexWrap: 'wrap', alignItems: 'center' }}>
+                          {entry.emotions.slice(0, 4).map(e => (
+                            <span key={e} style={{ width: 5, height: 5, borderRadius: '50%', background: emotionColor(e), display: 'inline-block', flexShrink: 0 }} />
+                          ))}
+                          {entry.emotions.length > 4 && (
+                            <span className="font-mono" style={{ fontSize: 7, color: 'var(--text-tertiary)' }}>+{entry.emotions.length - 4}</span>
+                          )}
+                        </div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pinned new entry button */}
+              <div style={{ padding: '6px 8px 10px', flexShrink: 0 }}>
+                <button onClick={openAdd} className="w-full font-mono uppercase tracking-widest"
+                  style={{ padding: '6px 0', fontSize: 8, borderRadius: 7, border: '1px dashed var(--bg-tertiary)', background: 'transparent', color: 'var(--text-tertiary)', cursor: 'pointer', transition: 'all 150ms', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-primary)'; e.currentTarget.style.color = 'var(--accent-primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--bg-tertiary)'; e.currentTarget.style.color = 'var(--text-tertiary)'; }}>
+                  <svg width="8" height="8" viewBox="0 0 10 10" fill="none">
+                    <path d="M5 1v8M1 5h8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                  New Entry
                 </button>
               </div>
             </div>
-            <div className="col-span-7 relative perspective-1000">
-              <div className="absolute inset-0 bg-secondary rounded-l-lg transform translate-x-3 translate-y-3 opacity-20 shadow-lg"></div>
-              <div className="absolute inset-0 bg-secondary rounded-l-lg transform translate-x-2 translate-y-2 opacity-30 shadow-lg"></div>
-              <div className="absolute inset-0 bg-surface rounded-l-lg transform translate-x-1 translate-y-1 opacity-50 shadow-md"></div>
-              
-              <div className="relative preserve-3d">
-                <div className={`relative bg-primary p-8 min-h-[600px] shadow-lg rounded-l-lg transition-all duration-1000 ease-in-out transform-style-preserve-3d ${
-                  isPageTurning 
-                    ? pageDirection === 'forward' 
-                      ? 'animate-page-turn-forward' 
-                      : 'animate-page-turn-backward'
-                    : ''
-                }`}>
-                  
-                  {/* Simple Bookmark Ribbon - Empty with Triangle Cut */}
-                  {selectedEntryData && (
-                    <div className="absolute top-0 right-6 z-20">
-                      <div className="relative">
-                        {/* Slim vertical ribbon */}
-                        <div 
-                          className="w-6 h-20 shadow-md relative" 
-                          style={{ backgroundColor: 'var(--accent-gold)' }}
-                        >
-                          {/* Deep triangle cut at bottom using CSS borders */}
-                          <div 
-                            className="absolute bottom-0 left-0 w-0 h-0"
-                            style={{
-                              borderLeft: '12px solid var(--accent-gold)',
-                              borderRight: '12px solid var(--accent-gold)',
-                              borderBottom: '16px solid transparent',
-                              transform: 'translateY(100%)'
-                            }}
-                          ></div>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div className="page-front backface-hidden">
-                    <div className="absolute inset-0 opacity-5 bg-gradient-to-bl from-accent-ai via-transparent to-accent-gold pointer-events-none rounded-l-lg"></div>
-                    
-                    <div className={`absolute bottom-4 right-4 w-16 h-16 pointer-events-none ${
-                      isPageTurning ? 'animate-paper-wrinkle' : ''
-                    }`}>
-                      <div className="w-full h-full bg-surface opacity-20 rounded-full transform rotate-45"></div>
-                      <div className="absolute inset-2 bg-accent-gold opacity-15 rounded-full transform -rotate-12"></div>
-                      <div className="absolute inset-4 bg-tertiary opacity-10 rounded-full transform rotate-30"></div>
-                    </div>
-                    
-                    <div className="relative z-10">
-                      {selectedEntryData ? (
-                        <div className="h-full flex flex-col">
-                          <div className="mb-6">
-                            <div className="flex items-start justify-between mb-4">
-                              <div className="flex-1">
-                                <div className="font-mono text-xs text-tertiary mb-2">
-                                  {new Date(selectedEntryData.createdAt).toLocaleDateString('en-US', {
-                                    weekday: 'long',
-                                    year: 'numeric',
-                                    month: 'long',
-                                    day: 'numeric'
-                                  })}
-                                </div>
-                                {selectedEntryData.title && (
-                                  <h3 className="font-serif text-xl font-medium text-primary mb-2">
-                                    {selectedEntryData.title}
-                                  </h3>
-                                )}
-                              </div>
-                              {selectedEntryData.isPrivate && (
-                                <div className="flex items-center gap-1 px-2 py-1 bg-surface rounded-full border border-secondary shadow-sm" style={{ marginRight: '22px' }}>
-                                  <svg className="w-3 h-3 text-tertiary" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 616 0z" clipRule="evenodd" />
-                                  </svg>
-                                  <span className="font-mono text-xs text-tertiary">Private</span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="w-full h-px bg-accent-gold shadow-sm"></div>
-                          </div>
 
-                          <div className="flex-1 mb-6">
-                            <div className="font-serif text-base text-primary leading-relaxed whitespace-pre-wrap">
-                              {selectedEntryData.content}
-                            </div>
-                          </div>
+            {/* Right panel — page content (uses CSS classes from themes.css) */}
+            <div className="perspective-1000" style={{ flex: 1, position: 'relative', height: '100%' }}>
 
-                          <div className="space-y-4">
-                            {selectedEntryData.mood.length > 0 && (
-                              <div>
-                                <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
-                                  Emotional State
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                  {selectedEntryData.mood.map((mood, index) => (
-                                    <span key={index} className="px-3 py-1 rounded-full text-sm font-serif" style={getMoodStyle(mood)}>
-                                      {mood}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            
-                            {selectedEntryData.tags.length > 0 && (
-                              <div>
-                                <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
-                                  Themes
-                                </div>
-                                <div className="flex flex-wrap gap-2">
-                                  {selectedEntryData.tags.map((tag, index) => (
-                                    <span key={index} className="px-3 py-1 bg-accent-gold-light text-accent-gold rounded-full text-sm font-serif border border-accent-gold shadow-sm">
-                                      {tag}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className="h-full flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-20 h-20 mx-auto mb-4 bg-surface rounded-full flex items-center justify-center shadow-inner">
-                              <svg className="w-10 h-10 text-tertiary" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" />
-                                <path fillRule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                            <h3 className="font-serif text-lg text-primary mb-2">
-                              Select an entry to read
-                            </h3>
-                            <p className="font-serif text-sm text-secondary">
-                              Choose from your journal entries on the left
-                            </p>
-                          </div>
-                        </div>
-                      )}
+              <div className="preserve-3d" style={{ height: '100%' }}>
+                <div
+                  className={`relative rounded-l-lg transform-style-preserve-3d ${
+                    isPageTurning
+                      ? pageDirection === 'forward'
+                        ? 'animate-page-turn-forward'
+                        : 'animate-page-turn-backward'
+                      : ''
+                  }`}
+                  style={{ background: 'var(--bg-primary)', height: '100%' }}
+                >
+                  {/* Bookmark ribbon */}
+                  <div className="absolute top-0 right-6 z-20">
+                    <div style={{ width: 18, height: 56, background: 'var(--accent-gold)', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+                      <div style={{
+                        position: 'absolute', bottom: -11, left: 0, width: 0, height: 0,
+                        borderLeft: '9px solid var(--accent-gold)',
+                        borderRight: '9px solid var(--accent-gold)',
+                        borderBottom: '11px solid transparent',
+                      }} />
                     </div>
                   </div>
-                  
-                  <div className="page-back absolute inset-0 backface-hidden rotate-y-180 p-8" style={{backgroundColor: 'var(--bg-primary)'}}>
-                    <div className="absolute inset-0 rounded-l-lg" style={{backgroundColor: 'var(--bg-primary)'}}></div>
-                    <div className="absolute inset-0 rounded-l-lg" style={{backgroundColor: 'var(--bg-primary)'}}></div>
-                    
-                    <div className="absolute inset-0 opacity-3 bg-gradient-to-bl from-accent-ai via-transparent to-accent-gold pointer-events-none rounded-l-lg"></div>
-                    
-                    <div className="relative z-20 h-full flex flex-col justify-center opacity-5">
-                      {Array.from({ length: 15 }).map((_, i) => (
-                        <div key={i} className="w-full h-px bg-tertiary mb-8"></div>
+
+                  {/* Vertical rule line */}
+                  <div className="absolute" style={{ left: 48, top: 0, bottom: 0, width: 1, background: 'var(--accent-secondary)', opacity: 0.12, pointerEvents: 'none' }} />
+
+                  {/* Paper wrinkle corner */}
+                  <div className={`absolute bottom-4 right-4 w-14 h-14 pointer-events-none ${isPageTurning ? 'animate-paper-wrinkle' : ''}`}>
+                    <div className="w-full h-full rounded-full transform rotate-45 opacity-20" style={{ background: 'var(--bg-tertiary)' }} />
+                    <div className="absolute inset-2 rounded-full opacity-15" style={{ background: 'var(--accent-gold)', transform: 'rotate(-12deg)' }} />
+                  </div>
+
+                  {/* PAGE FRONT */}
+                  <div className="page-front backface-hidden absolute inset-0 rounded-l-lg overflow-hidden"
+                    style={{ display: 'flex', flexDirection: 'column' }}>
+                    {/* Subtle paper gradient */}
+                    <div className="absolute inset-0 pointer-events-none opacity-5 rounded-l-lg"
+                      style={{ background: 'linear-gradient(135deg, var(--accent-ai) 0%, transparent 50%, var(--accent-gold) 100%)' }} />
+
+                    {selected ? (
+                      <>
+                        {/* ── Fixed header ── */}
+                        <div className="relative z-10" style={{ flexShrink: 0, padding: '20px 52px 0 56px', background: 'var(--bg-primary)' }}>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                            <div>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4 }}>
+                                {new Date(selected.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
+                              </p>
+                              {selected.title && (
+                                <h3 className="font-serif" style={{ fontSize: 19, color: 'var(--text-primary)', fontWeight: 400, lineHeight: 1.3 }}>
+                                  {selected.title}
+                                </h3>
+                              )}
+                            </div>
+                            {/* Actions */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0, opacity: 0.3, transition: 'opacity 150ms' }}
+                              onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                              onMouseLeave={e => (e.currentTarget.style.opacity = '0.3')}>
+                              <button onClick={() => openEdit(selected)} title="Edit"
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
+                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                              </button>
+                              <button onClick={() => setDeleting(selected)} title="Delete"
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
+                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                  <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                                  <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                                  <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+                                  <path d="M5.5 6v2.5M7.5 6v2.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div style={{ width: '100%', height: 1, background: 'var(--accent-gold)', opacity: 0.5 }} />
+                        </div>
+
+                        {/* ── Scrollable content ── */}
+                        <div className="journal-page-scroll relative z-10" style={{ flex: 1, overflowY: 'auto', padding: '18px 52px 24px 56px' }}>
+                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.9, whiteSpace: 'pre-wrap', marginBottom: 22 }}>
+                            {selected.content}
+                          </p>
+
+                          {selected.emotions.length > 0 && (
+                            <div style={{ marginBottom: 14 }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 7 }}>Emotional State</p>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                                {selected.emotions.map(e => (
+                                  <span key={e} className="font-serif" style={{ fontSize: 11, padding: '2px 9px', borderRadius: 999, border: `1px solid ${emotionColor(e)}`, color: emotionColor(e) }}>{e}</span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {selected.tags.length > 0 && (
+                            <div>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 7 }}>Themes</p>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                                {selected.tags.map(tag => (
+                                  <span key={tag} className="font-mono uppercase tracking-widest"
+                                    style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--accent-gold)', color: 'var(--accent-gold)' }}>
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="relative z-10 h-full flex items-center justify-center">
+                        <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', fontStyle: 'italic' }}>Select an entry to read</p>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* PAGE BACK — lined paper shown during turn */}
+                  <div className="page-back backface-hidden absolute inset-0 rounded-l-lg rotate-y-180" style={{ background: 'var(--bg-primary)' }}>
+                    <div className="absolute inset-0 pointer-events-none opacity-5 rounded-l-lg"
+                      style={{ background: 'linear-gradient(135deg, var(--accent-ai) 0%, transparent 50%, var(--accent-gold) 100%)' }} />
+                    <div className="relative z-10 h-full flex flex-col justify-center opacity-5" style={{ padding: '24px 40px' }}>
+                      {Array.from({ length: 14 }).map((_, i) => (
+                        <div key={i} style={{ width: '100%', height: 1, background: 'var(--text-tertiary)', marginBottom: 28 }} />
                       ))}
                     </div>
                   </div>
                 </div>
               </div>
-              
-              <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-text-tertiary via-accent-gold to-text-tertiary opacity-30"></div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* New Entry Modal */}
-      {showAddForm && (
-        <div className="fixed inset-0 flex items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.5)' }}>
-          <div className="bg-surface rounded-2xl shadow-theme-xl border border-secondary p-8 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto journal-scrollbar">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-serif text-xl font-medium text-primary">
-                New Journal Entry
-              </h3>
-              <button
-                onClick={() => setShowAddForm(false)}
-                className="p-2 hover:bg-surface-hover rounded-lg transition-colors"
-              >
-                <svg className="w-5 h-5 text-tertiary" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label className="block font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
-                  Title (Optional)
-                </label>
-                <input
-                  type="text"
-                  value={newEntry.title}
-                  onChange={(e) => setNewEntry({ ...newEntry, title: e.target.value })}
-                  placeholder="Give your entry a title..."
-                  className="w-full p-3 bg-primary border border-secondary rounded-lg font-serif text-primary placeholder-tertiary focus:border-accent-secondary focus:outline-none focus:ring-2 focus:ring-accent-secondary focus:ring-opacity-20"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="block font-mono text-xs uppercase tracking-widest text-tertiary">
-                  Content
-                </label>
-
-                {/* Unified textarea + mic bar */}
-                <div
-                  className="rounded-xl transition-all duration-200"
-                  style={{
-                    background: 'var(--bg-primary)',
-                    border: `1.5px solid ${isJournalListening ? 'var(--accent-secondary)' : 'var(--bg-tertiary)'}`,
-                    boxShadow: isJournalListening ? '0 0 0 3px var(--accent-secondary-light)' : 'none',
-                  }}
-                >
-                  {/* Waveform row — only when listening */}
-                  {isJournalListening && (
-                    <div
-                      className="flex items-center gap-3 px-4 py-2.5"
-                      style={{ borderBottom: '1px solid var(--bg-tertiary)' }}
-                    >
-                      <Waveform active />
-                      {journalSpeech.interimText && (
-                        <span className="font-serif text-sm italic" style={{ color: 'var(--text-tertiary)' }}>
-                          {journalSpeech.interimText}
-                        </span>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Textarea */}
-                  <textarea
-                    ref={journalTextareaRef}
-                    value={newEntry.content}
-                    onChange={(e) => setNewEntry({ ...newEntry, content: e.target.value })}
-                    placeholder="What's on your mind about this relationship?"
-                    rows={5}
-                    style={{
-                      width: '100%',
-                      background: 'transparent',
-                      border: 'none',
-                      outline: 'none',
-                      boxShadow: 'none',
-                      resize: 'none',
-                      padding: '12px 16px',
-                      fontFamily: 'var(--font-serif, serif)',
-                      fontSize: '0.9rem',
-                      color: 'var(--text-primary)',
-                      lineHeight: 1.8,
-                      letterSpacing: '0.01em',
-                    }}
-                  />
-
-                  {/* Bottom bar: mic button */}
-                  <div
-                    className="flex items-center justify-between px-3 py-2"
-                    style={{ borderTop: '1px solid var(--bg-tertiary)' }}
-                  >
-                    <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
-                      {isJournalListening ? `${journalSpeech.duration}s · listening` : 'tap mic to speak'}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={isJournalListening ? journalSpeech.stop : journalSpeech.start}
-                      className="flex items-center justify-center rounded-full transition-all duration-200"
-                      style={{
-                        width: 32, height: 32,
-                        background: isJournalListening ? 'var(--accent-secondary-light)' : 'transparent',
-                        border: `1px solid ${isJournalListening ? 'var(--accent-secondary)' : 'var(--bg-tertiary)'}`,
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {isJournalListening ? (
-                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none">
-                          <rect x="5" y="5" width="14" height="14" rx="2" fill="var(--accent-secondary)" />
-                        </svg>
-                      ) : (
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
-                          <rect x="9" y="2" width="6" height="12" rx="3" fill="var(--text-tertiary)" />
-                          <path d="M5 11c0 3.866 3.134 7 7 7s7-3.134 7-7" stroke="var(--text-tertiary)" strokeWidth="1.8" strokeLinecap="round" />
-                          <line x1="12" y1="18" x2="12" y2="22" stroke="var(--text-tertiary)" strokeWidth="1.8" strokeLinecap="round" />
-                          <line x1="9" y1="22" x2="15" y2="22" stroke="var(--text-tertiary)" strokeWidth="1.8" strokeLinecap="round" />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
-                  Tags
-                </label>
-                <input
-                  type="text"
-                  placeholder="vulnerability, patterns, growth (comma separated)"
-                  className="w-full p-3 bg-primary border border-secondary rounded-lg font-serif text-primary placeholder-tertiary focus:border-accent-secondary focus:outline-none focus:ring-2 focus:ring-accent-secondary focus:ring-opacity-20"
-                />
-              </div>
-
-              <div className="flex items-center gap-3">
-                <input
-                  type="checkbox"
-                  id="isPrivate"
-                  checked={newEntry.isPrivate}
-                  onChange={(e) => setNewEntry({ ...newEntry, isPrivate: e.target.checked })}
-                  className="w-4 h-4 text-accent-secondary bg-primary border-secondary rounded focus:ring-accent-secondary focus:ring-2"
-                />
-                <label htmlFor="isPrivate" className="font-serif text-sm text-primary">
-                  Keep this entry private
-                </label>
-              </div>
-
-              <div className="flex gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className="flex-1 px-6 py-3 bg-surface border border-secondary text-primary font-serif rounded-lg hover:bg-surface-hover transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-accent-secondary text-inverse font-serif rounded-lg hover:bg-accent-secondary-hover transition-colors shadow-sm"
-                >
-                  Save Entry
-                </button>
-              </div>
-            </form>
           </div>
         </div>
       )}
