@@ -606,7 +606,7 @@ export class AuthService {
     const { user } = await this.supabaseService.getUserById(userId);
     return user?.date_of_birth ? true : false;
   }
-  async updateProfile(userId: string, updateData: any) {
+  async updateProfile(userId: string, updateData: any, avatar?: Express.Multer.File) {
     const supabase = this.supabaseService.getAdminClient();
 
     // Build update object with only provided fields
@@ -629,6 +629,30 @@ export class AuthService {
       const first = updateFields.first_name ?? '';
       const last = updateFields.last_name ?? '';
       updateFields.full_name = `${first} ${last}`.trim() || null;
+    }
+
+    // Handle avatar upload
+    if (avatar) {
+      const ext = (avatar.originalname.split('.').pop() ?? 'jpg').toLowerCase();
+      const storagePath = `avatars/${userId}.${ext}`;
+      const BUCKET = 'user-avatars';
+
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const bucketExists = buckets?.some(b => b.name === BUCKET);
+      if (!bucketExists) {
+        await supabase.storage.createBucket(BUCKET, { public: true });
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .upload(storagePath, avatar.buffer, { contentType: avatar.mimetype, upsert: true });
+
+      if (uploadError) {
+        console.error(`Avatar upload failed: ${uploadError.message}`);
+        throw new Error(`Avatar upload failed: ${uploadError.message}`);
+      }
+
+      updateFields.avatar_url = this.supabaseService.getPublicUrl(BUCKET, storagePath);
     }
 
     updateFields.updated_at = new Date().toISOString();

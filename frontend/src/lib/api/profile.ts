@@ -12,20 +12,35 @@ interface UpdateProfileData {
   analysis_depth_mode?: string;
 }
 
-export async function updateProfile(data: UpdateProfileData) {
+export async function updateProfile(data: UpdateProfileData, avatar?: File | null) {
   const tokens = getTokens();
-  
+
   if (!tokens?.access_token) {
     throw new Error('No access token found');
   }
 
+  let body: FormData | string;
+  const headers: Record<string, string> = {
+    'Authorization': `Bearer ${tokens.access_token}`,
+  };
+
+  if (avatar) {
+    const formData = new FormData();
+    formData.append('avatar', avatar);
+    Object.entries(data).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) formData.append(key, String(value));
+    });
+    body = formData;
+    // Do NOT set Content-Type — browser sets it with boundary automatically
+  } else {
+    body = JSON.stringify(data);
+    headers['Content-Type'] = 'application/json';
+  }
+
   const response = await fetch(`${API_BASE_URL}/auth/profile`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${tokens.access_token}`,
-    },
-    body: JSON.stringify(data),
+    headers,
+    body,
   });
 
   if (!response.ok) {

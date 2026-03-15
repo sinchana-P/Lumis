@@ -1,4 +1,5 @@
-import { Controller, Get, Post, Put, Body, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, HttpException, HttpStatus, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
@@ -192,9 +193,15 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user profile' })
-  async updateProfile(@User() user: any, @Body() dto: UpdateProfileDto): Promise<any> {
+  @UseInterceptors(FileInterceptor('avatar'))
+  async updateProfile(
+    @User() user: any,
+    @Body() dto: UpdateProfileDto,
+    @UploadedFile() avatar?: Express.Multer.File,
+  ): Promise<any> {
     try {
-      const updatedUser = await this.authService.updateProfile(user.id, dto);
+      const validAvatar = avatar && avatar.buffer && avatar.buffer.length > 0 ? avatar : undefined;
+      const updatedUser = await this.authService.updateProfile(user.id, dto, validAvatar);
       return {
         success: true,
         data: { user: updatedUser },

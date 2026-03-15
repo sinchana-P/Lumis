@@ -177,8 +177,9 @@ export default function ProfilePage() {
     setIsSaving(true);
     setSaveMsg('');
     try {
-      const response = await updateProfile({ ...form });
+      const response = await updateProfile({ ...form }, avatarFile);
       dispatch(updateUser(response.data.user));
+      setAvatarFile(null);
       setSaveMsg('saved ✦');
       setEditing(false);
       setTimeout(() => setSaveMsg(''), 3000);
