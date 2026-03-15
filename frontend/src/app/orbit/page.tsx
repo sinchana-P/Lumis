@@ -205,7 +205,7 @@ export default function MembersPage() {
       {/* Main Content */}
       <main className="w-full px-6 lg:px-12 pt-16 pb-4">
         {/* Compact page header row */}
-        <div className="flex items-baseline gap-4 mb-3">
+        <div className="flex items-center gap-4 mb-3">
           <h1 className="text-2xl font-serif font-light tracking-tight" style={{ color: 'var(--text-primary)' }}>
             Luminaries
           </h1>
@@ -215,9 +215,31 @@ export default function MembersPage() {
               : 'The people in your orbit'}
           </span>
           {viewMode === 'orbit' && displayMembers.length > 0 && (
-            <span className="font-mono text-xs uppercase tracking-widest hidden lg:block" style={{ color: 'var(--text-tertiary)' }}>
-              Drag to rearrange · Ctrl/Cmd + / - / 0 / 9
-            </span>
+            <div className="relative group hidden lg:flex items-center">
+              <button
+                type="button"
+                className="flex items-center gap-1 px-2 py-1 rounded-md transition-colors hover:bg-secondary"
+                style={{ color: 'var(--text-tertiary)' }}
+                aria-label="Orbit tips"
+              >
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                <span className="text-[10px] uppercase tracking-widest font-mono">tips</span>
+              </button>
+              <div className="absolute left-0 top-full mt-1.5 z-50 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150">
+                <div className="bg-surface-elevated border border-primary rounded-lg shadow-lg px-3 py-2.5 whitespace-nowrap">
+                  <p className="text-[11px] font-mono text-secondary tracking-wide">Drag to rearrange</p>
+                  <p className="text-[11px] font-mono text-tertiary tracking-wide mt-1">
+                    <span style={{ color: 'var(--accent-primary)' }}>+</span> zoom in &nbsp;·&nbsp;
+                    <span style={{ color: 'var(--accent-primary)' }}>-</span> zoom out &nbsp;·&nbsp;
+                    <span style={{ color: 'var(--accent-primary)' }}>0</span> fit &nbsp;·&nbsp;
+                    <span style={{ color: 'var(--accent-primary)' }}>9</span> reset
+                  </p>
+                  <p className="text-[10px] text-tertiary mt-1 opacity-60">Ctrl / Cmd + key</p>
+                </div>
+              </div>
+            </div>
           )}
         </div>
 
