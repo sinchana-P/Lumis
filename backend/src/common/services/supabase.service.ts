@@ -74,23 +74,56 @@ export class SupabaseService {
     const { data, error } = await this.supabase.auth.getUser(token);
     
     if (error) {
-      throw new Error(`Token verification failed: ${error.message}`);
+      return { user: null, error };
     }
 
-    return data.user;
+    return { user: data.user, error: null };
   }
 
   /**
    * Get user by ID (admin operation)
    */
   async getUserById(userId: string) {
-    const { data, error } = await this.supabaseAdmin.auth.admin.getUserById(userId);
-    
-    if (error) {
-      throw new Error(`Failed to get user: ${error.message}`);
-    }
+    try {
+      // First get auth user
+      const { data: authData, error: authError } = await this.supabaseAdmin.auth.admin.getUserById(userId);
+      
+      if (authError) {
+        return { user: null, error: authError };
+      }
 
-    return data.user;
+      // Then get user data from our users table
+      const { data: userData, error: dbError } = await this.supabaseAdmin
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+      if (dbError && dbError.code !== 'PGRST116') {
+        return { user: null, error: dbError };
+      }
+
+      // Combine auth and database data
+      const user = {
+        id: authData.user.id,
+        email: authData.user.email,
+        full_name: userData?.full_name || null,
+        date_of_birth: userData?.date_of_birth || null,
+        time_of_birth: userData?.time_of_birth || null,
+        place_of_birth: userData?.place_of_birth || null,
+        place_of_birth_lat: userData?.place_of_birth_lat || null,
+        place_of_birth_lng: userData?.place_of_birth_lng || null,
+        avatar_url: userData?.avatar_url || null,
+        provider: userData?.provider || 'local',
+        analysis_depth_mode: userData?.analysis_depth_mode || 'full-spectrum',
+        created_at: userData?.created_at || authData.user.created_at,
+        updated_at: userData?.updated_at || authData.user.updated_at,
+      };
+
+      return { user, error: null };
+    } catch (error) {
+      return { user: null, error };
+    }
   }
 
   /**

@@ -16,6 +16,7 @@ import { useAppSelector } from '@/store/hooks';
 import { selectIsAuthenticated } from '@/store/slices/authSlice';
 import { useAuthInit } from '@/hooks/useAuthInit';
 import { isPublicRoute } from '@/lib/auth';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 export function AuthInitializer({ children }: { children: React.ReactNode }) {
   const [isRehydrated, setIsRehydrated] = useState(false);
@@ -82,13 +83,8 @@ export function AuthInitializer({ children }: { children: React.ReactNode }) {
     }
   }, [isAuthenticated, pathname, router, isRehydrated]);
 
-  // Show loading while waiting for rehydration
   if (!isRehydrated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-primary">
-        <div className="animate-spin h-8 w-8 border-2 border-accent-primary border-t-transparent rounded-full"></div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return <>{children}</>;

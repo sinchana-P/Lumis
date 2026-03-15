@@ -4,7 +4,7 @@ import {
   ConflictException,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { SupabaseService } from './supabase.service';
+import { SupabaseService } from '../../common/services/supabase.service';
 
 @Injectable()
 export class AuthService {
@@ -85,22 +85,36 @@ export class AuthService {
    * Sign up new user with email and password
    * Requirements: 2.3, 2.4, 2.5, 2.6
    */
-  async signUp(email: string, password: string) {
+  async signUp(firstName: string, lastName: string, email: string, password: string) {
     try {
-      console.log('SignUp attempt:', { email });
-      const supabase = this.supabaseService.getClient();
+      console.log('SignUp attempt:', { firstName, lastName, email });
+      const supabase = this.supabaseService.getAdminClient(); // Use admin client for auto-confirmation
 
-      // Create user account via Supabase Auth
-      const { data, error } = await supabase.auth.signUp({
+      const fullName = `${firstName} ${lastName}`.trim();
+
+      // Create user account via Supabase Auth with auto-confirmation
+      const { data, error } = await supabase.auth.admin.createUser({
         email,
         password,
+        email_confirm: true, // Auto-confirm to skip email verification
+        user_metadata: {
+          first_name: firstName,
+          last_name: lastName,
+          full_name: fullName,
+          signup_method: 'email',
+          auto_confirmed: true
+        }
       });
 
-      console.log('Supabase signUp result:', { data: !!data, error: error?.message });
+      console.log('Supabase signUp result:', { 
+        data: !!data, 
+        user: !!data?.user,
+        error: error?.message 
+      });
 
       if (error) {
         console.error('Supabase signUp error:', error);
-        if (error.message.includes('already registered')) {
+        if (error.message.includes('already registered') || error.message.includes('already exists') || error.code === 'email_exists') {
           throw new ConflictException({
             success: false,
             error: {
@@ -126,16 +140,39 @@ export class AuthService {
             },
           });
         }
-        throw error;
+        if (error.message.includes('Password should be at least')) {
+          throw new ConflictException({
+            success: false,
+            error: {
+              code: 'VALIDATION_ERROR',
+              message: 'Password must be at least 6 characters long',
+            },
+            meta: {
+              timestamp: new Date().toISOString(),
+              request_id: this.generateRequestId(),
+            },
+          });
+        }
+        throw new InternalServerErrorException({
+          success: false,
+          error: {
+            code: 'SIGNUP_ERROR',
+            message: error.message || 'Failed to create account',
+          },
+          meta: {
+            timestamp: new Date().toISOString(),
+            request_id: this.generateRequestId(),
+          },
+        });
       }
 
-      if (!data.session) {
-        console.log('No session in signup response, data:', data);
-        throw new UnauthorizedException({
+      if (!data.user) {
+        console.log('No user in signup response');
+        throw new InternalServerErrorException({
           success: false,
           error: {
             code: 'INTERNAL_ERROR',
-            message: 'Failed to create user session',
+            message: 'Failed to create user account',
           },
           meta: {
             timestamp: new Date().toISOString(),
@@ -149,19 +186,55 @@ export class AuthService {
       const user = await this.createOrUpdateUser(data.user, 'local');
       console.log('User created successfully:', user.id);
 
+      // Generate session for immediate login
+      const { data: sessionData, error: sessionError } = await supabase.auth.admin.generateLink({
+        type: 'magiclink',
+        email: data.user.email!,
+      });
+
+      if (sessionError) {
+        console.error('Session generation error:', sessionError);
+        // Return user without tokens - they can login separately
+        return {
+          user,
+          tokens: null,
+          email_confirmation_required: false,
+          message: 'Account created successfully. Please login to continue.',
+        };
+      }
+
+      // Create a session for the user
+      const clientSupabase = this.supabaseService.getClient();
+      const { data: signInData, error: signInError } = await clientSupabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError || !signInData.session) {
+        // User created but couldn't auto-login, they can login manually
+        return {
+          user,
+          tokens: null,
+          email_confirmation_required: false,
+          message: 'Account created successfully. Please login to continue.',
+        };
+      }
+
       return {
         user,
         tokens: {
-          auth_token: data.session.access_token,
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
+          auth_token: signInData.session.access_token,
+          access_token: signInData.session.access_token,
+          refresh_token: signInData.session.refresh_token,
         },
+        email_confirmation_required: false,
       };
-    } catch (error) {
+    } catch (error: any) {
       console.error('SignUp error:', error);
       if (
         error instanceof UnauthorizedException ||
-        error instanceof ConflictException
+        error instanceof ConflictException ||
+        error instanceof InternalServerErrorException
       ) {
         throw error;
       }
@@ -169,7 +242,8 @@ export class AuthService {
         success: false,
         error: {
           code: 'INTERNAL_ERROR',
-          message: 'An unexpected error occurred',
+          message: 'An unexpected error occurred during signup',
+          details: error?.message || 'Unknown error',
         },
         meta: {
           timestamp: new Date().toISOString(),
@@ -208,9 +282,14 @@ export class AuthService {
       }
 
       // Get user data from database
-      const { user: userData } = await this.supabaseService.getUserById(
+      const { user: userData, error: userError } = await this.supabaseService.getUserById(
         data.user.id,
       );
+
+      if (userError) {
+        console.error('Error getting user data:', userError);
+        // Continue with basic user data if database lookup fails
+      }
 
       const user = {
         id: data.user.id,
@@ -279,9 +358,14 @@ export class AuthService {
       }
 
       // Get user data from database
-      const { user: userData } = await this.supabaseService.getUserById(
+      const { user: userData, error: userError } = await this.supabaseService.getUserById(
         data.user!.id,
       );
+
+      if (userError) {
+        console.error('Error getting user data:', userError);
+        // Continue with basic user data if database lookup fails
+      }
 
       const user = {
         id: data.user!.id,
@@ -341,16 +425,20 @@ export class AuthService {
    * Requirements: 7.2, 7.3
    */
   async validateToken(userId: string) {
-    const { user: userData } = await this.supabaseService.getUserById(userId);
+    const { user: userData, error } = await this.supabaseService.getUserById(userId);
+
+    if (error || !userData) {
+      throw new UnauthorizedException('User not found');
+    }
 
     return {
       id: userId,
-      email: userData?.email || null,
-      name: userData?.full_name || null,
-      avatar_url: userData?.avatar_url || null,
-      provider: userData?.provider || 'local',
-      analysis_depth_mode: userData?.analysis_depth_mode || 'full-spectrum',
-      created_at: userData?.created_at || new Date().toISOString(),
+      email: userData.email || null,
+      name: userData.full_name || null,
+      avatar_url: userData.avatar_url || null,
+      provider: userData.provider || 'local',
+      analysis_depth_mode: userData.analysis_depth_mode || 'full-spectrum',
+      created_at: userData.created_at || new Date().toISOString(),
     };
   }
 
@@ -359,61 +447,121 @@ export class AuthService {
    * Requirements: 1.4, 1.6, 2.4, 2.5, 11.3, 11.4
    */
   private async createOrUpdateUser(supabaseUser: any, provider: string) {
-    const supabase = this.supabaseService.getClient();
+    const supabase = this.supabaseService.getAdminClient(); // Use admin client to bypass RLS
 
-    // Check if user exists
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', supabaseUser.id)
-      .single();
+    try {
+      // Extract names from user metadata or Google profile
+      let firstName = null;
+      let lastName = null;
+      let fullName = null;
 
-    if (existingUser) {
-      // Update existing user
-      const { data: updatedUser } = await supabase
+      if (provider === 'google') {
+        // For Google login, extract from user metadata
+        fullName = supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name;
+        firstName = supabaseUser.user_metadata?.given_name;
+        lastName = supabaseUser.user_metadata?.family_name;
+        
+        // If we don't have first/last names but have full name, try to split it
+        if (!firstName && !lastName && fullName) {
+          const nameParts = fullName.split(' ');
+          firstName = nameParts[0] || null;
+          lastName = nameParts.slice(1).join(' ') || null;
+        }
+      } else {
+        // For email signup, get from user metadata
+        firstName = supabaseUser.user_metadata?.first_name;
+        lastName = supabaseUser.user_metadata?.last_name;
+        fullName = supabaseUser.user_metadata?.full_name;
+        
+        // If no full name but have first/last, create it
+        if (!fullName && (firstName || lastName)) {
+          fullName = `${firstName || ''} ${lastName || ''}`.trim();
+        }
+      }
+
+      // Check if user exists
+      const { data: existingUser, error: selectError } = await supabase
         .from('users')
-        .update({
-          email: supabaseUser.email,
-          updated_at: new Date().toISOString(),
-        })
+        .select('*')
         .eq('id', supabaseUser.id)
+        .single();
+
+      if (selectError && selectError.code !== 'PGRST116') {
+        // PGRST116 is "not found" error, which is expected for new users
+        console.error('Error checking existing user:', selectError);
+        throw selectError;
+      }
+
+      if (existingUser) {
+        // Update existing user
+        const { data: updatedUser, error: updateError } = await supabase
+          .from('users')
+          .update({
+            email: supabaseUser.email,
+            full_name: fullName || existingUser.full_name,
+            first_name: firstName || existingUser.first_name,
+            last_name: lastName || existingUser.last_name,
+            avatar_url: supabaseUser.user_metadata?.avatar_url || existingUser.avatar_url,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', supabaseUser.id)
+          .select()
+          .single();
+
+        if (updateError) {
+          console.error('Error updating user:', updateError);
+          throw updateError;
+        }
+
+        return {
+          id: updatedUser.id,
+          email: updatedUser.email,
+          name: updatedUser.full_name,
+          firstName: updatedUser.first_name,
+          lastName: updatedUser.last_name,
+          avatar_url: updatedUser.avatar_url,
+          provider: updatedUser.provider || provider,
+          analysis_depth_mode: updatedUser.analysis_depth_mode,
+          created_at: updatedUser.created_at,
+        };
+      }
+
+      // Create new user with preferences
+      const { data: newUser, error: insertError } = await supabase
+        .from('users')
+        .insert({
+          id: supabaseUser.id,
+          email: supabaseUser.email,
+          full_name: fullName,
+          first_name: firstName,
+          last_name: lastName,
+          avatar_url: supabaseUser.user_metadata?.avatar_url || null,
+          provider,
+          analysis_depth_mode: 'full-spectrum', // Initialize preference
+        })
         .select()
         .single();
 
+      if (insertError) {
+        console.error('Error creating user:', insertError);
+        throw insertError;
+      }
+
       return {
-        id: updatedUser.id,
-        email: updatedUser.email,
-        name: updatedUser.full_name,
-        avatar_url: updatedUser.avatar_url,
-        provider: updatedUser.provider || provider,
-        analysis_depth_mode: updatedUser.analysis_depth_mode,
-        created_at: updatedUser.created_at,
+        id: newUser.id,
+        email: newUser.email,
+        name: newUser.full_name,
+        firstName: newUser.first_name,
+        lastName: newUser.last_name,
+        avatar_url: newUser.avatar_url,
+        provider: newUser.provider,
+        analysis_depth_mode: newUser.analysis_depth_mode,
+        created_at: newUser.created_at,
       };
+    } catch (error) {
+      console.error('Error in createOrUpdateUser:', error);
+      throw error;
     }
-
-    // Create new user with preferences
-    const { data: newUser } = await supabase
-      .from('users')
-      .insert({
-        id: supabaseUser.id,
-        email: supabaseUser.email,
-        full_name: supabaseUser.user_metadata?.full_name || null,
-        avatar_url: supabaseUser.user_metadata?.avatar_url || null,
-        provider,
-        analysis_depth_mode: 'full-spectrum', // Initialize preference
-      })
-      .select()
-      .single();
-
-    return {
-      id: newUser.id,
-      email: newUser.email,
-      name: newUser.full_name,
-      avatar_url: newUser.avatar_url,
-      provider: newUser.provider,
-      analysis_depth_mode: newUser.analysis_depth_mode,
-      created_at: newUser.created_at,
-    };
   }
 
   // Validate access token from request

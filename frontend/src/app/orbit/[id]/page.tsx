@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useGetMemberQuery } from '@/store/api/membersApi';
 import { MemberPageHeader } from '@/components/members/MemberPageHeader';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 // Tab Components
 import { 
@@ -117,16 +118,7 @@ export default function MemberDetailPage() {
   }, [activeTab]);
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-lumis-bg-primary flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-12 h-12 mx-auto mb-6 flex items-center justify-center">
-            <div className="w-8 h-8 border-2 border-lumis-accent-primary border-t-transparent rounded-full animate-spin"></div>
-          </div>
-          <p className="text-lumis-text-secondary font-mono text-sm uppercase tracking-widest">Loading luminary...</p>
-        </div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   if (error || !member) {

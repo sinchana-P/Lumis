@@ -11,6 +11,8 @@ CREATE TABLE IF NOT EXISTS public.users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email TEXT UNIQUE NOT NULL,
   full_name TEXT,
+  first_name TEXT,
+  last_name TEXT,
   date_of_birth DATE,
   time_of_birth TIME,
   place_of_birth TEXT,

@@ -41,7 +41,12 @@ export class AuthController {
   @ApiOperation({ summary: 'Create new user account with email and password' })
   async signUp(@Body() dto: SignUpDto): Promise<any> {
     try {
-      const result = await this.authService.signUp(dto.email, dto.password);
+      const result = await this.authService.signUp(
+        dto.firstName,
+        dto.lastName,
+        dto.email,
+        dto.password
+      );
       return {
         success: true,
         data: result,
@@ -188,6 +193,11 @@ export class AuthController {
   private handleError(error: any) {
     const requestId = this.generateRequestId();
     const timestamp = new Date().toISOString();
+
+    // If it's already a structured NestJS exception, return its response
+    if (error.response && error.status) {
+      throw new HttpException(error.response, error.status);
+    }
 
     // Map known error types to standard error codes
     let errorCode = 'INTERNAL_ERROR';

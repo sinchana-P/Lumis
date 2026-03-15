@@ -13,12 +13,16 @@ export interface SignUpFormProps {
 }
 
 interface SignUpFormData {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
 interface FormErrors {
+  firstName?: string;
+  lastName?: string;
   email?: string;
   password?: string[];
   confirmPassword?: string;
@@ -44,6 +48,8 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
   const [signUp, { isLoading }] = useSignUpMutation();
 
   const [formData, setFormData] = useState<SignUpFormData>({
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -52,6 +58,26 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [apiError, setApiError] = useState<string | null>(null);
+
+  // Validate first name on blur
+  const handleFirstNameBlur = () => {
+    setTouched({ ...touched, firstName: true });
+    if (!formData.firstName.trim()) {
+      setErrors({ ...errors, firstName: 'First name is required' });
+    } else {
+      setErrors({ ...errors, firstName: undefined });
+    }
+  };
+
+  // Validate last name on blur
+  const handleLastNameBlur = () => {
+    setTouched({ ...touched, lastName: true });
+    if (!formData.lastName.trim()) {
+      setErrors({ ...errors, lastName: 'Last name is required' });
+    } else {
+      setErrors({ ...errors, lastName: undefined });
+    }
+  };
 
   // Validate email on blur
   const handleEmailBlur = () => {
@@ -100,6 +126,8 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
 
   // Validate entire form before submission
   const validateForm = (): boolean => {
+    const firstNameError = !formData.firstName.trim() ? 'First name is required' : null;
+    const lastNameError = !formData.lastName.trim() ? 'Last name is required' : null;
     const emailError = validateEmail(formData.email);
     const passwordErrors = validatePassword(formData.password);
     const confirmPasswordError =
@@ -108,15 +136,17 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
         : null;
 
     const newErrors: FormErrors = {
+      firstName: firstNameError || undefined,
+      lastName: lastNameError || undefined,
       email: emailError || undefined,
       password: passwordErrors.length > 0 ? passwordErrors : undefined,
       confirmPassword: confirmPasswordError || undefined,
     };
 
     setErrors(newErrors);
-    setTouched({ email: true, password: true, confirmPassword: true });
+    setTouched({ firstName: true, lastName: true, email: true, password: true, confirmPassword: true });
 
-    return !emailError && passwordErrors.length === 0 && !confirmPasswordError;
+    return !firstNameError && !lastNameError && !emailError && passwordErrors.length === 0 && !confirmPasswordError;
   };
 
   // Handle form submission
@@ -132,12 +162,14 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
     try {
       // Call sign up mutation
       await signUp({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
         password: formData.password,
       }).unwrap();
 
       // Clear sensitive form data from memory (Requirement 9.3)
-      setFormData({ email: '', password: '', confirmPassword: '' });
+      setFormData({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' });
 
       // Call success callback if provided
       if (onSuccess) {
@@ -173,6 +205,36 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
             onDismiss={() => setApiError(null)}
           />
         )}
+
+        {/* First Name Field */}
+        <AuthFormField
+          label="First Name"
+          name="firstName"
+          type="text"
+          value={formData.firstName}
+          onChange={handleChange('firstName')}
+          onBlur={handleFirstNameBlur}
+          error={touched.firstName ? errors.firstName : undefined}
+          placeholder="your given name"
+          required
+          autoComplete="given-name"
+          disabled={isLoading}
+        />
+
+        {/* Last Name Field */}
+        <AuthFormField
+          label="Last Name"
+          name="lastName"
+          type="text"
+          value={formData.lastName}
+          onChange={handleChange('lastName')}
+          onBlur={handleLastNameBlur}
+          error={touched.lastName ? errors.lastName : undefined}
+          placeholder="your family name"
+          required
+          autoComplete="family-name"
+          disabled={isLoading}
+        />
 
         {/* Email Field */}
         <AuthFormField

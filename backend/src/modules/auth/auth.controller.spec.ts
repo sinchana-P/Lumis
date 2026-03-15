@@ -61,6 +61,8 @@ describe('AuthController', () => {
           id: 'user-123',
           email: 'user@example.com',
           name: 'John Doe',
+          firstName: 'John',
+          lastName: 'Doe',
           avatar_url: null,
           provider: 'google',
           analysis_depth_mode: 'full-spectrum',
@@ -94,6 +96,8 @@ describe('AuthController', () => {
           id: 'user-123',
           email: 'user@example.com',
           name: 'John Doe',
+          firstName: 'John',
+          lastName: 'Doe',
           avatar_url: null,
           provider: 'google',
           analysis_depth_mode: 'full-spectrum',
@@ -121,6 +125,8 @@ describe('AuthController', () => {
           id: 'user-456',
           email: 'newuser@example.com',
           name: null,
+          firstName: 'New',
+          lastName: 'User',
           avatar_url: null,
           provider: 'local',
           analysis_depth_mode: 'full-spectrum',
@@ -131,11 +137,14 @@ describe('AuthController', () => {
           access_token: 'access-token-456',
           refresh_token: 'refresh-token-456',
         },
+        email_confirmation_required: false,
       };
 
       authService.signUp.mockResolvedValue(mockResult);
 
       const result = await controller.signUp({
+        firstName: 'New',
+        lastName: 'User',
         email: 'newuser@example.com',
         password: 'Password123',
       });
@@ -145,6 +154,8 @@ describe('AuthController', () => {
       expect(result.meta.timestamp).toBeDefined();
       expect(result.meta.request_id).toBeDefined();
       expect(authService.signUp).toHaveBeenCalledWith(
+        'New',
+        'User',
         'newuser@example.com',
         'Password123',
       );

@@ -31,12 +31,10 @@ export default function SignUpPage() {
       {/* Divider */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-primary"></div>
+          <div className="w-full" style={{ borderTop: '1px solid var(--text-tertiary)', opacity: 0.35 }}></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="px-3 bg-surface-elevated text-tertiary font-sans text-xs">
-            or 
-          </span>
+          <span className="px-3 bg-surface-elevated text-tertiary font-sans text-xs">or</span>
         </div>
       </div>
 
