@@ -39,7 +39,7 @@ export class IncidentsService {
       .select('*')
       .eq('user_id', userId)
       .eq('member_id', memberId)
-      .order('date', { ascending: false });
+      .order('created_at', { ascending: false });
 
     if (query.category) q = q.eq('category', query.category);
     if (query.severity)  q = q.eq('severity', query.severity);
