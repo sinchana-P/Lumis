@@ -2,6 +2,33 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 
+// ─── Luxury Color Tokens ──────────────────────────────────────────────────────
+
+const T = {
+  bg:          '#FDFAF7',
+  surface:     '#F7F2EC',
+  surface2:    '#F0E9DF',
+  border:      '#E2D5C5',
+  borderSoft:  '#EDE5DA',
+  accent:      '#9B6E5A',
+  accentSoft:  '#B8896F',
+  accentGlow:  'rgba(155,110,90,0.10)',
+  text:        '#2E1F14',
+  textDim:     '#7A5C48',
+  textMuted:   '#B09880',
+  textFaint:   '#CDBAA8',
+  sage:        '#5A7A52',
+  sageBg:      'rgba(90,122,82,0.07)',
+  rose:        '#9A5060',
+  roseBg:      'rgba(154,80,96,0.07)',
+  cosmic:      '#6A5890',
+  cosmicBg:    'rgba(106,88,144,0.07)',
+  red:         '#C04040',
+  redBg:       'rgba(192,64,64,0.08)',
+  gold:        '#A08050',
+  goldBg:      'rgba(160,128,80,0.08)',
+} as const;
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 export interface SpeechCaptureData {
@@ -32,10 +59,9 @@ export interface SpeechInputProps {
 
 type SpeechState = 'idle' | 'listening' | 'processing' | 'done' | 'error';
 
-// Set to your Whisper server URL to enable offline/high-accuracy mode
 const WHISPER_ENDPOINT = process.env.NEXT_PUBLIC_WHISPER_ENDPOINT ?? null;
 
-// ─── Post-processing ───────────────────────────────────────────────────────────
+// ─── Post-processing ──────────────────────────────────────────────────────────
 
 const VOICE_COMMANDS: [RegExp, string][] = [
   [/\b(period|full stop)\b/gi, '.'],
@@ -48,37 +74,20 @@ const VOICE_COMMANDS: [RegExp, string][] = [
   [/\bellipsis\b/gi, '...'],
   [/\bnew paragraph\b/gi, '\n\n'],
   [/\bnew line\b/gi, '\n'],
-  [/\bopen quote\b/gi, '"'],
-  [/\bclose quote\b/gi, '"'],
+  [/\bopen quote\b/gi, '\u201C'],
+  [/\bclose quote\b/gi, '\u201D'],
 ];
 
 function processTranscript(raw: string): { text: string; corrected: boolean } {
   let text = raw;
-  let corrected = false;
   const original = text;
-
-  // Voice commands → punctuation
-  for (const [pattern, replacement] of VOICE_COMMANDS) {
-    text = text.replace(pattern, replacement);
-  }
-
-  // Remove space before punctuation: "hello ." → "hello."
+  for (const [pattern, replacement] of VOICE_COMMANDS) text = text.replace(pattern, replacement);
   text = text.replace(/ ([.,?!:;])/g, '$1');
-
-  // Fix standalone "i" → "I"
   text = text.replace(/\bi\b/g, 'I');
-
-  // Capitalize first character
   text = text.replace(/^[a-z]/, (c) => c.toUpperCase());
-
-  // Capitalize after sentence-ending punctuation
   text = text.replace(/([.!?]\s+)([a-z])/g, (_, p, c) => p + c.toUpperCase());
-
-  // Collapse multiple spaces
   text = text.replace(/  +/g, ' ').trim();
-
-  if (text !== original) corrected = true;
-  return { text, corrected };
+  return { text, corrected: text !== original };
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -115,7 +124,6 @@ export function useSpeechToText({
     typeof window !== 'undefined' &&
     ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window);
 
-  // Timer tick
   useEffect(() => {
     if (state === 'listening') {
       timerRef.current = setInterval(() => {
@@ -124,9 +132,7 @@ export function useSpeechToText({
     } else {
       if (timerRef.current) clearInterval(timerRef.current);
     }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
   }, [state]);
 
   const buildOutput = useCallback(
@@ -145,42 +151,22 @@ export function useSpeechToText({
     [context, memberId, duration, engine]
   );
 
-  // Web Speech API
   const startWebSpeech = useCallback(() => {
-    console.log('🎤 Initializing Web Speech API...');
-    
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-      console.error('❌ SpeechRecognition not available');
-      setError('Speech recognition not available in this browser');
-      setState('error');
-      return;
-    }
-    
-    const recognition = new SpeechRecognition();
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) { setError('Speech recognition not available in this browser'); setState('error'); return; }
 
+    const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
     recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => {
-      console.log('✅ Speech recognition started');
-      setEngine('webspeech');
-      setState('listening');
-      isListeningRef.current = true;
-      startTimeRef.current = Date.now();
-      setError(null);
-    };
+    recognition.onstart = () => { setEngine('webspeech'); setState('listening'); isListeningRef.current = true; startTimeRef.current = Date.now(); setError(null); };
 
     recognition.onresult = (event: any) => {
-      console.log('🎤 Speech result received:', event);
       let interim = '';
       let final = finalTranscriptRef.current;
       let lastConfidence: number | null = null;
-
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
         if (result.isFinal) {
@@ -188,13 +174,8 @@ export function useSpeechToText({
           final += cleaned + ' ';
           lastConfidence = result[0].confidence;
           if (corrected) setWasAutoCorrected(true);
-          console.log('✅ Final transcript:', cleaned);
-        } else {
-          interim += result[0].transcript;
-          console.log('⏳ Interim transcript:', interim);
-        }
+        } else { interim += result[0].transcript; }
       }
-
       finalTranscriptRef.current = final;
       setTranscript(final);
       setInterimText(interim);
@@ -202,153 +183,67 @@ export function useSpeechToText({
     };
 
     recognition.onerror = (event: any) => {
-      console.error('❌ Speech recognition error:', event.error, event);
-      if (event.error === 'no-speech') {
-        console.log('⚠️ No speech detected, continuing...');
-        return;
-      }
-      // aborted = user stopped intentionally, not an error
-      if (event.error === 'aborted') {
-        console.log('⚠️ Speech recognition aborted by user');
-        return;
-      }
+      if (event.error === 'no-speech' || event.error === 'aborted') return;
       setError(`Microphone error: ${event.error}`);
       setState('error');
       isListeningRef.current = false;
     };
 
     recognition.onend = () => {
-      console.log('🎤 Speech recognition ended');
-      // Auto-restart if still in listening state (Web Speech stops after ~10s silence)
-      if (isListeningRef.current) {
-        console.log('🔄 Auto-restarting speech recognition...');
-        try {
-          recognition.start();
-          return;
-        } catch (error) {
-          console.error('❌ Failed to restart recognition:', error);
-          // recognition already started or unavailable — fall through
-        }
-      }
-
+      if (isListeningRef.current) { try { recognition.start(); return; } catch { /* fall through */ } }
       setInterimText('');
       const finalText = finalTranscriptRef.current;
-      if (finalText.trim()) {
-        console.log('✅ Speech capture complete:', finalText);
-        setState('done');
-        const output = buildOutput(finalText, { confidence, engine: 'webspeech' });
-        onCapture?.(output);
-      } else {
-        console.log('⚠️ No speech captured, returning to idle');
-        setState('idle');
-      }
+      if (finalText.trim()) { setState('done'); onCapture?.(buildOutput(finalText, { confidence, engine: 'webspeech' })); }
+      else setState('idle');
     };
 
     recognitionRef.current = recognition;
-    
-    try {
-      console.log('🎤 Starting recognition...');
-      recognition.start();
-    } catch (error) {
-      console.error('❌ Failed to start recognition:', error);
-      setError('Failed to start speech recognition');
-      setState('error');
-    }
+    try { recognition.start(); } catch { setError('Failed to start speech recognition'); setState('error'); }
   }, [buildOutput, confidence, onCapture]);
 
-  // Whisper fallback
   const startWhisper = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       chunksRef.current = [];
-
-      mediaRecorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunksRef.current.push(e.data);
-      };
-
+      mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) chunksRef.current.push(e.data); };
       mediaRecorder.onstop = async () => {
         setState('processing');
         stream.getTracks().forEach((t) => t.stop());
-
         try {
           const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
           const formData = new FormData();
           formData.append('audio', blob, 'recording.webm');
-
           const res = await fetch(WHISPER_ENDPOINT!, { method: 'POST', body: formData });
           const data = await res.json();
           const text = data.text ?? '';
-
-          setTranscript(text);
-          setState('done');
-          setEngine('whisper');
+          setTranscript(text); setState('done'); setEngine('whisper');
           onCapture?.(buildOutput(text, { engine: 'whisper', raw: data, segments: data.segments ?? [] }));
-        } catch {
-          setError('Whisper transcription failed. Is the server running?');
-          setState('error');
-        }
+        } catch { setError('Whisper transcription failed.'); setState('error'); }
       };
-
       mediaRecorderRef.current = mediaRecorder;
       mediaRecorder.start(1000);
-      setEngine('whisper');
-      setState('listening');
-      startTimeRef.current = Date.now();
-      setError(null);
-    } catch {
-      setError('Microphone access denied.');
-      setState('error');
-    }
+      setEngine('whisper'); setState('listening'); startTimeRef.current = Date.now(); setError(null);
+    } catch { setError('Microphone access denied.'); setState('error'); }
   }, [buildOutput, onCapture]);
 
   const start = useCallback(() => {
-    console.log('🎤 Starting speech recognition...');
-    console.log('Browser support:', isSupported);
-    console.log('Use Whisper:', useWhisper);
-    console.log('Whisper endpoint:', WHISPER_ENDPOINT);
-    
     finalTranscriptRef.current = '';
-    setTranscript('');
-    setInterimText('');
-    setDuration(0);
-    setConfidence(null);
-    setError(null);
-    setWasAutoCorrected(false);
-
-    if (useWhisper && WHISPER_ENDPOINT) {
-      console.log('🎤 Using Whisper mode');
-      startWhisper();
-    } else {
-      if (!isSupported) {
-        console.error('❌ Speech recognition not supported');
-        setError('Speech recognition not supported. Use Chrome or Edge.');
-        setState('error');
-        return;
-      }
-      console.log('🎤 Using Web Speech API');
-      startWebSpeech();
-    }
+    setTranscript(''); setInterimText(''); setDuration(0); setConfidence(null); setError(null); setWasAutoCorrected(false);
+    if (useWhisper && WHISPER_ENDPOINT) { startWhisper(); }
+    else if (!isSupported) { setError('Speech recognition not supported. Use Chrome or Edge.'); setState('error'); }
+    else startWebSpeech();
   }, [useWhisper, isSupported, startWebSpeech, startWhisper]);
 
   const stop = useCallback(() => {
     isListeningRef.current = false;
     recognitionRef.current?.stop();
-    if (mediaRecorderRef.current?.state !== 'inactive') {
-      mediaRecorderRef.current?.stop();
-    }
+    if (mediaRecorderRef.current?.state !== 'inactive') mediaRecorderRef.current?.stop();
   }, []);
 
   const reset = useCallback(() => {
-    stop();
-    setState('idle');
-    setTranscript('');
-    setInterimText('');
-    setDuration(0);
-    setConfidence(null);
-    setError(null);
-    setWasAutoCorrected(false);
-    finalTranscriptRef.current = '';
+    stop(); setState('idle'); setTranscript(''); setInterimText(''); setDuration(0);
+    setConfidence(null); setError(null); setWasAutoCorrected(false); finalTranscriptRef.current = '';
   }, [stop]);
 
   return { state, transcript, interimText, confidence, duration, error, engine, wasAutoCorrected, isSupported, start, stop, reset };
@@ -357,48 +252,42 @@ export function useSpeechToText({
 // ─── Waveform ─────────────────────────────────────────────────────────────────
 
 export function Waveform({ active }: { active: boolean }) {
-  const heights = [0.6, 1, 0.75, 1, 0.5, 0.85, 0.65, 1, 0.7, 0.9];
+  const bars = [0.45, 0.8, 0.55, 1, 0.65, 0.9, 0.5, 1, 0.7, 0.6, 0.85, 0.45];
   return (
-    <div className="flex items-center gap-0.5" style={{ height: 18 }}>
-      {heights.map((h, i) => (
-        <div
-          key={i}
-          className={`rounded-sm transition-all duration-150 ${
-            active ? 'bg-lumis-accent-secondary' : 'bg-lumis-text-tertiary/30'
-          }`}
-          style={{
-            width: 2.5,
-            height: active ? `${h * 18}px` : '3px',
-            animation: active ? `lumis-wave ${0.5 + i * 0.07}s ease-in-out infinite alternate` : 'none',
-          }}
-        />
-      ))}
+    <>
       <style>{`
-        @keyframes lumis-wave { from { transform: scaleY(0.35); } to { transform: scaleY(1); } }
-        @keyframes lumis-pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
-        @keyframes lumis-spin { to { transform: rotate(360deg); } }
-        @keyframes lumis-rise { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes lx-wave { 0%{transform:scaleY(0.3)} 100%{transform:scaleY(1)} }
+        @keyframes lx-pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+        @keyframes lx-spin { to{transform:rotate(360deg)} }
+        @keyframes lx-rise { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes lx-fade { from{opacity:0} to{opacity:1} }
       `}</style>
-    </div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 2, height: 20 }}>
+        {bars.map((h, i) => (
+          <div key={i} style={{
+            width: 2,
+            borderRadius: 2,
+            background: active ? T.accent : T.border,
+            height: active ? `${h * 20}px` : '3px',
+            transformOrigin: 'bottom',
+            animation: active ? `lx-wave ${0.4 + i * 0.06}s ease-in-out ${i * 0.04}s infinite alternate` : 'none',
+            transition: 'height 0.2s ease, background 0.3s ease',
+          }} />
+        ))}
+      </div>
+    </>
   );
 }
 
 // ─── Mic Button ───────────────────────────────────────────────────────────────
 
-function MicButton({
-  state,
-  onStart,
-  onStop,
-  compact = false,
-}: {
-  state: SpeechState;
-  onStart: () => void;
-  onStop: () => void;
-  compact?: boolean;
+function MicButton({ state, onStart, onStop, compact = false }: {
+  state: SpeechState; onStart: () => void; onStop: () => void; compact?: boolean;
 }) {
   const isListening = state === 'listening';
   const isProcessing = state === 'processing';
-  const size = compact ? 36 : 48;
+  const size = compact ? 36 : 52;
+  const iconSize = compact ? 14 : 19;
 
   return (
     <button
@@ -406,43 +295,39 @@ function MicButton({
       onClick={isListening ? onStop : onStart}
       disabled={isProcessing}
       style={{
-        width: size,
-        height: size,
+        width: size, height: size,
         borderRadius: '50%',
-        border: `1.5px solid ${isListening ? 'var(--accent-secondary)' : 'var(--bg-tertiary)'}`,
-        background: isListening
-          ? 'var(--accent-secondary-light)'
-          : 'var(--surface)',
+        border: `1.5px solid ${isListening ? T.accent : T.border}`,
+        background: isListening ? T.accentGlow : T.surface,
         cursor: isProcessing ? 'not-allowed' : 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        transition: 'all 0.25s',
-        boxShadow: isListening ? '0 0 0 4px var(--accent-secondary-light)' : 'none',
-        flexShrink: 0,
-        outline: 'none',
-        opacity: isProcessing ? 0.6 : 1,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0, outline: 'none',
+        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        boxShadow: isListening
+          ? `0 0 0 4px ${T.accentGlow}, 0 2px 12px rgba(155,110,90,0.15)`
+          : `0 1px 4px rgba(46,31,20,0.06)`,
+        opacity: isProcessing ? 0.5 : 1,
       }}
     >
       {isProcessing ? (
         <div style={{
-          width: 13, height: 13, borderRadius: '50%',
-          border: '2px solid var(--bg-tertiary)',
-          borderTopColor: 'var(--accent-secondary)',
-          animation: 'lumis-spin 0.7s linear infinite',
+          width: 14, height: 14, borderRadius: '50%',
+          border: `1.5px solid ${T.borderSoft}`,
+          borderTopColor: T.accent,
+          animation: 'lx-spin 0.8s linear infinite',
         }} />
       ) : (
-        <svg width={compact ? 15 : 18} height={compact ? 15 : 18} viewBox="0 0 24 24" fill="none">
+        <svg width={iconSize} height={iconSize} viewBox="0 0 24 24" fill="none">
           <rect x="9" y="2" width="6" height="12" rx="3"
-            fill={isListening ? 'var(--accent-secondary)' : 'var(--text-tertiary)'} />
+            fill={isListening ? T.accent : T.textMuted} />
           <path d="M5 11c0 3.866 3.134 7 7 7s7-3.134 7-7"
-            stroke={isListening ? 'var(--accent-secondary)' : 'var(--text-tertiary)'}
+            stroke={isListening ? T.accent : T.textMuted}
             strokeWidth="1.8" strokeLinecap="round" />
           <line x1="12" y1="18" x2="12" y2="22"
-            stroke={isListening ? 'var(--accent-secondary)' : 'var(--text-tertiary)'}
+            stroke={isListening ? T.accent : T.textMuted}
             strokeWidth="1.8" strokeLinecap="round" />
           <line x1="9" y1="22" x2="15" y2="22"
-            stroke={isListening ? 'var(--accent-secondary)' : 'var(--text-tertiary)'}
+            stroke={isListening ? T.accent : T.textMuted}
             strokeWidth="1.8" strokeLinecap="round" />
         </svg>
       )}
@@ -455,7 +340,7 @@ function MicButton({
 export function SpeechInput({
   context = 'note',
   memberId = null,
-  placeholder = 'Tap the mic and speak...',
+  placeholder = 'Tap the mic and speak freely...',
   onCapture,
   compact = false,
   useWhisper = false,
@@ -472,7 +357,6 @@ export function SpeechInput({
   const [editableText, setEditableText] = useState('');
   const [saved, setSaved] = useState(false);
 
-  // Sync transcript → editable field
   useEffect(() => {
     if (transcript) setEditableText(transcript);
   }, [transcript]);
@@ -480,61 +364,51 @@ export function SpeechInput({
   const handleSave = () => {
     if (!editableText.trim()) return;
     onCapture({
-      text: editableText.trim(),
-      context,
-      memberId,
-      duration,
+      text: editableText.trim(), context, memberId, duration,
       wordCount: editableText.trim().split(/\s+/).filter(Boolean).length,
-      timestamp: new Date().toISOString(),
-      confidence,
-      engine,
-      segments: [],
-      raw: null,
-      edited: true,
+      timestamp: new Date().toISOString(), confidence, engine, segments: [], raw: null, edited: true,
     });
     setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    setTimeout(() => setSaved(false), 2200);
   };
 
   const showInterim = state === 'listening' && interimText;
+  const wordCount = editableText.trim().split(/\s+/).filter(Boolean).length;
 
   // ── Compact Mode ──
   if (compact) {
     return (
       <div className={className}>
-        <div
-          className="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-250"
-          style={{
-            background: 'var(--surface)',
-            border: `1.5px solid ${state === 'listening' ? 'var(--accent-secondary)' : 'var(--bg-tertiary)'}`,
-          }}
-        >
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 12,
+          padding: '10px 16px', borderRadius: 14,
+          background: T.surface,
+          border: `1.5px solid ${state === 'listening' ? T.accent : T.borderSoft}`,
+          boxShadow: state === 'listening' ? `0 0 0 3px ${T.accentGlow}` : '0 1px 4px rgba(46,31,20,0.05)',
+          transition: 'all 0.3s ease',
+        }}>
           <MicButton state={state} onStart={start} onStop={stop} compact />
-          <div
-            className="flex-1 font-serif text-sm leading-snug"
-            style={{
-              color: editableText ? 'var(--text-secondary)' : 'var(--text-tertiary)',
-              fontStyle: editableText ? 'normal' : 'italic',
-            }}
-          >
+          <div style={{
+            flex: 1, fontFamily: "'Crimson Pro', Georgia, serif",
+            fontSize: 14, lineHeight: 1.5,
+            color: editableText ? T.textDim : T.textFaint,
+            fontStyle: editableText ? 'normal' : 'italic',
+          }}>
             {showInterim
-              ? <span style={{ color: 'var(--text-tertiary)', fontStyle: 'italic' }}>{interimText}</span>
+              ? <span style={{ color: T.textFaint, fontStyle: 'italic' }}>{interimText}</span>
               : editableText || placeholder}
           </div>
           {state === 'listening' && <Waveform active />}
           {editableText && state !== 'listening' && (
-            <button
-              type="button"
-              onClick={reset}
-              className="font-mono text-xs transition-colors hover:text-primary"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)' }}
-            >
-              ✕
-            </button>
+            <button type="button" onClick={reset} style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: T.textFaint, fontSize: 14, lineHeight: 1, padding: 2,
+              transition: 'color 0.2s',
+            }}>×</button>
           )}
         </div>
         {error && (
-          <p className="font-mono text-xs mt-1.5 tracking-wide" style={{ color: 'var(--error)' }}>
+          <p style={{ fontFamily: 'monospace', fontSize: 11, color: T.red, marginTop: 6, letterSpacing: '0.04em' }}>
             {error}
           </p>
         )}
@@ -546,69 +420,84 @@ export function SpeechInput({
   return (
     <div className={className}>
       {label && (
-        <div className="flex items-center gap-2 mb-3">
-          <div className="w-3 h-px" style={{ background: 'var(--accent-secondary)', opacity: 0.5 }} />
-          <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <div style={{ width: 18, height: 1, background: T.accent, opacity: 0.4 }} />
+          <span style={{
+            fontFamily: 'monospace', fontSize: 10, textTransform: 'uppercase',
+            letterSpacing: '0.15em', color: T.textMuted,
+          }}>
             {label}
           </span>
         </div>
       )}
 
-      <div
-        className="rounded-xl overflow-hidden transition-all duration-300"
-        style={{
-          background: 'var(--surface)',
-          border: `1.5px solid ${state === 'listening' ? 'var(--accent-secondary)' : 'var(--bg-tertiary)'}`,
-          boxShadow: state === 'listening' ? '0 0 0 3px var(--accent-secondary-light)' : 'none',
-        }}
-      >
-        {/* Top bar */}
-        <div
-          className="flex items-center gap-3 px-4 py-3"
-          style={{ borderBottom: '1px solid var(--bg-tertiary)' }}
-        >
+      <div style={{
+        borderRadius: 16, overflow: 'hidden',
+        background: T.bg,
+        border: `1.5px solid ${state === 'listening' ? T.accent : T.border}`,
+        boxShadow: state === 'listening'
+          ? `0 0 0 4px ${T.accentGlow}, 0 4px 24px rgba(155,110,90,0.10)`
+          : `0 2px 16px rgba(46,31,20,0.06), 0 1px 4px rgba(46,31,20,0.04)`,
+        transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
+      }}>
+
+        {/* ── Top bar ── */}
+        <div style={{
+          display: 'flex', alignItems: 'center', gap: 14,
+          padding: '14px 18px',
+          borderBottom: `1px solid ${T.borderSoft}`,
+          background: T.surface,
+        }}>
           <MicButton state={state} onStart={start} onStop={stop} />
 
-          <div className="flex-1">
+          <div style={{ flex: 1 }}>
             {state === 'idle' && (
-              <p className="font-serif text-sm italic" style={{ color: 'var(--text-tertiary)' }}>
-                {!isSupported ? 'Use Chrome or Edge for voice input' : 'Tap mic to start speaking'}
+              <p style={{
+                fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 14,
+                fontStyle: 'italic', color: T.textFaint, margin: 0,
+              }}>
+                {!isSupported ? 'Voice input requires Chrome or Edge' : 'Tap to begin speaking'}
               </p>
             )}
+
             {state === 'listening' && (
-              <div style={{ animation: 'lumis-rise 0.2s ease-out' }}>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <div
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: 'var(--accent-secondary)', animation: 'lumis-pulse 1s ease-in-out infinite' }}
-                  />
-                  <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--accent-secondary)' }}>
+              <div style={{ animation: 'lx-rise 0.2s ease-out' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                  <div style={{
+                    width: 6, height: 6, borderRadius: '50%',
+                    background: T.accent,
+                    animation: 'lx-pulse 1.2s ease-in-out infinite',
+                  }} />
+                  <span style={{ fontFamily: 'monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: T.accent }}>
                     Listening
                   </span>
-                  <span className="font-mono text-xs" style={{ color: 'var(--text-tertiary)' }}>
+                  <span style={{ fontFamily: 'monospace', fontSize: 10, color: T.textFaint }}>
                     · {duration}s
                   </span>
                 </div>
                 <Waveform active />
               </div>
             )}
+
             {state === 'processing' && (
-              <p className="font-serif text-sm italic" style={{ color: 'var(--text-tertiary)' }}>
-                Processing with Whisper...
+              <p style={{ fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 14, fontStyle: 'italic', color: T.textMuted, margin: 0 }}>
+                Transcribing with Whisper...
               </p>
             )}
+
             {state === 'done' && (
-              <div className="flex items-center gap-2" style={{ animation: 'lumis-rise 0.2s ease-out' }}>
-                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--accent-primary)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, animation: 'lx-rise 0.2s ease-out' }}>
+                <span style={{ fontFamily: 'monospace', fontSize: 10, textTransform: 'uppercase', letterSpacing: '0.15em', color: T.sage }}>
                   Captured
                 </span>
-                <span className="font-mono text-xs" style={{ color: 'var(--text-tertiary)' }}>
-                  · {duration}s · {editableText.split(/\s+/).filter(Boolean).length} words
+                <span style={{ fontFamily: 'monospace', fontSize: 10, color: T.textFaint }}>
+                  · {duration}s · {wordCount} words
                 </span>
               </div>
             )}
+
             {state === 'error' && (
-              <p className="font-mono text-xs tracking-wide" style={{ color: 'var(--error)' }}>
+              <p style={{ fontFamily: 'monospace', fontSize: 11, color: T.red, margin: 0, letterSpacing: '0.04em' }}>
                 {error}
               </p>
             )}
@@ -616,44 +505,51 @@ export function SpeechInput({
 
           {/* Engine badge */}
           {state !== 'idle' && (
-            <span
-              className="font-mono text-xs uppercase tracking-widest px-2 py-0.5 rounded-full"
-              style={{
-                background: 'var(--surface-hover)',
-                color: 'var(--text-tertiary)',
-                border: '1px solid var(--bg-tertiary)',
-              }}
-            >
+            <span style={{
+              fontFamily: 'monospace', fontSize: 9, textTransform: 'uppercase',
+              letterSpacing: '0.12em', color: T.textFaint,
+              background: T.surface2, border: `1px solid ${T.borderSoft}`,
+              padding: '2px 8px', borderRadius: 99,
+            }}>
               {engine === 'whisper' ? 'Whisper' : 'Web Speech'}
             </span>
           )}
 
           {(state === 'done' || editableText) && (
-            <button
-              type="button"
-              onClick={reset}
-              className="font-mono text-sm transition-colors"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
-            >
-              ✕
-            </button>
+            <button type="button" onClick={reset} style={{
+              background: 'none', border: 'none', cursor: 'pointer',
+              color: T.textFaint, fontSize: 16, lineHeight: 1, padding: 4,
+              transition: 'color 0.2s',
+            }}>×</button>
           )}
         </div>
 
-        {/* Transcript area */}
-        <div className="relative px-4 py-3" style={{ minHeight: 96 }}>
+        {/* ── Transcript area ── */}
+        <div style={{ position: 'relative', padding: '18px 20px', minHeight: 110 }}>
+          {/* Fine paper texture line */}
+          <div style={{
+            position: 'absolute', left: 44, top: 0, bottom: 0, width: 1,
+            background: `linear-gradient(to bottom, transparent, ${T.borderSoft} 10%, ${T.borderSoft} 90%, transparent)`,
+            opacity: 0.5, pointerEvents: 'none',
+          }} />
+
           {showInterim && (
-            <p
-              className="absolute bottom-3 left-4 right-4 font-serif text-sm leading-relaxed pointer-events-none"
-              style={{ color: 'var(--text-tertiary)', fontStyle: 'italic' }}
-            >
+            <p style={{
+              position: 'absolute', bottom: 18, left: 20, right: 20,
+              fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 15,
+              fontStyle: 'italic', color: T.textFaint,
+              lineHeight: 1.85, margin: 0, pointerEvents: 'none',
+            }}>
               {interimText}
             </p>
           )}
 
           {state === 'listening' && !interimText && !editableText && (
-            <p className="font-serif text-sm italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
-              Speak freely. Transcript appears here in real time.
+            <p style={{
+              fontFamily: "'Crimson Pro', Georgia, serif", fontSize: 15,
+              fontStyle: 'italic', color: T.textFaint, lineHeight: 1.85, margin: 0,
+            }}>
+              Speak freely — your words appear here in real time.
             </p>
           )}
 
@@ -663,42 +559,43 @@ export function SpeechInput({
             placeholder={state === 'listening' ? '' : placeholder}
             rows={4}
             style={{
-              width: '100%',
-              background: 'transparent',
-              border: 'none',
-              outline: 'none',
-              resize: 'none',
-              fontFamily: 'var(--font-serif, serif)',
-              fontSize: '0.9rem',
-              color: 'var(--text-primary)',
-              lineHeight: 1.85,
-              letterSpacing: '0.01em',
+              width: '100%', background: 'transparent', border: 'none',
+              outline: 'none', resize: 'none',
+              fontFamily: "'Crimson Pro', Georgia, serif",
+              fontSize: 15.5, color: T.text,
+              lineHeight: 1.9, letterSpacing: '0.012em',
+              caretColor: T.accent,
             }}
           />
         </div>
 
-        {/* Footer: meta + save */}
+        {/* ── Footer ── */}
         {(state === 'done' || editableText) && (
-          <div
-            className="flex items-center justify-between px-4 py-2.5"
-            style={{ borderTop: '1px solid var(--bg-tertiary)', animation: 'lumis-rise 0.25s ease-out' }}
-          >
+          <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '11px 18px',
+            borderTop: `1px solid ${T.borderSoft}`,
+            background: T.surface,
+            animation: 'lx-rise 0.25s ease-out',
+          }}>
             {showMeta ? (
-              <div className="flex items-center gap-3">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 {confidence !== null && (
-                  <span className="font-mono text-xs tracking-wide" style={{ color: 'var(--text-tertiary)' }}>
+                  <span style={{ fontFamily: 'monospace', fontSize: 10, color: T.textFaint, letterSpacing: '0.08em' }}>
                     {Math.round(confidence * 100)}% confidence
                   </span>
                 )}
                 {wasAutoCorrected && (
-                  <span
-                    className="font-mono text-xs uppercase tracking-widest px-1.5 py-0.5 rounded"
-                    style={{ background: 'var(--accent-gold-light)', color: 'var(--accent-gold)', border: '1px solid var(--accent-gold)' }}
-                  >
+                  <span style={{
+                    fontFamily: 'monospace', fontSize: 9, textTransform: 'uppercase',
+                    letterSpacing: '0.12em', color: T.gold,
+                    background: T.goldBg, border: `1px solid rgba(160,128,80,0.2)`,
+                    padding: '2px 7px', borderRadius: 4,
+                  }}>
                     auto-corrected
                   </span>
                 )}
-                <span className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                <span style={{ fontFamily: 'monospace', fontSize: 10, color: T.textFaint, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                   {context}
                 </span>
               </div>
@@ -707,12 +604,14 @@ export function SpeechInput({
             <button
               type="button"
               onClick={handleSave}
-              className="font-mono text-xs uppercase tracking-widest px-4 py-1.5 rounded-lg transition-all duration-200"
               style={{
-                border: `1px solid ${saved ? 'var(--accent-primary)' : 'var(--accent-secondary)'}`,
-                background: saved ? 'var(--accent-primary-light)' : 'var(--accent-secondary-light)',
-                color: saved ? 'var(--accent-primary)' : 'var(--accent-secondary)',
-                cursor: 'pointer',
+                fontFamily: 'monospace', fontSize: 10,
+                textTransform: 'uppercase', letterSpacing: '0.14em',
+                padding: '6px 18px', borderRadius: 8, cursor: 'pointer',
+                border: `1px solid ${saved ? T.sage : T.accent}`,
+                background: saved ? T.sageBg : T.accentGlow,
+                color: saved ? T.sage : T.accent,
+                transition: 'all 0.25s ease',
               }}
             >
               {saved ? '✓ Saved' : 'Use This Text'}
