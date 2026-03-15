@@ -92,6 +92,7 @@ export default function MemberDetailPage() {
   const memberId = params.id as string;
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [showEditModal, setShowEditModal] = useState(false);
+  const [incidentsAddOpen, setIncidentsAddOpen] = useState(false);
   
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
@@ -156,7 +157,7 @@ export default function MemberDetailPage() {
       case 'traits':
         return <MemberProsConsTab member={member} />;
       case 'incidents':
-        return <MemberIncidentsTab member={member} />;
+        return <MemberIncidentsTab member={member} externalAddOpen={incidentsAddOpen} onExternalAddClose={() => setIncidentsAddOpen(false)} />;
       case 'patterns':
         return <MemberPatternsTab member={member} />;
       case 'interactions':
@@ -298,8 +299,7 @@ export default function MemberDetailPage() {
               // Trigger log interaction
               console.log('Open log interaction');
             } else if (activeTab === 'incidents') {
-              // Trigger add incident
-              console.log('Open add incident');
+              setIncidentsAddOpen(true);
             } else if (activeTab === 'traits') {
               // Trigger add trait
               console.log('Open add trait');

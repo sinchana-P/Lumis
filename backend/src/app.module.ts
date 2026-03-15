@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
 import { MembersModule } from './modules/members/members.module';
 import { TraitsModule } from './modules/traits/traits.module';
+import { IncidentsModule } from './modules/incidents/incidents.module';
 import { SupabaseModule } from './common/modules/supabase.module';
 import configuration from './config/configuration';
 
@@ -19,6 +20,7 @@ import configuration from './config/configuration';
     AuthModule,
     MembersModule,
     TraitsModule,
+    IncidentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -128,6 +128,7 @@ export const baseApi = createApi({
     'MemberNumerology',
     'MemberVedic',
     'MemberTraits',
+    'Incidents',
     'MemberIncidents',
     'MemberPatterns',
     'MemberInteractions',

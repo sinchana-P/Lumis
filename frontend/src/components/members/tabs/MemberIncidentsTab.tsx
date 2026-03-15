@@ -1,405 +1,511 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import {
+  useGetIncidentsQuery,
+  useCreateIncidentMutation,
+  useUpdateIncidentMutation,
+  useDeleteIncidentMutation,
+  type Incident,
+  type CreateIncidentRequest,
+  type IncidentCategory,
+  type IncidentSeverity,
+} from '@/store/api/incidentsApi';
+import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 
-interface Member {
-  id: string;
-  fullName: string;
-  [key: string]: any;
-}
-
+interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberIncidentsTabProps {
   member: Member;
+  /** Set to true by the parent page's header button to open the add modal */
+  externalAddOpen?: boolean;
+  onExternalAddClose?: () => void;
 }
 
-interface Incident {
-  id: string;
-  title: string;
-  description: string;
-  date: string;
-  severity: 'low' | 'medium' | 'high';
-  category: 'conflict' | 'breakthrough' | 'milestone' | 'challenge' | 'celebration';
-  emotions: string[];
-  outcome?: string;
-  createdAt: string;
-}
+// ── Constants ────────────────────────────────────────────────────────────────
 
-// Mock data
-const mockIncidents: Incident[] = [
-  {
-    id: '1',
-    title: 'Had our first real argument',
-    description: 'Disagreed about weekend plans. I felt unheard when they made decisions without asking me first.',
-    date: '2024-03-10',
-    severity: 'medium',
-    category: 'conflict',
-    emotions: ['frustrated', 'hurt'],
-    outcome: 'We talked it through and agreed to check with each other before making plans',
-    createdAt: '2024-03-10T18:30:00Z'
-  },
-  {
-    id: '2',
-    title: 'They surprised me for my birthday',
-    description: 'Organized a small gathering with my closest friends. They remembered I mentioned wanting a quiet celebration.',
-    date: '2024-03-05',
-    severity: 'low',
-    category: 'celebration',
-    emotions: ['joyful', 'loved', 'grateful'],
-    outcome: 'Felt deeply appreciated and understood',
-    createdAt: '2024-03-05T20:15:00Z'
-  },
-  {
-    id: '3',
-    title: 'Supported me during work crisis',
-    description: 'When I was stressed about the project deadline, they brought me dinner and just listened without trying to fix everything.',
-    date: '2024-02-28',
-    severity: 'low',
-    category: 'milestone',
-    emotions: ['safe', 'supported'],
-    outcome: 'Realized how much I can rely on them during tough times',
-    createdAt: '2024-02-28T22:00:00Z'
-  }
+const CATEGORIES: { value: IncidentCategory; label: string; color: string }[] = [
+  { value: 'milestone',    label: 'Milestone',    color: 'var(--accent-ai)' },
+  { value: 'celebration',  label: 'Celebration',  color: '#7FA87A' },
+  { value: 'breakthrough', label: 'Breakthrough', color: 'var(--accent-gold)' },
+  { value: 'challenge',    label: 'Challenge',    color: '#C4A87A' },
+  { value: 'conflict',     label: 'Conflict',     color: '#C47A7A' },
 ];
 
-export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newIncident, setNewIncident] = useState({
-    title: '',
-    description: '',
-    date: new Date().toISOString().split('T')[0],
-    severity: 'medium' as 'low' | 'medium' | 'high',
-    category: 'milestone' as Incident['category'],
-    emotions: [] as string[],
-    outcome: ''
-  });
+const SEVERITIES: { value: IncidentSeverity; label: string; sub: string }[] = [
+  { value: 'low',    label: 'Light',    sub: 'minor ripple'      },
+  { value: 'medium', label: 'Moderate', sub: 'noticeable shift'  },
+  { value: 'high',   label: 'Deep',     sub: 'significant impact'},
+];
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'high': return 'bg-error-bg text-error border-error-border';
-      case 'medium': return 'bg-warning-bg text-warning border-warning-border';
-      case 'low': return 'bg-success-bg text-success border-success-border';
-      default: return 'bg-surface text-tertiary border-primary';
-    }
-  };
+const EMOTION_TAGS = ['joyful', 'safe', 'loved', 'energized', 'peaceful', 'anxious', 'frustrated', 'drained', 'confused', 'hurt'];
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'conflict': return (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-        </svg>
-      );
-      case 'breakthrough': return (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      );
-      case 'milestone': return (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-8.293l-3-3a1 1 0 00-1.414-1.414L9 7.586 7.707 6.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4a1 1 0 000-1.414z" clipRule="evenodd" />
-        </svg>
-      );
-      case 'challenge': return (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-        </svg>
-      );
-      case 'celebration': return (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
-        </svg>
-      );
-      default: return (
-        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clipRule="evenodd" />
-        </svg>
-      );
-    }
-  };
+function categoryColor(cat?: string | null) {
+  return CATEGORIES.find(c => c.value === cat)?.color ?? 'var(--text-tertiary)';
+}
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'conflict': return 'bg-error-bg text-error border-error-border';
-      case 'breakthrough': return 'bg-info-bg text-info border-info-border';
-      case 'milestone': return 'bg-accent-ai-light text-accent-ai border-accent-ai';
-      case 'challenge': return 'bg-warning-bg text-warning border-warning-border';
-      case 'celebration': return 'bg-success-bg text-success border-success-border';
-      default: return 'bg-surface text-tertiary border-primary';
-    }
-  };
+// ── Mic button ───────────────────────────────────────────────────────────────
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Adding new incident:', newIncident);
-    setNewIncident({
-      title: '',
-      description: '',
-      date: new Date().toISOString().split('T')[0],
-      severity: 'medium',
-      category: 'milestone',
-      emotions: [],
-      outcome: ''
-    });
-    setShowAddForm(false);
+function MicButton({ onTranscript }: { onTranscript: (t: string) => void }) {
+  const [listening, setListening] = useState(false);
+  const ref = useRef<any>(null);
+
+  const toggle = () => {
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) return;
+    if (listening) { ref.current?.stop(); setListening(false); return; }
+    const rec = new SR();
+    rec.continuous = false; rec.interimResults = false; rec.lang = 'en-US';
+    rec.onresult = (e: any) => { onTranscript(e.results[0][0].transcript); setListening(false); };
+    rec.onerror = () => setListening(false);
+    rec.onend   = () => setListening(false);
+    ref.current = rec; rec.start(); setListening(true);
   };
 
   return (
-    <div className="w-full">
-      {/* Add Form Modal */}
-      {showAddForm && (
-        <div className="fixed inset-0 bg-primary/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-elevated rounded-2xl shadow-theme-xl max-w-2xl w-full p-8 max-h-[90vh] overflow-y-auto border border-tertiary">
-            <div className="text-center mb-8">
-              <h3 className="font-serif text-xl text-primary mb-2">
-                Chronicle a New Moment
-              </h3>
-              <div className="w-16 h-px bg-accent-gold mx-auto"></div>
+    <button type="button" onClick={toggle} title={listening ? 'Stop' : 'Speak'}
+      style={{
+        position: 'absolute', bottom: 10, right: 10, width: 28, height: 28,
+        borderRadius: '50%', border: 'none', cursor: 'pointer',
+        background: listening ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
+        color: listening ? '#fff' : 'var(--text-tertiary)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'background 200ms, color 200ms',
+      }}>
+      {listening
+        ? <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1" /></svg>
+        : <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4M8 23h8" />
+          </svg>}
+    </button>
+  );
+}
+
+// ── Incident modal (add + edit) ───────────────────────────────────────────────
+
+interface ModalForm {
+  title: string;
+  description: string;
+  date: string;
+  category: IncidentCategory;
+  severity: IncidentSeverity;
+  outcome: string;
+  emotions: string[];
+  tags: string;
+}
+
+const EMPTY_FORM: ModalForm = {
+  title: '', description: '', date: new Date().toISOString().split('T')[0],
+  category: 'milestone', severity: 'medium', outcome: '', emotions: [], tags: '',
+};
+
+function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
+  isOpen: boolean;
+  editing: Incident | null;
+  onClose: () => void;
+  onSave: (payload: CreateIncidentRequest) => Promise<void>;
+  saving: boolean;
+}) {
+  const [form, setForm] = useState<ModalForm>(EMPTY_FORM);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    if (editing) {
+      setForm({
+        title:       editing.title,
+        description: editing.description,
+        date:        editing.date,
+        category:    (editing.category ?? 'milestone') as IncidentCategory,
+        severity:    (editing.severity ?? 'medium') as IncidentSeverity,
+        outcome:     editing.outcome ?? '',
+        emotions:    editing.emotions ?? [],
+        tags:        editing.tags.join(', '),
+      });
+    } else {
+      setForm(EMPTY_FORM);
+    }
+  }, [isOpen, editing]);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    if (isOpen) document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
+
+  if (!isOpen) return null;
+
+  const toggleEmotion = (tag: string) =>
+    setForm(f => ({ ...f, emotions: f.emotions.includes(tag) ? f.emotions.filter(e => e !== tag) : [...f.emotions, tag] }));
+
+  const handleSave = async () => {
+    if (!form.title.trim() || !form.description.trim() || saving) return;
+    const tagList = form.tags.split(',').map(t => t.trim()).filter(Boolean);
+    await onSave({
+      title:       form.title.trim(),
+      description: form.description.trim(),
+      date:        form.date,
+      category:    form.category,
+      severity:    form.severity,
+      outcome:     form.outcome.trim() || undefined,
+      emotions:    form.emotions,
+      tags:        tagList,
+    });
+  };
+
+  const canSave = !!form.title.trim() && !!form.description.trim() && !saving;
+  const catColor = categoryColor(form.category);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0" style={{ background: 'rgba(0,0,0,0.25)', backdropFilter: 'blur(4px)' }} onClick={onClose} />
+      <div className="relative w-full scrollbar-thin overflow-y-auto" style={{ maxWidth: 460, maxHeight: '92vh', background: 'var(--bg-primary)', border: '1px solid var(--bg-tertiary)', borderRadius: 16, boxShadow: '0 20px 48px rgba(0,0,0,0.12)', padding: '24px 24px 20px' }}>
+
+        {/* Header */}
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 20 }}>
+          {editing ? 'Edit Incident' : 'Chronicle a Moment'}
+        </p>
+
+        <div style={{ height: 1, background: 'var(--bg-tertiary)', marginBottom: 20 }} />
+
+        {/* Title */}
+        <div style={{ marginBottom: 16 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>What Happened</p>
+          <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
+            placeholder="A brief, honest title…" className="w-full font-serif"
+            style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
+          />
+        </div>
+
+        {/* Date + Severity row */}
+        <div className="grid grid-cols-2 gap-3" style={{ marginBottom: 16 }}>
+          <div>
+            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>When</p>
+            <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+              className="w-full font-mono"
+              style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
+            />
+          </div>
+          <div>
+            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Weight</p>
+            <div style={{ display: 'flex', gap: 4, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
+              {SEVERITIES.map(s => (
+                <button key={s.value} type="button" onClick={() => setForm(f => ({ ...f, severity: s.value }))}
+                  className="font-mono uppercase tracking-widest"
+                  style={{
+                    flex: 1, fontSize: 9, padding: '5px 0', borderRadius: 6, border: 'none', cursor: 'pointer',
+                    background: form.severity === s.value ? 'var(--bg-primary)' : 'transparent',
+                    color: form.severity === s.value ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                    boxShadow: form.severity === s.value ? '0 1px 4px rgba(0,0,0,0.08)' : 'none',
+                    transition: 'all 180ms',
+                  }}>{s.label}</button>
+              ))}
             </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div>
-                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
-                  What Happened
-                </label>
-                <input
-                  type="text"
-                  value={newIncident.title}
-                  onChange={(e) => setNewIncident({ ...newIncident, title: e.target.value })}
-                  placeholder="A brief, honest description..."
-                  className="w-full p-4 border-2 border-primary rounded-lg bg-primary text-primary font-serif text-base focus:border-accent-primary focus:outline-none transition-colors"
-                  required
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
-                    When
-                  </label>
-                  <input
-                    type="date"
-                    value={newIncident.date}
-                    onChange={(e) => setNewIncident({ ...newIncident, date: e.target.value })}
-                    className="w-full p-4 border-2 border-primary rounded-lg bg-primary text-primary font-serif focus:border-accent-primary focus:outline-none transition-colors"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
-                    Nature
-                  </label>
-                  <select
-                    value={newIncident.category}
-                    onChange={(e) => setNewIncident({ ...newIncident, category: e.target.value as Incident['category'] })}
-                    className="w-full p-4 border-2 border-primary rounded-lg bg-primary text-primary font-serif focus:border-accent-primary focus:outline-none transition-colors"
-                  >
-                    <option value="milestone">Milestone</option>
-                    <option value="celebration">Celebration</option>
-                    <option value="breakthrough">Breakthrough</option>
-                    <option value="challenge">Challenge</option>
-                    <option value="conflict">Conflict</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
-                  The Full Story
-                </label>
-                <textarea
-                  value={newIncident.description}
-                  onChange={(e) => setNewIncident({ ...newIncident, description: e.target.value })}
-                  placeholder="What happened? How did it make you feel? What was the context? Be honest with yourself..."
-                  className="w-full p-4 border-2 border-primary rounded-lg bg-primary text-primary font-serif resize-none leading-relaxed focus:border-accent-primary focus:outline-none transition-colors"
-                  rows={5}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
-                  Emotional Weight
-                </label>
-                <select
-                  value={newIncident.severity}
-                  onChange={(e) => setNewIncident({ ...newIncident, severity: e.target.value as 'low' | 'medium' | 'high' })}
-                  className="w-full p-4 border-2 border-primary rounded-lg bg-primary text-primary font-serif focus:border-accent-primary focus:outline-none transition-colors"
-                >
-                  <option value="low">Light — Minor ripple</option>
-                  <option value="medium">Moderate — Noticeable shift</option>
-                  <option value="high">Deep — Significant impact</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
-                  Resolution & Reflection
-                </label>
-                <textarea
-                  value={newIncident.outcome}
-                  onChange={(e) => setNewIncident({ ...newIncident, outcome: e.target.value })}
-                  placeholder="How was it resolved? What did you learn? How do you feel about it now? What would you do differently?"
-                  className="w-full p-4 border-2 border-primary rounded-lg bg-primary text-primary font-serif resize-none leading-relaxed focus:border-accent-primary focus:outline-none transition-colors"
-                  rows={4}
-                />
-              </div>
-
-              <div className="flex space-x-4 pt-6">
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-4 bg-accent-primary text-inverse rounded-lg font-serif font-medium hover:bg-accent-primary transition-colors"
-                >
-                  Chronicle This Moment
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAddForm(false)}
-                  className="flex-1 px-6 py-4 bg-surface text-primary rounded-lg font-serif font-medium hover:bg-surface-hover transition-colors border border-primary"
-                >
-                  Not Now
-                </button>
-              </div>
-            </form>
           </div>
         </div>
-      )}
 
-      {/* Timeline - Clean Minimal Layout */}
-      <div className="w-full">
-        {mockIncidents.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full" style={{ backgroundColor: 'var(--surface)' }}>
-              <svg className="w-8 h-8" style={{ color: 'var(--text-tertiary)' }} fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-            </div>
-            <h3 className="font-serif text-xl mb-3" style={{ color: 'var(--text-primary)' }}>
-              Your story begins here
-            </h3>
-            <p className="font-serif text-sm mb-8 max-w-md mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-              Start chronicling the experiences that shape your connection with {member.fullName}.
-            </p>
-            <button
-              onClick={() => setShowAddForm(true)}
-              className="px-6 py-3 rounded-lg font-mono text-xs uppercase tracking-widest transition-all duration-300"
-              style={{ 
-                border: '1px solid var(--border-tertiary)',
-                color: 'var(--text-primary)',
-                backgroundColor: 'transparent'
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface)')}
-              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
-            >
-              Begin Chronicle
-            </button>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {mockIncidents.map((incident, index) => (
-              <div key={incident.id}>
-                <div className="flex items-start gap-6">
-                  {/* Simple Timeline Marker */}
-                  <div className="flex-shrink-0 w-3 h-3 rounded-full mt-2" style={{ backgroundColor: 'var(--accent-primary)' }}></div>
-                  
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    {/* Header */}
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <h3 className="font-serif text-lg font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
-                          {incident.title}
-                        </h3>
-                        <div className="flex items-center gap-4 text-sm">
-                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
-                            {new Date(incident.date).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric'
-                            })}
-                          </span>
-                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
-                            {incident.category}
-                          </span>
-                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
-                            {incident.severity}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Description */}
-                    <div className="mb-4">
-                      <p className="font-serif leading-relaxed" style={{ color: 'var(--text-primary)' }}>
-                        {incident.description}
-                      </p>
-                    </div>
-                    
-                    {/* Outcome */}
-                    {incident.outcome && (
-                      <div className="mb-4 pl-4" style={{ borderLeft: '2px solid var(--accent-ai)' }}>
-                        <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--accent-ai)' }}>
-                          Resolution
-                        </div>
-                        <p className="font-serif text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                          {incident.outcome}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {/* Emotions - Simple Text */}
-                    {incident.emotions.length > 0 && (
-                      <div className="text-sm">
-                        <span className="font-mono uppercase tracking-widest mr-3" style={{ color: 'var(--text-tertiary)' }}>
-                          Emotions:
-                        </span>
-                        <span className="font-serif" style={{ color: 'var(--text-secondary)' }}>
-                          {incident.emotions.join(', ')}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-                
-                {/* Subtle Divider */}
-                {index < mockIncidents.length - 1 && (
-                  <div className="w-full h-px mt-8" style={{ 
-                    backgroundImage: 'repeating-linear-gradient(to right, var(--border-tertiary) 0px, var(--border-tertiary) 4px, transparent 4px, transparent 8px)',
-                    opacity: '0.4'
-                  }}></div>
-                )}
-              </div>
+        {/* Category */}
+        <div style={{ marginBottom: 16 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Nature</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {CATEGORIES.map(c => (
+              <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
+                className="font-mono uppercase tracking-widest"
+                style={{
+                  fontSize: 9, padding: '4px 12px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
+                  borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
+                  background: form.category === c.value ? c.color : 'transparent',
+                  color: form.category === c.value ? '#fff' : 'var(--text-tertiary)',
+                  transition: 'all 150ms',
+                }}>{c.label}</button>
             ))}
           </div>
-        )}
-      </div>
+        </div>
 
-      {/* Summary Section */}
-      {mockIncidents.length > 0 && (
+        {/* Description */}
+        <div style={{ marginBottom: 16 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>The Full Story</p>
+          <div style={{ position: 'relative' }}>
+            <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+              placeholder="What happened? How did it make you feel? Be honest with yourself…"
+              rows={4} className="w-full font-serif"
+              style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '10px 40px 10px 12px', resize: 'none', outline: 'none', lineHeight: 1.55 }}
+            />
+            <MicButton onTranscript={t => setForm(f => ({ ...f, description: f.description ? f.description + ' ' + t : t }))} />
+          </div>
+        </div>
+
+        {/* Emotions */}
+        <div style={{ marginBottom: 16 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Emotions</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {EMOTION_TAGS.map(tag => (
+              <button key={tag} type="button" onClick={() => toggleEmotion(tag)}
+                className="font-mono uppercase tracking-widest"
+                style={{
+                  fontSize: 9, padding: '4px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
+                  borderColor: form.emotions.includes(tag) ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
+                  background: form.emotions.includes(tag) ? 'var(--accent-primary)' : 'transparent',
+                  color: form.emotions.includes(tag) ? '#fff' : 'var(--text-tertiary)',
+                  transition: 'all 150ms',
+                }}>{tag}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Outcome */}
+        <div style={{ marginBottom: 16 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
+            Resolution <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— optional</span>
+          </p>
+          <div style={{ position: 'relative' }}>
+            <textarea value={form.outcome} onChange={e => setForm(f => ({ ...f, outcome: e.target.value }))}
+              placeholder="How was it resolved? What did you learn?"
+              rows={2} className="w-full font-serif"
+              style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '10px 40px 10px 12px', resize: 'none', outline: 'none', lineHeight: 1.55 }}
+            />
+            <MicButton onTranscript={t => setForm(f => ({ ...f, outcome: f.outcome ? f.outcome + ' ' + t : t }))} />
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div style={{ marginBottom: 20 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
+            Tags <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— e.g. theme:trust, context:work</span>
+          </p>
+          <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
+            placeholder="theme:conflict, context:social" className="w-full font-mono"
+            style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
+          />
+        </div>
+
+        {/* Actions — Cancel LEFT, Save RIGHT */}
+        <div className="flex gap-2">
+          <button type="button" onClick={onClose} className="font-mono uppercase tracking-widest"
+            style={{ flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            Cancel
+          </button>
+          <button type="button" onClick={handleSave} disabled={!canSave} className="font-mono uppercase tracking-widest"
+            style={{
+              flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: 'none',
+              cursor: canSave ? 'pointer' : 'default',
+              background: canSave ? catColor : 'var(--bg-tertiary)',
+              color: canSave ? '#fff' : 'var(--text-tertiary)',
+              transition: 'background 200ms',
+            }}>
+            {saving ? 'Saving…' : editing ? 'Save Changes' : 'Chronicle It'}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main Tab ─────────────────────────────────────────────────────────────────
+
+export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose }: MemberIncidentsTabProps) {
+  const [modalOpen, setModalOpen]       = useState(false);
+  const [editing, setEditing]           = useState<Incident | null>(null);
+  const [deletingIncident, setDeleting] = useState<Incident | null>(null);
+
+  // Sync external trigger from header button
+  useEffect(() => {
+    if (externalAddOpen) {
+      setEditing(null);
+      setModalOpen(true);
+      onExternalAddClose?.();
+    }
+  }, [externalAddOpen, onExternalAddClose]);
+
+  const { data, isLoading, isError } = useGetIncidentsQuery({ memberId: member.id });
+  const [createIncident, { isLoading: creating }] = useCreateIncidentMutation();
+  const [updateIncident, { isLoading: updating }] = useUpdateIncidentMutation();
+  const [deleteIncident, { isLoading: deleting }] = useDeleteIncidentMutation();
+
+  const openAdd  = () => { setEditing(null); setModalOpen(true); };
+  const openEdit = (i: Incident) => { setEditing(i); setModalOpen(true); };
+
+  const handleSave = async (payload: CreateIncidentRequest) => {
+    if (editing) {
+      await updateIncident({ memberId: member.id, id: editing.id, data: payload });
+    } else {
+      await createIncident({ memberId: member.id, ...payload });
+    }
+    setModalOpen(false);
+    setEditing(null);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingIncident) return;
+    await deleteIncident({ memberId: member.id, id: deletingIncident.id });
+    setDeleting(null);
+  };
+
+  const incidents = data?.data ?? [];
+
+  // Summary counts
+  const counts = CATEGORIES.reduce((acc, c) => {
+    acc[c.value] = incidents.filter(i => i.category === c.value).length;
+    return acc;
+  }, {} as Record<string, number>);
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
+    </div>
+  );
+
+  if (isError) return (
+    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+      <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Could not load incidents. Please try again.</p>
+    </div>
+  );
+
+  return (
+    <div className="w-full">
+      <IncidentModal isOpen={modalOpen} editing={editing} onClose={() => { setModalOpen(false); setEditing(null); }} onSave={handleSave} saving={creating || updating} />
+
+      {deletingIncident && (
+        <ConfirmDeleteModal
+          title="Remove Incident"
+          itemLabel={deletingIncident.title}
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setDeleting(null)}
+          deleting={deleting}
+        />
+      )}
+
+      {incidents.length === 0 ? (
+        /* ── Empty state ── */
+        <div style={{ paddingTop: 40, textAlign: 'center' }}>
+          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>Your story begins here</p>
+          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
+            Start chronicling the moments that shaped your connection with {member.fullName}.
+          </p>
+          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            Chronicle a Moment
+          </button>
+        </div>
+      ) : (
         <>
-          <div className="w-full h-px mt-12 mb-8" style={{ 
-            backgroundImage: 'repeating-linear-gradient(to right, var(--accent-gold) 0px, var(--accent-gold) 6px, transparent 6px, transparent 12px)',
-            opacity: '0.6'
-          }}></div>
-          
-          <div className="w-full">
-            <h3 className="font-serif text-lg mb-6" style={{ color: 'var(--text-primary)' }}>
-              Chronicle Summary
-            </h3>
-            
-            <div className="grid grid-cols-5 gap-8">
-              {['conflict', 'breakthrough', 'milestone', 'challenge', 'celebration'].map((category) => {
-                const count = mockIncidents.filter(i => i.category === category).length;
-                return (
-                  <div key={category} className="text-center">
-                    <div className="text-2xl font-serif font-light mb-1" style={{ color: 'var(--text-primary)' }}>
-                      {count}
-                    </div>
-                    <div className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
-                      {category}{count !== 1 ? 's' : ''}
+          {/* ── Header row ── */}
+          <div className="flex items-center justify-between" style={{ marginBottom: 28 }}>
+            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+              {incidents.length} moment{incidents.length !== 1 ? 's' : ''}
+            </span>
+            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+              style={{ fontSize: 10, padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              + Add
+            </button>
+          </div>
+
+          {/* ── Timeline ── */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {incidents.map((incident, index) => {
+              const color = categoryColor(incident.category);
+              return (
+                <div key={incident.id}>
+                  <div className="flex items-start gap-5">
+                    {/* Dot */}
+                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 5 }} />
+
+                    {/* Content */}
+                    <div className="flex-1 min-w-0" style={{ paddingBottom: 28 }}>
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 4, lineHeight: 1.4 }}>
+                            {incident.title}
+                          </p>
+                          <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
+                            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                              {new Date(incident.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            </span>
+                            {incident.category && (
+                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color }}>
+                                {incident.category}
+                              </span>
+                            )}
+                            {incident.severity && (
+                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                                {incident.severity}
+                              </span>
+                            )}
+                          </div>
+
+                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: incident.outcome ? 12 : 0 }}>
+                            {incident.description}
+                          </p>
+
+                          {incident.outcome && (
+                            <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 10 }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color, marginBottom: 4 }}>Resolution</p>
+                              <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.55 }}>{incident.outcome}</p>
+                            </div>
+                          )}
+
+                          {incident.emotions.length > 0 && (
+                            <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: incident.tags?.length ? 6 : 0 }}>
+                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Emotions:</span>
+                              <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{incident.emotions.join(', ')}</span>
+                            </div>
+                          )}
+
+                          {incident.tags?.length > 0 && (
+                            <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 4 }}>
+                              {incident.tags.map(tag => (
+                                <span key={tag} className="font-mono uppercase tracking-widest"
+                                  style={{ fontSize: 9, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Row actions */}
+                        <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.35, transition: 'opacity 150ms' }}
+                          onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
+                          onMouseLeave={e => (e.currentTarget.style.opacity = '0.35')}>
+                          <button onClick={() => openEdit(incident)} title="Edit"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
+                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                          </button>
+                          <button onClick={() => setDeleting(incident)} title="Remove"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
+                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                              <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                              <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                              <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M5.5 6v2.5M7.5 6v2.5" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                );
-              })}
+
+                  {/* Dashed divider between items */}
+                  {index < incidents.length - 1 && (
+                    <div style={{ marginLeft: 15, marginBottom: 0, height: 1,
+                      backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)',
+                      opacity: 0.5, marginTop: -20, marginBottom: 8 }} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* ── Summary strip ── */}
+          <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
+            <div className="grid grid-cols-5 gap-4">
+              {CATEGORIES.map(c => (
+                <div key={c.value} className="text-center">
+                  <div className="font-serif font-light" style={{ fontSize: 22, color: c.color, marginBottom: 2 }}>{counts[c.value]}</div>
+                  <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>{c.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </>
