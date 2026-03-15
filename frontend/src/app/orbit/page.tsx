@@ -10,6 +10,9 @@ import { MinimalButtonGroup, MinimalButtonGroupItem } from '@/components/ui/Mini
 import { LuminaryControls } from '@/components/ui/LuminaryControls';
 import { Header } from '@/components/layout/Header';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { DeleteMemberModal } from '@/components/members/DeleteMemberModal';
+import { MemberContextMenu } from '@/components/members/MemberContextMenu';
+import type { Member } from '@/store/api/membersApi';
 
 export default function MembersPage() {
   const router = useRouter();
@@ -19,8 +22,17 @@ export default function MembersPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'health' | 'type' | 'date'>('name');
   const [viewMode, setViewMode] = useState<'orbit' | 'list'>('orbit');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
   const luminaryRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Delete functionality state
+  const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    member: Member;
+    position: { x: number; y: number };
+  } | null>(null);
   
   const members = membersResponse?.data || [];
   const displayMembers = members;
@@ -107,6 +119,29 @@ export default function MembersPage() {
     return 'bg-accent-primary';
   };
 
+  // Delete functionality handlers
+  const handleContextMenu = (e: React.MouseEvent, member: Member) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      member,
+      position: { x: e.clientX, y: e.clientY }
+    });
+  };
+
+  const handleDeleteMember = (member: Member) => {
+    setMemberToDelete(member);
+  };
+
+  const handleDeleteSuccess = () => {
+    // The query will automatically refetch due to invalidatesTags
+    setMemberToDelete(null);
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu(null);
+  };
+
   // Keyboard shortcuts for search
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -121,6 +156,7 @@ export default function MembersPage() {
       
       if (e.key === 'Escape' && searchQuery) {
         setSearchQuery('');
+        setPage(1);
       }
 
       // Fit all shortcut
@@ -184,6 +220,9 @@ export default function MembersPage() {
     return passesEnergyFilter && passesSearchFilter;
   });
 
+  // reset page when filter/search changes
+  const totalFiltered = filteredMembers.length;
+
   const sortedMembers = [...filteredMembers].sort((a, b) => {
     switch (sortBy) {
       case 'name':
@@ -198,6 +237,10 @@ export default function MembersPage() {
         return 0;
     }
   });
+
+  const totalPages = Math.ceil(sortedMembers.length / pageSize);
+  const pagedMembers = sortedMembers.slice((page - 1) * pageSize, page * pageSize);
+
   return (
     <div className="min-h-screen bg-primary">
       <Header />
@@ -279,10 +322,11 @@ export default function MembersPage() {
                 type="text"
                 placeholder="Search luminaries..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 px-4 py-2 pl-10 bg-surface border-2 border-primary/30 rounded-lg text-sm text-primary placeholder:text-tertiary focus:outline-none focus:border-accent-primary transition-colors shadow-sm"
+                onChange={(e) => { setSearchQuery(e.target.value); setPage(1); }}
+                className="w-44 px-3 py-1.5 pl-8 rounded-lg text-xs font-mono placeholder:text-tertiary focus:outline-none transition-colors"
+                style={{ background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', color: 'var(--text-primary)' }}
               />
-              <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="absolute left-2.5 top-1/2 transform -translate-y-1/2 w-3 h-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               {searchQuery && (
@@ -394,6 +438,7 @@ export default function MembersPage() {
                         transition: isDragging ? 'none' : 'all 0.2s ease'
                       }}
                       onMouseDown={(e) => handleMouseDown(e, member.id)}
+                      onContextMenu={(e) => handleContextMenu(e, member)}
                       onClick={(e) => {
                         e.stopPropagation();
                         if (!isDragging && !hasDragged) {
@@ -460,105 +505,182 @@ export default function MembersPage() {
           </div>
         ) : (
           /* List View */
-          <div className="space-y-4">
-            {sortedMembers.map((member) => {
+          <div>
+            {/* Scrollable table */}
+            <div className="rounded-t-xl overflow-hidden overflow-y-auto"
+              style={{ border: '1px solid var(--bg-tertiary)', borderBottom: 'none', height: 'calc(100vh - 230px)' }}>
+            {pagedMembers.map((member, idx) => {
               const health = getRelationshipHealth(member);
               const isHighlighted = searchQuery && (
                 member.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 member.relationType.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 (member.relationTypeCustom && member.relationTypeCustom.toLowerCase().includes(searchQuery.toLowerCase()))
               );
-              
+              const energyLabel = health >= 70 ? 'Nourishing' : health >= 50 ? 'Neutral' : 'Draining';
+              const energyColor = health >= 70 ? 'var(--accent-primary)' : health >= 50 ? 'var(--accent-secondary)' : '#ef4444';
+
               return (
                 <div
                   key={member.id}
-                  className={`bg-surface rounded-2xl p-6 hover:shadow-md transition-all duration-200 cursor-pointer shadow-md ${
-                    isHighlighted ? 'ring-2 ring-accent-gold' : ''
-                  }`}
+                  className="flex items-center gap-4 px-5 transition-colors cursor-pointer"
+                  style={{
+                    height: 56,
+                    background: isHighlighted ? 'var(--bg-secondary)' : 'var(--bg-primary)',
+                    borderBottom: idx < sortedMembers.length - 1 ? '1px solid var(--bg-tertiary)' : 'none',
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-secondary)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = isHighlighted ? 'var(--bg-secondary)' : 'var(--bg-primary)')}
                   onClick={() => router.push(`/orbit/${member.id}`)}
                 >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      {/* Avatar */}
-                      <div className="w-16 h-16 bg-accent-primary rounded-full flex items-center justify-center border-4 border-white shadow-md">
-                        {member.photoUrl ? (
-                          <img
-                            src={member.photoUrl}
-                            alt={member.fullName}
-                            className="w-full h-full rounded-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-white font-medium text-xl">
-                            {member.fullName.charAt(0).toUpperCase()}
-                          </span>
-                        )}
-                      </div>
-                      
-                      {/* Member Info */}
-                      <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <h3 className={`text-xl font-serif font-medium ${
-                            isHighlighted ? 'text-accent-gold' : 'text-primary'
-                          }`}>
-                            {member.fullName}
-                          </h3>
-                          {isHighlighted && (
-                            <div className="w-5 h-5 bg-accent-gold rounded-full flex items-center justify-center animate-pulse">
-                              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        
-                        <div className="flex items-center space-x-4 text-sm text-secondary">
-                          <span className="uppercase tracking-wider font-medium">
-                            {getRelationshipType(member)}
-                          </span>
-                          <span>•</span>
-                          <span>Added {new Date(member.createdAt).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {/* Health Score & Energy Indicator */}
-                    <div className="flex items-center space-x-6">
-                      {/* Health Score */}
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-primary mb-1">
-                          {health}
-                        </div>
-                        <div className="text-xs uppercase tracking-wider text-tertiary">
-                          Health
-                        </div>
-                      </div>
-                      
-                      {/* Energy Indicator */}
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className={`w-4 h-4 rounded-full ${
-                          health >= 70 ? 'bg-accent-primary' : 
-                          health >= 50 ? 'bg-accent-secondary' : 
-                          'bg-error'
-                        }`}></div>
-                        <div className="text-xs uppercase tracking-wider text-tertiary">
-                          {health >= 70 ? 'Nourishing' : health >= 50 ? 'Neutral' : 'Draining'}
-                        </div>
-                      </div>
-                      
-                      {/* Arrow */}
-                      <div className="text-tertiary">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </div>
+                  {/* Avatar */}
+                  <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden"
+                    style={{ background: 'var(--accent-primary)' }}>
+                    {member.photoUrl ? (
+                      <img src={member.photoUrl} alt={member.fullName} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="font-serif font-medium" style={{ fontSize: 13, color: '#fff' }}>
+                        {member.fullName.charAt(0).toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Name + meta */}
+                  <div className="flex-1 min-w-0">
+                    <span className="font-serif truncate block" style={{ fontSize: 14, color: 'var(--text-primary)' }}>
+                      {member.fullName}
+                    </span>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                        {getRelationshipType(member)}
+                      </span>
+                      <span style={{ color: 'var(--text-tertiary)', fontSize: 10 }}>•</span>
+                      <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                        Added {new Date(member.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: '2-digit' })}
+                      </span>
                     </div>
                   </div>
+
+                  {/* Health */}
+                  <div className="text-right flex-shrink-0" style={{ width: 48 }}>
+                    <span className="font-serif font-medium" style={{ fontSize: 16, color: 'var(--text-primary)' }}>{health}</span>
+                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginTop: 1 }}>Health</p>
+                  </div>
+
+                  {/* Energy */}
+                  <div className="flex flex-col items-center flex-shrink-0" style={{ width: 64 }}>
+                    <div className="w-2 h-2 rounded-full" style={{ background: energyColor }} />
+                    <span className="font-mono uppercase tracking-widest mt-1" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>
+                      {energyLabel}
+                    </span>
+                  </div>
+
+                  {/* Delete Button */}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteMember(member);
+                    }}
+                    className="flex-shrink-0 p-2 rounded-lg transition-colors hover:bg-accent-secondary/20"
+                    style={{ color: 'var(--text-tertiary)' }}
+                    onMouseEnter={(e) => e.currentTarget.style.color = 'var(--accent-secondary)'}
+                    onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-tertiary)'}
+                    title="Delete luminary"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+
+                  {/* Chevron */}
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    style={{ color: 'var(--text-tertiary)' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
                 </div>
               );
             })}
+            </div>
+
+            {/* Pagination */}
+            <div className="flex items-center justify-between px-5 rounded-b-xl"
+              style={{ height: 44, border: '1px solid var(--bg-tertiary)', borderTop: '1px solid var(--bg-tertiary)', background: 'var(--bg-secondary)' }}>
+              {/* Left: count + per-page */}
+              <div className="flex items-center gap-3">
+                <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                  {sortedMembers.length === 0 ? '0' : `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, sortedMembers.length)}`} of {sortedMembers.length}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono" style={{ fontSize: 9, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Per page</span>
+                  <select
+                    value={pageSize}
+                    onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}
+                    className="font-mono focus:outline-none"
+                    style={{ fontSize: 10, padding: '2px 4px', borderRadius: 5, border: '1px solid var(--bg-tertiary)', background: 'var(--bg-primary)', color: 'var(--text-secondary)', cursor: 'pointer' }}
+                  >
+                    {[5, 10, 20, 50].map(n => <option key={n} value={n}>{n}</option>)}
+                  </select>
+                </div>
+              </div>
+
+              {/* Right: page buttons */}
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => setPage(p => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                    style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--bg-tertiary)', background: 'transparent', cursor: page === 1 ? 'default' : 'pointer', opacity: page === 1 ? 0.3 : 1 }}
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-secondary)' }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                    <button key={p} onClick={() => setPage(p)} className="font-mono"
+                      style={{ width: 26, height: 26, borderRadius: 6, fontSize: 10, border: p === page ? 'none' : '1px solid var(--bg-tertiary)', background: p === page ? 'var(--accent-primary)' : 'transparent', color: p === page ? '#fff' : 'var(--text-secondary)', cursor: 'pointer' }}>
+                      {p}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                    style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid var(--bg-tertiary)', background: 'transparent', cursor: page === totalPages ? 'default' : 'pointer', opacity: page === totalPages ? 0.3 : 1 }}
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-secondary)' }}>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </main>
+
+      {/* Delete Modal */}
+      {memberToDelete && (
+        <DeleteMemberModal
+          member={memberToDelete}
+          isOpen={!!memberToDelete}
+          onClose={() => setMemberToDelete(null)}
+          onSuccess={handleDeleteSuccess}
+        />
+      )}
+
+      {/* Context Menu */}
+      {contextMenu && (
+        <MemberContextMenu
+          member={contextMenu.member}
+          position={contextMenu.position}
+          isOpen={!!contextMenu}
+          onClose={closeContextMenu}
+          onView={() => router.push(`/orbit/${contextMenu.member.id}`)}
+          onEdit={() => {
+            // TODO: Add edit functionality
+            router.push(`/orbit/${contextMenu.member.id}`);
+          }}
+          onDelete={() => handleDeleteMember(contextMenu.member)}
+        />
+      )}
     </div>
   );
 }
