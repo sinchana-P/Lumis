@@ -333,8 +333,17 @@ export default function LumisLanding() {
             Lumis
           </button>
           <div style={{ display:'flex', gap:30, alignItems:'center' }}>
-            {['The Mission','Intelligence','Sanctuary','For Whom'].map(l => (
-              <button key={l} className="lumis-nav-link" style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color:C.textMuted, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}>{l}</button>
+            {[
+              { label:'The Mission',  id:'the-mission' },
+              { label:'Intelligence', id:'intelligence' },
+              { label:'Sanctuary',    id:'sanctuary'   },
+              { label:'For Whom',     id:'for-whom'    },
+            ].map(({ label, id }) => (
+              <button key={id} className="lumis-nav-link"
+                onClick={() => document.getElementById(id)?.scrollIntoView({ behavior:'smooth' })}
+                style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color:C.textMuted, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}>
+                {label}
+              </button>
             ))}
             <button onClick={() => router.push('/signup')} className="lumis-cta-secondary" style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color:C.accent, background:'transparent', border:`1px solid ${C.accent}55`, borderRadius:1, padding:'8px 20px', cursor:'pointer', textTransform:'uppercase', transition:'all 0.2s' }}>
               Start Journey
@@ -380,11 +389,14 @@ export default function LumisLanding() {
               A private mirror for your social world. Intention-driven relationship intelligence designed for the discerning soul.
             </p>
 
-            <div style={{ display:'flex', gap:14, justifyContent:'center', alignItems:'center', animation:'fadeUp 1s ease 0.7s both' }}>
-              <button onClick={() => router.push('/signup')} className="lumis-cta-primary" style={{ padding:'14px 34px', background:C.accent, color:'#F9F5EF', fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, border:'none', cursor:'pointer', transition:'background 0.25s' }}>
+            <div style={{ display:'flex', gap:14, justifyContent:'center', alignItems:'center', flexWrap:'wrap', animation:'fadeUp 1s ease 0.7s both' }}>
+              <button onClick={() => router.push('/signup')} className="lumis-cta-primary" style={{ whiteSpace:'nowrap', padding:'13px 32px', background:C.accent, color:'#F9F5EF', fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, border:'none', cursor:'pointer', transition:'background 0.25s' }}>
                 Enter the Clarity
               </button>
-              <button onClick={() => router.push('/login')} className="lumis-cta-secondary" style={{ padding:'14px 34px', background:'transparent', color:C.accent, border:`1px solid ${C.accent}50`, fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, cursor:'pointer', transition:'all 0.25s' }}>
+              <button
+                onClick={() => document.getElementById('sanctuary')?.scrollIntoView({ behavior:'smooth' })}
+                className="lumis-cta-secondary"
+                style={{ whiteSpace:'nowrap', padding:'13px 32px', background:'transparent', color:C.accent, border:`1px solid ${C.accent}50`, fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, cursor:'pointer', transition:'all 0.25s' }}>
                 Hear the Voice
               </button>
             </div>
@@ -398,7 +410,7 @@ export default function LumisLanding() {
         </section>
 
         {/* ══════════════════════════ THE MIRROR ══════════════════════════════ */}
-        <section style={{ padding:'110px 52px', maxWidth:1140, margin:'0 auto' }}>
+        <section id="the-mission" style={{ padding:'110px 52px', maxWidth:1140, margin:'0 auto' }}>
           <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:88, alignItems:'center' }}>
 
             <Reveal>
@@ -569,7 +581,7 @@ export default function LumisLanding() {
         </section>
 
         {/* ══════════════════════════ ARCHITECTURE ══════════════════════════ */}
-        <section style={{ padding:'110px 52px', maxWidth:1140, margin:'0 auto' }}>
+        <section id="intelligence" style={{ padding:'110px 52px', maxWidth:1140, margin:'0 auto' }}>
           <Reveal>
             <SectionMark num="03" label="The Architecture" />
             <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginBottom:52 }}>
@@ -599,7 +611,7 @@ export default function LumisLanding() {
         </section>
 
         {/* ══════════════════════════ FOR WHOM ══════════════════════════════ */}
-        <section style={{ padding:'110px 52px', background:C.surface, borderTop:`1px solid ${C.borderSoft}`, borderBottom:`1px solid ${C.borderSoft}` }}>
+        <section id="for-whom" style={{ padding:'110px 52px', background:C.surface, borderTop:`1px solid ${C.borderSoft}`, borderBottom:`1px solid ${C.borderSoft}` }}>
           <div style={{ maxWidth:1140, margin:'0 auto' }}>
             <Reveal style={{ textAlign:'center', marginBottom:58 }}>
               <SectionMark num="04" label="The Souls" />
@@ -752,11 +764,16 @@ export default function LumisLanding() {
             <span style={{ fontFamily:CG, fontStyle:'italic', fontWeight:300, fontSize:18, color:C.textMuted, letterSpacing:'2px' }}>Lumis</span>
             <HrDeco />
             <div style={{ display:'flex', gap:28 }}>
-              {['Privacy','Terms','Support'].map(l => (
-                <button key={l} style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'1.5px', color:C.textFaint, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}
+              {[
+                { label:'Privacy', href:'/privacy' },
+                { label:'Terms',   href:'/terms'   },
+                { label:'Support', href:'mailto:hello@lumis.app' },
+              ].map(({ label, href }) => (
+                <button key={label} onClick={() => href.startsWith('mailto') ? window.location.href = href : router.push(href)}
+                  style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'1.5px', color:C.textFaint, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = C.textMuted)}
                   onMouseLeave={e => (e.currentTarget.style.color = C.textFaint)}>
-                  {l}
+                  {label}
                 </button>
               ))}
             </div>
