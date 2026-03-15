@@ -171,7 +171,7 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
       <div className="bg-accent-gold/12 border border-accent-gold/30 rounded-xl px-5 py-3 flex items-center gap-3 mb-2">
         <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse flex-shrink-0" />
         <div>
-          <span className="font-mono text-xs uppercase tracking-widest text-accent-gold font-bold mr-2">
+          <span className="font-mono text-xs uppercase tracking-widest text-accent-gold font-medium mr-2">
             Current Year Energy: {currentYear}
           </span>
           <span className="font-serif text-sm text-secondary font-light tracking-wide">

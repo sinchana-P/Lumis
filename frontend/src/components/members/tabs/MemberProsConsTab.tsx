@@ -88,7 +88,7 @@ export function MemberProsConsTab({ member: _member }: MemberProsConsTabProps) {
               <svg className="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
-              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-medium">
                 Add Relationship Trait
               </h3>
             </div>
@@ -143,7 +143,7 @@ export function MemberProsConsTab({ member: _member }: MemberProsConsTabProps) {
                 />
                 <div className="flex justify-between text-xs text-tertiary mt-2">
                   <span className="font-mono">Subtle</span>
-                  <span className="font-mono font-bold">{newProCon.intensity}</span>
+                  <span className="font-mono font-medium">{newProCon.intensity}</span>
                   <span className="font-mono">Profound</span>
                 </div>
               </div>
@@ -151,7 +151,7 @@ export function MemberProsConsTab({ member: _member }: MemberProsConsTabProps) {
               <div className="flex gap-3 pt-4">
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 bg-accent-primary text-inverse rounded-xl font-mono text-xs uppercase tracking-widest font-bold hover:bg-accent-primary-hover transition-colors"
+                  className="flex-1 px-6 py-3 bg-accent-primary text-inverse rounded-xl font-mono text-xs uppercase tracking-widest font-medium hover:bg-accent-primary-hover transition-colors"
                 >
                   Save Trait
                 </button>
@@ -177,7 +177,7 @@ export function MemberProsConsTab({ member: _member }: MemberProsConsTabProps) {
               <svg className="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
-              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-medium">
                 What Draws You Closer
               </h3>
               <span className="font-mono text-xs text-tertiary">({pros.length})</span>
@@ -238,7 +238,7 @@ export function MemberProsConsTab({ member: _member }: MemberProsConsTabProps) {
               <svg className="w-5 h-5 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
-              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
+              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-medium">
                 Growth Edges
               </h3>
               <span className="font-mono text-xs text-tertiary">({cons.length})</span>

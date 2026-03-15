@@ -65,7 +65,7 @@ export function GoogleSignInButton({ onSuccess, onError }: GoogleSignInButtonPro
       type="button"
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full flex items-center justify-center gap-3 px-4 py-2 font-sans font-medium rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+      className="w-full flex items-center justify-center gap-3 px-4 py-2 font-serif font-medium rounded-lg shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
       style={{ background: 'var(--surface)', color: 'var(--text-primary)', border: '1px solid var(--bg-tertiary)' }}
       aria-label="Sign in with Google"
     >

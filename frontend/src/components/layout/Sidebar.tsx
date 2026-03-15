@@ -69,7 +69,7 @@ export function Sidebar() {
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-primary text-white">
               <span className="text-lg">✦</span>
             </div>
-            <h1 className="font-sans text-xl font-semibold tracking-tight text-primary">
+            <h1 className="font-serif text-xl font-medium tracking-tight text-primary">
               Lumis
             </h1>
           </div>
@@ -83,7 +83,7 @@ export function Sidebar() {
                   key={item.name}
                   href={item.href}
                   className={cn(
-                    'flex items-center gap-3 rounded-md px-3 py-2.5 font-sans text-sm font-medium transition-all duration-200',
+                    'flex items-center gap-3 rounded-md px-3 py-2.5 font-serif text-sm font-medium transition-all duration-200',
                     isActive
                       ? 'bg-accent-primary/10 text-accent-primary border-l-2 border-accent-primary'
                       : 'text-secondary hover:bg-surface hover:text-primary'
@@ -103,7 +103,7 @@ export function Sidebar() {
               onClick={handleSignOut}
               disabled={isSigningOut}
               className={cn(
-                'w-full flex items-center gap-3 rounded-md px-3 py-2.5 font-sans text-sm font-medium transition-all duration-200',
+                'w-full flex items-center gap-3 rounded-md px-3 py-2.5 font-serif text-sm font-medium transition-all duration-200',
                 'text-secondary hover:bg-surface hover:text-primary',
                 'disabled:opacity-50 disabled:cursor-not-allowed'
               )}

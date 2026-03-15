@@ -59,7 +59,7 @@ export const VedicChartComplete: React.FC<VedicChartCompleteProps> = ({
           <div className="flex-1 min-w-64">
             {/* Birth Data */}
             <div className="bg-amber-50 p-4 rounded-lg mb-4">
-              <h3 className="font-semibold text-amber-800 mb-2">Birth Information</h3>
+              <h3 className="font-medium text-amber-800 mb-2">Birth Information</h3>
               <div className="text-sm space-y-1">
                 <div>Date: {astrologyData.birthData.date}</div>
                 <div>Time: {astrologyData.birthData.time}</div>
@@ -69,7 +69,7 @@ export const VedicChartComplete: React.FC<VedicChartCompleteProps> = ({
 
             {/* Planet Legend */}
             <div className="bg-lumis-surface p-4 rounded-lg">
-              <h3 className="font-semibold text-lumis-text-primary mb-2">Planets</h3>
+              <h3 className="font-medium text-lumis-text-primary mb-2">Planets</h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 {astrologyData.planetaryPositions.map(planet => (
                   <div key={planet.planet} className="flex items-center gap-2">

@@ -142,7 +142,7 @@ export default function AuthCallbackPage() {
                 Completing sign in...
               </p>
               
-              <p className="text-xs text-tertiary font-sans">
+              <p className="text-xs text-tertiary font-serif">
                 Please wait while we securely authenticate your account
               </p>
             </div>

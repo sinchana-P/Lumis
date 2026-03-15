@@ -60,7 +60,7 @@ export function EmotionPicker({
           <button
             onClick={() => setActiveCategory('positive')}
             className={cn(
-              'px-4 py-2 font-sans text-sm font-medium transition-all duration-200',
+              'px-4 py-2 font-serif text-sm font-medium transition-all duration-200',
               activeCategory === 'positive'
                 ? 'text-accent-primary border-b-2 border-accent-primary'
                 : 'text-tertiary hover:text-secondary'
@@ -71,7 +71,7 @@ export function EmotionPicker({
           <button
             onClick={() => setActiveCategory('negative')}
             className={cn(
-              'px-4 py-2 font-sans text-sm font-medium transition-all duration-200',
+              'px-4 py-2 font-serif text-sm font-medium transition-all duration-200',
               activeCategory === 'negative'
                 ? 'text-accent-primary border-b-2 border-accent-primary'
                 : 'text-tertiary hover:text-secondary'
@@ -105,7 +105,7 @@ export function EmotionPicker({
 
       {/* Selected count */}
       {multiple && selected.length > 0 && (
-        <p className="text-xs font-sans text-tertiary">
+        <p className="text-xs font-serif text-tertiary">
           {selected.length} emotion{selected.length !== 1 ? 's' : ''} selected
         </p>
       )}

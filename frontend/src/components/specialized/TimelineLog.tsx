@@ -62,7 +62,7 @@ export function TimelineLog({
     <div className={cn('space-y-6', className)}>
       {/* Header with add button */}
       <div className="flex items-center justify-between">
-        <h3 className="font-sans text-lg font-semibold text-primary capitalize">
+        <h3 className="font-serif text-lg font-medium text-primary capitalize">
           {type} Log
         </h3>
         {onAdd && (
@@ -153,7 +153,7 @@ export function TimelineLog({
 
                 {/* Title */}
                 {entry.title && (
-                  <h4 className="font-sans text-base font-medium text-primary mb-2">
+                  <h4 className="font-serif text-base font-medium text-primary mb-2">
                     {entry.title}
                   </h4>
                 )}
@@ -165,7 +165,7 @@ export function TimelineLog({
 
                 {/* Emotion tracking metadata */}
                 {emotionTracking && entry.metadata && (
-                  <div className="mt-3 flex items-center gap-4 text-xs font-sans">
+                  <div className="mt-3 flex items-center gap-4 text-xs font-serif">
                     {entry.metadata.moodBefore !== undefined && (
                       <div className="flex items-center gap-1">
                         <span className="text-tertiary">Before:</span>

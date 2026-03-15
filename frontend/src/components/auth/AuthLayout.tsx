@@ -33,7 +33,7 @@ export function AuthLayout({ children, className }: AuthLayoutProps) {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-tertiary font-sans">
+        <p className="text-center text-xs text-tertiary font-serif">
           By continuing, you agree to Lumis&apos;s Terms of Service and Privacy Policy
         </p>
       </div>

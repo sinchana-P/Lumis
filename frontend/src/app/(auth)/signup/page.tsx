@@ -34,7 +34,7 @@ export default function SignUpPage() {
           <div className="w-full" style={{ borderTop: '1px solid var(--text-tertiary)', opacity: 0.35 }}></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="px-3 bg-surface-elevated text-tertiary font-sans text-xs">or</span>
+          <span className="px-3 bg-surface-elevated text-tertiary font-serif text-xs">or</span>
         </div>
       </div>
 
@@ -43,7 +43,7 @@ export default function SignUpPage() {
 
       {/* Link to Sign In */}
       <div className="text-center">
-        <p className="text-sm text-secondary font-sans">
+        <p className="text-sm text-secondary font-serif">
           already orbiting?{' '}
           <Link
             href="/login"

@@ -31,7 +31,7 @@ export const AuthFormField = forwardRef<HTMLInputElement, AuthFormFieldProps>(
         {/* Label */}
         <label
           htmlFor={props.id || props.name}
-          className="block text-sm font-sans font-medium text-primary"
+          className="block text-sm font-serif font-medium text-primary"
         >
           {label}
           {required && <span className="ml-1 text-error">*</span>}
@@ -39,7 +39,7 @@ export const AuthFormField = forwardRef<HTMLInputElement, AuthFormFieldProps>(
 
         {/* Hint Text (only show if no error) */}
         {hint && !error && (
-          <p className="text-xs font-sans text-tertiary">
+          <p className="text-xs font-serif text-tertiary">
             {hint}
           </p>
         )}

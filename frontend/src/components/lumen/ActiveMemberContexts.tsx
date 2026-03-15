@@ -49,7 +49,7 @@ export function ActiveMemberContexts({
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="font-mono text-xs uppercase tracking-wider text-lumis-text-primary font-bold">
+              <h3 className="font-mono text-xs uppercase tracking-wider text-lumis-text-primary font-medium">
                 Add Member to Context
               </h3>
               <p className="font-serif text-sm text-lumis-text-secondary italic">

@@ -87,7 +87,7 @@ export function TimePicker({ value, onChange, placeholder = '--:-- --', label }:
           <div className="flex gap-2">
             {/* Hour column */}
             <div className="flex-1">
-              <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-sans text-center">Hr</p>
+              <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-serif text-center">Hr</p>
               <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                 {HOURS.map(hour => (
                   <button key={hour} type="button"
@@ -103,7 +103,7 @@ export function TimePicker({ value, onChange, placeholder = '--:-- --', label }:
 
             {/* Minute column */}
             <div className="flex-1">
-              <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-sans text-center">Min</p>
+              <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-serif text-center">Min</p>
               <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                 {MINUTES.map(minute => (
                   <button key={minute} type="button"
@@ -122,7 +122,7 @@ export function TimePicker({ value, onChange, placeholder = '--:-- --', label }:
               {(['AM', 'PM'] as const).map(period => (
                 <button key={period} type="button"
                   onClick={() => setSelected(s => ({ ...s, period }))}
-                  className={`px-2 py-1.5 text-xs rounded font-sans tracking-widest uppercase transition-colors
+                  className={`px-2 py-1.5 text-xs rounded font-serif tracking-widest uppercase transition-colors
                     ${selected.period === period ? 'bg-accent-primary text-inverse' : 'border border-primary text-secondary hover:border-accent-primary hover:text-primary'}`}
                 >{period}</button>
               ))}

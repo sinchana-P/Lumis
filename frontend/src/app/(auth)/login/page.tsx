@@ -41,7 +41,7 @@ export default function LoginPage() {
           <div className="w-full" style={{ borderTop: '1px solid var(--text-tertiary)', opacity: 0.35 }}></div>
         </div>
         <div className="relative flex justify-center">
-          <span className="px-3 bg-surface-elevated text-tertiary font-sans text-xs">or</span>
+          <span className="px-3 bg-surface-elevated text-tertiary font-serif text-xs">or</span>
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export default function LoginPage() {
       <SignInForm />
 
       {/* Sign Up Link */}
-      <div className="text-center text-sm text-secondary font-sans">
+      <div className="text-center text-sm text-secondary font-serif">
         new here?{' '}
         <Link
           href="/signup"

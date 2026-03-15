@@ -27,7 +27,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && (
-          <p className="mt-1.5 text-sm font-sans text-error">{error}</p>
+          <p className="mt-1.5 text-sm font-serif text-error">{error}</p>
         )}
       </div>
     );

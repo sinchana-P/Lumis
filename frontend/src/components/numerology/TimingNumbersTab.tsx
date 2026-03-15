@@ -71,7 +71,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
           <svg className="w-5 h-5 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
-          <div className="font-mono text-xs uppercase tracking-widest text-accent-gold font-bold">
+          <div className="font-mono text-xs uppercase tracking-widest text-accent-gold font-medium">
             Current Year Energy: {currentYear}
           </div>
         </div>
@@ -115,7 +115,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
                   {timingNumber.year === currentYear && (
                     <div className="flex items-center gap-2 px-3 py-1 bg-accent-gold/20 text-accent-gold border border-accent-gold/30 rounded-full">
                       <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse"></div>
-                      <span className="font-mono text-xs uppercase tracking-wider font-bold">Active</span>
+                      <span className="font-mono text-xs uppercase tracking-wider font-medium">Active</span>
                     </div>
                   )}
                 </div>

@@ -24,20 +24,20 @@ export function FormField({
     <div className={cn('w-full space-y-2', className)}>
       <label
         htmlFor={name}
-        className="block font-sans text-sm font-medium text-primary"
+        className="block font-serif text-sm font-medium text-primary"
       >
         {label}
         {required && <span className="ml-1 text-error">*</span>}
       </label>
       
       {hint && !error && (
-        <p className="text-xs font-sans text-tertiary">{hint}</p>
+        <p className="text-xs font-serif text-tertiary">{hint}</p>
       )}
       
       {children}
       
       {error && (
-        <p className="text-sm font-sans text-error flex items-center gap-1">
+        <p className="text-sm font-serif text-error flex items-center gap-1">
           <svg
             className="h-4 w-4"
             fill="none"

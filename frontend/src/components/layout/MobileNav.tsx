@@ -58,7 +58,7 @@ export function MobileNav() {
               )}
             >
               <span className="text-xl">{item.icon}</span>
-              <span className="font-sans text-xs font-medium uppercase tracking-wider">
+              <span className="font-serif text-xs font-medium uppercase tracking-wider">
                 {item.name}
               </span>
             </Link>
@@ -76,7 +76,7 @@ export function MobileNav() {
           )}
         >
           <span className="text-xl">⎋</span>
-          <span className="font-sans text-xs font-medium uppercase tracking-wider">
+          <span className="font-serif text-xs font-medium uppercase tracking-wider">
             {isSigningOut ? 'Out' : 'Sign Out'}
           </span>
         </button>
