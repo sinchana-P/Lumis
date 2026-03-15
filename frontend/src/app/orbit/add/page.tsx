@@ -16,6 +16,8 @@ export default function AddMemberPage() {
   const [createMember, { isLoading: isSubmitting }] = useCreateMemberMutation();
   const [showPlaceSuggestions, setShowPlaceSuggestions] = useState(false);
   const [placeSuggestions, setPlaceSuggestions] = useState<any[]>([]);
+  const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+  const [isSearching, setIsSearching] = useState(false);
   
   const [showMonthDropdown, setShowMonthDropdown] = useState(false);
   const [showYearDropdown, setShowYearDropdown] = useState(false);
@@ -55,126 +57,61 @@ export default function AddMemberPage() {
     { value: 'colleague', label: 'Colleague' },
   ];
 
-  // Debounced search function for Nominatim API
+  // Photon geocoding API — free, no API key, browser-safe, built for place search
   const searchPlaces = useCallback(async (searchTerm: string) => {
     if (searchTerm.length < 2) {
       setShowPlaceSuggestions(false);
+      setPlaceSuggestions([]);
       return;
     }
-    
-    try {
-      const encodedTerm = encodeURIComponent(searchTerm);
-      
-      // Call Nominatim API for place search with better parameters
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodedTerm}&format=json&limit=15&addressdetails=1&extratags=1&countrycodes=&accept-language=en`
-      );
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch places');
-      }
-      
-      const results = await response.json();
-      console.log('Raw Nominatim results:', results);
-      
-      // Filter and format results to prioritize cities, towns, and villages
-      const filteredResults = results.filter((place: any) => {
-        const placeType = place.type || '';
-        const category = place.category || '';
-        const placeClass = place.class || '';
-        
-        // Prioritize populated places and administrative boundaries
-        return category === 'place' || 
-               placeClass === 'place' ||
-               placeType.includes('city') || 
-               placeType.includes('town') || 
-               placeType.includes('village') ||
-               placeType.includes('municipality') ||
-               placeType.includes('hamlet') ||
-               placeType.includes('suburb') ||
-               category === 'boundary' ||
-               placeClass === 'boundary';
-      });
-      
-      // Sort by relevance and importance
-      const sortedResults = filteredResults.sort((a: any, b: any) => {
-        const aImportance = parseFloat(a.importance || '0');
-        const bImportance = parseFloat(b.importance || '0');
-        const aName = (a.name || '').toLowerCase();
-        const bName = (b.name || '').toLowerCase();
-        const searchLower = searchTerm.toLowerCase();
-        
-        // Exact name matches first
-        if (aName === searchLower && bName !== searchLower) return -1;
-        if (aName !== searchLower && bName === searchLower) return 1;
-        
-        // Names that start with search term
-        if (aName.startsWith(searchLower) && !bName.startsWith(searchLower)) return -1;
-        if (!aName.startsWith(searchLower) && bName.startsWith(searchLower)) return 1;
-        
-        // Then by importance (higher first)
-        return bImportance - aImportance;
-      });
 
-      console.log('Filtered and sorted results for:', searchTerm, sortedResults);
-      setPlaceSuggestions(sortedResults.slice(0, 10));
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `https://photon.komoot.io/api/?q=${encodeURIComponent(searchTerm)}&limit=8&lang=en`
+      );
+      if (!response.ok) throw new Error('Failed');
+
+      const data = await response.json();
+      const PLACE_TYPES = ['city', 'town', 'village', 'municipality', 'hamlet', 'suburb', 'district', 'county', 'state'];
+
+      const places = (data.features || [])
+        .filter((f: any) => PLACE_TYPES.includes(f.properties?.type))
+        .map((f: any) => ({
+          name: f.properties.name,
+          state: f.properties.state,
+          country: f.properties.country,
+          type: f.properties.type,
+          countryCode: f.properties.countrycode?.toUpperCase(),
+        }));
+
+      setPlaceSuggestions(places);
       setShowPlaceSuggestions(true);
-    } catch (error) {
-      console.error('Error searching places:', error);
+      setActiveSuggestionIndex(-1);
+    } catch {
       setShowPlaceSuggestions(false);
+    } finally {
+      setIsSearching(false);
     }
   }, []);
 
-  // Handle place input and show suggestions using Nominatim API
   const handlePlaceInput = (value: string) => {
     setFormData(prev => ({ ...prev, placeOfBirth: value }));
-    
-    // Clear existing timeout
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-    
-    // Debounce the search
-    searchTimeoutRef.current = setTimeout(() => {
-      searchPlaces(value);
-    }, 300);
+    if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+    searchTimeoutRef.current = setTimeout(() => searchPlaces(value), 300);
   };
 
-  // Format place display name as "City, State, Country"
   const formatPlaceName = (place: any) => {
-    const address = place.address || {};
-    const parts = [];
-    
-    // Add city/village/town name - try multiple fields
-    const placeName = address.city || 
-                     address.town || 
-                     address.village || 
-                     address.municipality || 
-                     address.hamlet ||
-                     address.suburb ||
-                     place.name || 
-                     place.display_name?.split(',')[0]?.trim();
-    
-    if (placeName) {
-      parts.push(placeName);
-    }
-    
-    // Add state/province/region
-    const state = address.state || 
-                  address.province || 
-                  address.region ||
-                  address['ISO3166-2-lvl4'];
-    
-    if (state && state !== placeName) {
-      parts.push(state);
-    }
-    
-    // Add country
-    if (address.country && address.country !== placeName) {
-      parts.push(address.country);
-    }
-    
+    const parts = [place.name];
+    if (place.state && place.state !== place.name) parts.push(place.state);
+    if (place.country) parts.push(place.country);
     return parts.join(', ');
+  };
+
+  const selectPlace = (place: any) => {
+    setFormData(prev => ({ ...prev, placeOfBirth: formatPlaceName(place) }));
+    setShowPlaceSuggestions(false);
+    setActiveSuggestionIndex(-1);
   };
 
   // Handle clicking outside to close dropdowns
@@ -764,90 +701,81 @@ export default function AddMemberPage() {
                 type="text"
                 value={formData.placeOfBirth}
                 onChange={(e) => handlePlaceInput(e.target.value)}
-                onFocus={() => {
-                  if (formData.placeOfBirth.length > 0) {
-                    setShowPlaceSuggestions(true);
+                onFocus={() => { if (formData.placeOfBirth.length >= 2) setShowPlaceSuggestions(true); }}
+                onKeyDown={(e) => {
+                  if (!showPlaceSuggestions || placeSuggestions.length === 0) return;
+                  if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    setActiveSuggestionIndex(i => Math.min(i + 1, placeSuggestions.length - 1));
+                  } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    setActiveSuggestionIndex(i => Math.max(i - 1, -1));
+                  } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
+                    e.preventDefault();
+                    selectPlace(placeSuggestions[activeSuggestionIndex]);
+                  } else if (e.key === 'Escape') {
+                    setShowPlaceSuggestions(false);
                   }
                 }}
                 placeholder="City, Country"
-                className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary"
+                className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary pr-7"
                 autoComplete="off"
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded={showPlaceSuggestions}
               />
-              <div className="absolute right-0 top-2.5 text-tertiary">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5C10.62,11.5 9.5,10.38 9.5,9C9.5,7.62 10.62,6.5 12,6.5C13.38,6.5 14.5,7.62 14.5,9C14.5,10.38 13.38,11.5 12,11.5Z"/>
-                </svg>
+
+              {/* Icon: spinner when searching, pin otherwise */}
+              <div className="absolute right-0 top-2.5 text-tertiary pointer-events-none">
+                {isSearching ? (
+                  <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                  </svg>
+                ) : (
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5C10.62,11.5 9.5,10.38 9.5,9C9.5,7.62 10.62,6.5 12,6.5C13.38,6.5 14.5,7.62 14.5,9C14.5,10.38 13.38,11.5 12,11.5Z"/>
+                  </svg>
+                )}
               </div>
-              
-              {/* Place Suggestions Dropdown */}
+
+              {/* Suggestions dropdown */}
               {showPlaceSuggestions && placeSuggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 overflow-hidden">
                   {placeSuggestions.map((place, index) => (
                     <button
-                      key={`${place.place_id || index}`}
+                      key={index}
                       type="button"
-                      onClick={() => {
-                        const placeName = formatPlaceName(place);
-                        setFormData(prev => ({ ...prev, placeOfBirth: placeName }));
-                        setShowPlaceSuggestions(false);
-                      }}
-                      className="w-full text-left px-4 py-3 hover:bg-secondary transition-colors text-primary border-b border-primary last:border-b-0 focus:outline-none focus:bg-secondary"
+                      onClick={() => selectPlace(place)}
+                      onMouseEnter={() => setActiveSuggestionIndex(index)}
+                      className={`w-full text-left px-3 py-2.5 transition-colors border-b border-primary last:border-b-0 focus:outline-none ${
+                        activeSuggestionIndex === index ? 'bg-secondary' : 'hover:bg-secondary'
+                      }`}
                     >
-                      <div className="flex items-start space-x-3">
-                        <svg className="w-4 h-4 text-accent-primary flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 24 24">
+                      <div className="flex items-center gap-2.5">
+                        <svg className="w-3.5 h-3.5 text-accent-primary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5C10.62,11.5 9.5,10.38 9.5,9C9.5,7.62 10.62,6.5 12,6.5C13.38,6.5 14.5,7.62 14.5,9C14.5,10.38 13.38,11.5 12,11.5Z"/>
                         </svg>
                         <div className="flex-1 min-w-0">
-                          <div className="font-medium text-primary text-sm leading-tight">
-                            {place.address?.city || 
-                             place.address?.town || 
-                             place.address?.village || 
-                             place.address?.municipality || 
-                             place.address?.hamlet ||
-                             place.address?.suburb ||
-                             place.name || 
-                             place.display_name?.split(',')[0]?.trim()}
-                          </div>
-                          <div className="text-xs text-tertiary mt-1 leading-tight">
-                            {[
-                              place.address?.state || place.address?.province || place.address?.region,
-                              place.address?.country
-                            ].filter(Boolean).join(', ')}
-                          </div>
-                          {place.type && (
-                            <div className="text-xs text-accent-primary mt-1 capitalize">
-                              {place.type.replace(/_/g, ' ')}
-                            </div>
+                          <span className="text-sm text-primary font-medium">{place.name}</span>
+                          {(place.state || place.country) && (
+                            <span className="text-xs text-tertiary ml-1.5">
+                              {[place.state, place.country].filter(Boolean).join(', ')}
+                            </span>
                           )}
                         </div>
+                        {place.countryCode && (
+                          <span className="text-[10px] text-tertiary font-mono flex-shrink-0">{place.countryCode}</span>
+                        )}
                       </div>
                     </button>
                   ))}
-                  
-                  {formData.placeOfBirth.length >= 2 && placeSuggestions.length === 0 && (
-                    <div className="px-4 py-6 text-center">
-                      <div className="text-tertiary text-sm mb-2">
-                        No places found for "{formData.placeOfBirth}"
-                      </div>
-                      <div className="text-xs text-tertiary">
-                        Try searching for a city, town, or village name
-                      </div>
-                    </div>
-                  )}
                 </div>
               )}
-              
-              {/* Loading indicator */}
-              {showPlaceSuggestions && placeSuggestions.length === 0 && formData.placeOfBirth.length >= 2 && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50">
-                  <div className="px-4 py-6 text-center">
-                    <div className="inline-flex items-center space-x-2 text-tertiary text-sm">
-                      <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      <span>Searching places...</span>
-                    </div>
-                  </div>
+
+              {/* No results */}
+              {showPlaceSuggestions && !isSearching && placeSuggestions.length === 0 && formData.placeOfBirth.length >= 2 && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 px-4 py-4 text-center">
+                  <p className="text-xs text-tertiary">No places found — try a city or town name</p>
                 </div>
               )}
             </div>
