@@ -46,7 +46,7 @@ export const themes: ThemeMetadata[] = [
     vibe: 'Calm, focused, gently bright',
     category: 'classic',
     preview: { bg: '#F8F6F3', surface: '#E8E3D8', accent: '#9CAF9E' },
-    tags: ['default', 'warm', 'light', 'calm'],
+    tags: ['warm', 'light', 'calm'],
   },
   {
     id: 'deep-dark',
@@ -55,7 +55,7 @@ export const themes: ThemeMetadata[] = [
     vibe: 'Night owls, comfort in darkness',
     category: 'classic',
     preview: { bg: '#1A1816', surface: '#3D3935', accent: '#8A9D8C' },
-    tags: ['dark', 'night', 'cozy', 'introspective'],
+    tags: ['default', 'dark', 'night', 'cozy', 'introspective'],
   },
   {
     id: 'soft-feminine',
@@ -150,14 +150,17 @@ export const themes: ThemeMetadata[] = [
 ];
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeName>('warm-light');
+  const [theme, setThemeState] = useState<ThemeName>('deep-dark');
 
-  // Load theme from localStorage on mount
+  // Load theme from localStorage on mount; default to deep-dark for new users
   useEffect(() => {
     const savedTheme = localStorage.getItem('lumis-theme') as ThemeName;
     if (savedTheme && themes.find(t => t.id === savedTheme)) {
       setThemeState(savedTheme);
       document.documentElement.setAttribute('data-theme', savedTheme);
+    } else {
+      // No saved preference — apply deep-dark as the default
+      document.documentElement.setAttribute('data-theme', 'deep-dark');
     }
   }, []);
 

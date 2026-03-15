@@ -165,7 +165,7 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
 
   return (
     <form onSubmit={handleSubmit} className={className}>
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* API Error Display */}
         {apiError && (
           <AuthErrorDisplay
@@ -183,7 +183,7 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
           onChange={handleChange('email')}
           onBlur={handleEmailBlur}
           error={touched.email ? errors.email : undefined}
-          placeholder="your@email.com"
+          placeholder="you@..."
           required
           autoComplete="email"
           disabled={isLoading}
@@ -203,7 +203,7 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
               : undefined
           }
           hint="Minimum 8 characters with uppercase, lowercase, and number"
-          placeholder="••••••••"
+          placeholder="something only you'd know"
           required
           autoComplete="new-password"
           disabled={isLoading}
@@ -218,7 +218,7 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
           onChange={handleChange('confirmPassword')}
           onBlur={handleConfirmPasswordBlur}
           error={touched.confirmPassword ? errors.confirmPassword : undefined}
-          placeholder="••••••••"
+          placeholder="say it once more"
           required
           autoComplete="new-password"
           disabled={isLoading}
@@ -228,9 +228,9 @@ export function SignUpForm({ onSuccess, className }: SignUpFormProps) {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full px-6 py-3 rounded-md bg-accent-primary text-inverse font-sans font-medium text-base shadow-sm transition-all duration-200 hover:bg-accent-primary-hover hover:shadow-md hover:-translate-y-0.5 focus:outline-none focus:ring-4 focus:ring-lumis-accent-primary-light disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          className="w-full btn btn-primary !py-2"
         >
-          {isLoading ? 'Creating account...' : 'Create account'}
+          {isLoading ? 'entering the light...' : 'begin your orbit'}
         </button>
       </div>
     </form>

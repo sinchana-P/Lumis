@@ -40,9 +40,9 @@ export default function LoginPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-primary"></div>
         </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-surface-elevated text-tertiary font-sans">
-            Or continue with email
+        <div className="relative flex justify-center">
+          <span className="px-3 bg-surface-elevated text-tertiary font-sans text-xs">
+            or 
           </span>
         </div>
       </div>
@@ -52,12 +52,12 @@ export default function LoginPage() {
 
       {/* Sign Up Link */}
       <div className="text-center text-sm text-secondary font-sans">
-        Don&apos;t have an account?{' '}
-        <Link 
-          href="/signup" 
+        new here?{' '}
+        <Link
+          href="/signup"
           className="text-accent-primary hover:text-accent-primary-hover font-medium transition-colors"
         >
-          Sign up
+          begin your orbit
         </Link>
       </div>
     </AuthLayout>

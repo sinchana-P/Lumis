@@ -21,19 +21,14 @@ export interface AuthLayoutProps {
 export function AuthLayout({ children, className }: AuthLayoutProps) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-primary">
-      <div className={cn('w-full max-w-md space-y-8', className)}>
+      <div className={cn('w-full max-w-md space-y-3', className)}>
         {/* Lumis Branding */}
-        <div className="text-center space-y-2">
-          <h1 className="text-4xl font-serif text-primary">
-            ✦ LUMIS
-          </h1>
-          <p className="text-secondary italic font-serif">
-            Your personal intelligence platform
-          </p>
+        <div className="text-center">
+          <h1 className="text-2xl font-serif text-primary">✦ LUMIS</h1>
         </div>
 
         {/* Main Content Card */}
-        <div className="card space-y-6">
+        <div className="card space-y-3" style={{ padding: '1.25rem' }}>
           {children}
         </div>
 

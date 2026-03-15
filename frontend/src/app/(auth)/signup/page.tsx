@@ -23,14 +23,7 @@ export default function SignUpPage() {
   return (
     <AuthLayout>
       {/* Page Title */}
-      <div className="space-y-2">
-        <h2 className="text-2xl font-serif text-primary text-center">
-          Create your account
-        </h2>
-        <p className="text-sm text-secondary text-center font-sans">
-          Begin your journey of self-discovery
-        </p>
-      </div>
+      <h2 className="text-xl font-serif text-primary text-center">your orbit begins here</h2>
 
       {/* Google Sign In Button */}
       <GoogleSignInButton />
@@ -40,9 +33,9 @@ export default function SignUpPage() {
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-primary"></div>
         </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-surface-elevated text-tertiary font-sans">
-            or continue with email
+        <div className="relative flex justify-center">
+          <span className="px-3 bg-surface-elevated text-tertiary font-sans text-xs">
+            or 
           </span>
         </div>
       </div>
@@ -53,12 +46,12 @@ export default function SignUpPage() {
       {/* Link to Sign In */}
       <div className="text-center">
         <p className="text-sm text-secondary font-sans">
-          Already have an account?{' '}
+          already orbiting?{' '}
           <Link
             href="/login"
             className="text-accent-primary hover:text-accent-primary-hover font-medium transition-colors duration-200 underline decoration-1 underline-offset-2"
           >
-            Sign in
+            step back in
           </Link>
         </p>
       </div>

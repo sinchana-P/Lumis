@@ -101,7 +101,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {/* Form Error Display */}
       {formError && (
         <div 
@@ -122,7 +122,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         error={emailError}
-        placeholder="you@example.com"
+        placeholder="you@..."
         required
         disabled={isLoading}
         autoComplete="email"
@@ -138,7 +138,7 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         error={passwordError}
-        placeholder="••••••••"
+        placeholder="your key to the light"
         required
         disabled={isLoading}
         autoComplete="current-password"
@@ -148,9 +148,9 @@ export function SignInForm({ onSuccess }: SignInFormProps) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full btn btn-secondary"
+        className="w-full btn btn-primary !py-2"
       >
-        {isLoading ? 'Signing in...' : 'Sign In'}
+        {isLoading ? 'stepping in...' : 'step into the light'}
       </button>
     </form>
   );
