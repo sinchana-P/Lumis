@@ -49,3 +49,7 @@ backend/.env
 test-results/
 playwright-report/
 playwright/.cache/
+
+*.zip
+files/
+lumen_v2_architecture.svg
