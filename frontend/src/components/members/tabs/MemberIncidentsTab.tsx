@@ -145,27 +145,6 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
 
   return (
     <div className="w-full">
-      {/* Compact Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-serif text-lg text-primary mb-1">
-            Significant Moments with {member.fullName}
-          </h2>
-          <p className="font-serif text-xs text-secondary">
-            Chronicle the moments that shaped your connection
-          </p>
-        </div>
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 border border-tertiary rounded-full font-mono text-xs uppercase tracking-widest text-primary hover:bg-surface transition-all duration-300"
-        >
-          + Log Moment
-        </button>
-      </div>
-
-      {/* Divider */}
-      <div className="w-full h-px bg-accent-gold mx-auto mb-4"></div>
-
       {/* Add Form Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-primary/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -179,7 +158,7 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
             
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   What Happened
                 </label>
                 <input
@@ -194,7 +173,7 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                  <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                     When
                   </label>
                   <input
@@ -207,7 +186,7 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
                 </div>
 
                 <div>
-                  <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                  <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                     Nature
                   </label>
                   <select
@@ -225,7 +204,7 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
               </div>
 
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   The Full Story
                 </label>
                 <textarea
@@ -239,7 +218,7 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
               </div>
 
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   Emotional Weight
                 </label>
                 <select
@@ -254,7 +233,7 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
               </div>
 
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   Resolution & Reflection
                 </label>
                 <textarea
@@ -286,96 +265,107 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
         </div>
       )}
 
-      {/* Timeline - Compact Layout */}
+      {/* Timeline - Clean Minimal Layout */}
       <div className="w-full">
         {mockIncidents.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-12 min-h-[3rem] mx-auto mb-3 flex items-center justify-center bg-surface rounded-full p-3">
-              <svg className="w-6 h-6 text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full" style={{ backgroundColor: 'var(--surface)' }}>
+              <svg className="w-8 h-8" style={{ color: 'var(--text-tertiary)' }} fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
-            <h3 className="font-serif text-base text-primary mb-2">
+            <h3 className="font-serif text-xl mb-3" style={{ color: 'var(--text-primary)' }}>
               Your story begins here
             </h3>
-            <p className="font-serif text-xs text-secondary mb-4 max-w-md mx-auto">
+            <p className="font-serif text-sm mb-8 max-w-md mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Start chronicling the experiences that shape your connection with {member.fullName}.
             </p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="px-4 py-2 border border-tertiary rounded-full font-mono text-xs uppercase tracking-widest text-primary hover:bg-surface transition-all duration-300"
+              className="px-6 py-3 rounded-lg font-mono text-xs uppercase tracking-widest transition-all duration-300"
+              style={{ 
+                border: '1px solid var(--border-tertiary)',
+                color: 'var(--text-primary)',
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               Begin Chronicle
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {mockIncidents.map((incident, index) => (
               <div key={incident.id}>
-                <div className="flex items-start gap-4">
-                  {/* Compact Timeline Marker */}
-                  <div className="flex-shrink-0 w-10 min-h-[2.5rem] bg-accent-primary-light border-accent-primary rounded-full flex items-center justify-center border p-2">
-                    <div className="text-accent-primary">{getCategoryIcon(incident.category)}</div>
-                  </div>
+                <div className="flex items-start gap-6">
+                  {/* Simple Timeline Marker */}
+                  <div className="flex-shrink-0 w-3 h-3 rounded-full mt-2" style={{ backgroundColor: 'var(--accent-primary)' }}></div>
                   
-                  {/* Content - Full Width */}
+                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    {/* Header Row - Compact */}
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-serif text-base text-primary font-medium">
-                        {incident.title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs text-tertiary">
-                          {new Date(incident.date).toLocaleDateString('en-US', {
-                            month: 'short',
-                            day: 'numeric'
-                          })}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${getCategoryColor(incident.category)}`}>
-                          {incident.category}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${getSeverityColor(incident.severity)}`}>
-                          {incident.severity}
-                        </span>
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-serif text-lg font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+                          {incident.title}
+                        </h3>
+                        <div className="flex items-center gap-4 text-sm">
+                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                            {new Date(incident.date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                            {incident.category}
+                          </span>
+                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                            {incident.severity}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Description - Compact */}
-                    <div className="bg-surface rounded-lg p-3 mb-2">
-                      <p className="font-serif text-sm text-primary leading-relaxed">
+                    {/* Description */}
+                    <div className="mb-4">
+                      <p className="font-serif leading-relaxed" style={{ color: 'var(--text-primary)' }}>
                         {incident.description}
                       </p>
                     </div>
                     
-                    {/* Outcome - Compact */}
+                    {/* Outcome */}
                     {incident.outcome && (
-                      <div className="bg-surface rounded-lg p-3 mb-2 border-l-2 border-accent-ai">
-                        <div className="font-mono text-[8px] uppercase tracking-widest text-accent-ai mb-1">
-                          Resolution & Reflection
+                      <div className="mb-4 pl-4" style={{ borderLeft: '2px solid var(--accent-ai)' }}>
+                        <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--accent-ai)' }}>
+                          Resolution
                         </div>
-                        <p className="font-serif text-sm text-primary leading-relaxed">
+                        <p className="font-serif text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                           {incident.outcome}
                         </p>
                       </div>
                     )}
                     
-                    {/* Emotions - Inline */}
+                    {/* Emotions - Simple Text */}
                     {incident.emotions.length > 0 && (
-                      <div className="flex flex-wrap gap-1">
-                        {incident.emotions.map((emotion) => (
-                          <span key={emotion} className="px-2 py-1 bg-accent-gold-light text-accent-gold rounded-full text-xs font-serif border border-accent-gold">
-                            {emotion}
-                          </span>
-                        ))}
+                      <div className="text-sm">
+                        <span className="font-mono uppercase tracking-widest mr-3" style={{ color: 'var(--text-tertiary)' }}>
+                          Emotions:
+                        </span>
+                        <span className="font-serif" style={{ color: 'var(--text-secondary)' }}>
+                          {incident.emotions.join(', ')}
+                        </span>
                       </div>
                     )}
                   </div>
                 </div>
                 
-                {/* Divider between incidents */}
+                {/* Subtle Divider */}
                 {index < mockIncidents.length - 1 && (
-                  <div className="w-full h-px bg-tertiary mt-4"></div>
+                  <div className="w-full h-px mt-8" style={{ 
+                    backgroundImage: 'repeating-linear-gradient(to right, var(--border-tertiary) 0px, var(--border-tertiary) 4px, transparent 4px, transparent 8px)',
+                    opacity: '0.4'
+                  }}></div>
                 )}
               </div>
             ))}
@@ -383,36 +373,36 @@ export function MemberIncidentsTab({ member }: MemberIncidentsTabProps) {
         )}
       </div>
 
-      {/* Divider before summary */}
+      {/* Summary Section */}
       {mockIncidents.length > 0 && (
-        <div className="w-full h-px bg-accent-gold mt-6 mb-4"></div>
-      )}
-
-      {/* Compact Summary Insights */}
-      {mockIncidents.length > 0 && (
-        <div className="w-full">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-serif text-base text-primary">Chronicle Insights</h3>
-            <div className="flex-1 h-px bg-accent-gold ml-4"></div>
-          </div>
+        <>
+          <div className="w-full h-px mt-12 mb-8" style={{ 
+            backgroundImage: 'repeating-linear-gradient(to right, var(--accent-gold) 0px, var(--accent-gold) 6px, transparent 6px, transparent 12px)',
+            opacity: '0.6'
+          }}></div>
           
-          <div className="grid grid-cols-5 gap-4">
-            {['conflict', 'breakthrough', 'milestone', 'challenge', 'celebration'].map((category) => {
-              const count = mockIncidents.filter(i => i.category === category).length;
-              return (
-                <div key={category} className="text-center">
-                  <div className="w-8 h-8 mx-auto bg-surface rounded-full flex items-center justify-center mb-1">
-                    <div className="text-accent-primary">{getCategoryIcon(category)}</div>
+          <div className="w-full">
+            <h3 className="font-serif text-lg mb-6" style={{ color: 'var(--text-primary)' }}>
+              Chronicle Summary
+            </h3>
+            
+            <div className="grid grid-cols-5 gap-8">
+              {['conflict', 'breakthrough', 'milestone', 'challenge', 'celebration'].map((category) => {
+                const count = mockIncidents.filter(i => i.category === category).length;
+                return (
+                  <div key={category} className="text-center">
+                    <div className="text-2xl font-serif font-light mb-1" style={{ color: 'var(--text-primary)' }}>
+                      {count}
+                    </div>
+                    <div className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                      {category}{count !== 1 ? 's' : ''}
+                    </div>
                   </div>
-                  <div className="font-serif text-lg font-medium text-primary">{count}</div>
-                  <div className="font-mono text-xs uppercase tracking-wider text-secondary">
-                    {category}{count !== 1 ? 's' : ''}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

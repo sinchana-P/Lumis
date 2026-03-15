@@ -28,8 +28,8 @@ export function MinimalButton({
   };
   
   const sizes = {
-    sm: 'px-3 py-2 text-[10px]',
-    md: 'px-4 py-2.5 text-[11px]'
+    sm: 'px-3 py-2 text-xs',
+    md: 'px-4 py-2.5 text-xs'
   };
   
   const disabledStyles = 'opacity-50 cursor-not-allowed hover:bg-surface-elevated hover:shadow-none';

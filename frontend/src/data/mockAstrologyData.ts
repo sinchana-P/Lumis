@@ -221,6 +221,129 @@ export const getAstrologyDataForMember = (memberId: string): AstrologyData => {
   return mockAstrologyDatabase[memberId] || mockAstrologyDatabase['default'];
 };
 
+// ─── Emotional Astrology Data (Member Astrology Tab) ─────────────────────────
+
+export type AvailabilityLevel = 1 | 2 | 3;
+export type TipIcon = 'circle' | 'half-moon' | 'diamond';
+
+export interface EmotionalAstrologyData {
+  memberId: string;
+  moonSign: {
+    name: string;
+    element: string;
+    tagline: string;
+  };
+  moonNakshatra: {
+    name: string;
+    deity: string;
+  };
+  essenceQuote: string;
+  emotionalNature: {
+    summary: string;
+    whatMakesThemSafe: string;
+    whatTriggersWithdrawal: string;
+    emotionalGift: string;
+  };
+  whenThingsGoWrong: {
+    description: string;
+    howToRespond: string;
+  };
+  emotionalAvailability: {
+    level: AvailabilityLevel;
+    label: string;
+    description: string;
+    forYourInteractions: string;
+  };
+  relationshipDynamic: {
+    whatLandsWell: string;
+    whereFrictionLives: string;
+    theAdjustment: string;
+  };
+  howToMeetThemWell: {
+    tips: Array<{ icon: TipIcon; title: string; description: string }>;
+    bestMoment: string;
+    avoidWhen: string;
+  };
+}
+
+const mockEmotionalDatabase: { [memberId: string]: EmotionalAstrologyData } = {
+  default: {
+    memberId: 'default',
+    moonSign: {
+      name: 'Gemini',
+      element: 'Air',
+      tagline: 'Thought before feeling',
+    },
+    moonNakshatra: {
+      name: 'Ardra',
+      deity: 'Rudra — the Storm',
+    },
+    essenceQuote: 'Feels in storms. Thinks to survive.',
+    emotionalNature: {
+      summary:
+        'Their emotional world moves fast and intensely. They process by talking, questioning, circling — not by sitting still. When something is wrong they don\'t go quiet. They become more verbal, more restless, more analytical. This can read as fine when they are not fine at all.',
+      whatMakesThemSafe:
+        'They feel safe when there is room to think out loud without being judged for it. They need a conversational partner, not a fixer.',
+      whatTriggersWithdrawal:
+        'They withdraw — or overshare — when they feel unheard. If a conversation goes flat they interpret it as rejection before they interpret it as tiredness.',
+      emotionalGift:
+        'They recover faster than most. The same intensity that creates storms also creates clearings. Once they\'ve processed, they\'re genuinely done — not storing it.',
+    },
+    whenThingsGoWrong: {
+      description:
+        'They go precise and cold. Not loud — surgical. When Ardra Moon people feel cornered or unheard, their language becomes clipped, overly logical, and slightly distancing. It looks like they\'re being rational. They\'re actually frightened.',
+      howToRespond:
+        'The coldness is not contempt. It is self-protection. If they\'ve shifted into this mode with you, it means something mattered enough to hurt them — which is different from not caring.',
+    },
+    emotionalAvailability: {
+      level: 2,
+      label: 'Reaching Outward',
+      description:
+        'They are in a life chapter that is oriented outward — toward new experiences, new connections, and things they can\'t yet name. This gives them more capacity for meaningful conversations than usual, but less patience for things that feel routine or obligatory.',
+      forYourInteractions:
+        'Conversations with a sense of purpose or genuine curiosity land well right now. Anything that feels like maintenance or obligation will get less of them than you\'d expect.',
+    },
+    relationshipDynamic: {
+      whatLandsWell:
+        'Your instinct to hold space and listen without immediately responding — this is exactly what works with them. They feel that quality in people and relax into it.',
+      whereFrictionLives:
+        'Your tendency to absorb tension quietly rather than naming it can leave them in the dark about how an interaction has landed for you. They read silence as neutrality or disapproval. A small signal from you goes a long way.',
+      theAdjustment:
+        'With them specifically — say more than you think you need to. Not more words. More honesty about where you are.',
+    },
+    howToMeetThemWell: {
+      tips: [
+        {
+          icon: 'circle',
+          title: 'Give room to think aloud',
+          description:
+            'Don\'t interrupt to solve. Let them arrive at their own conclusion — they almost always do, and faster than you expect.',
+        },
+        {
+          icon: 'half-moon',
+          title: 'Name what you notice',
+          description:
+            'They respond well to being seen. \'You seem like you\'re carrying something\' lands better than waiting for them to bring it up.',
+        },
+        {
+          icon: 'diamond',
+          title: 'Match the rhythm, then slow it',
+          description:
+            'They move fast emotionally. Meet them at their pace first — then gently slow the register together. Don\'t start slow.',
+        },
+      ],
+      bestMoment:
+        'When there\'s a shared task or context. They open up in motion, not in stillness — side-by-side works better than face-to-face.',
+      avoidWhen:
+        'When they\'re already mid-spiral. Adding input while they\'re processing amplifies it, doesn\'t help. Wait for a natural pause.',
+    },
+  },
+};
+
+export const getEmotionalAstrologyDataForMember = (memberId: string): EmotionalAstrologyData => {
+  return mockEmotionalDatabase[memberId] || mockEmotionalDatabase['default'];
+};
+
 export const getSignColor = (sign: string): string => {
   const signColors: { [key: string]: string } = {
     'Simha': '#D4B896', // Leo - Gold

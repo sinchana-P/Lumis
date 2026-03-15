@@ -1,17 +1,14 @@
 import type { Metadata } from 'next';
-import { Inter, Crimson_Pro } from 'next/font/google';
+import { Crimson_Pro } from 'next/font/google';
 import { ReduxProvider } from '@/store/Provider';
 import { AuthInitializer } from '@/components/auth/AuthInitializer';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import './globals.css';
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-sans',
-});
-
 const crimsonPro = Crimson_Pro({
   subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
   variable: '--font-serif',
 });
 
@@ -28,7 +25,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} ${crimsonPro.variable} font-serif antialiased`}>
+      <body className={`${crimsonPro.variable} font-serif antialiased`}>
         <ThemeProvider>
           <ReduxProvider>
             <AuthInitializer>

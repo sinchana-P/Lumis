@@ -1,0 +1,330 @@
+'use client';
+
+import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useGetMemberQuery } from '@/store/api/membersApi';
+import { MemberPageHeader } from '@/components/members/MemberPageHeader';
+
+// Tab Components
+import { 
+  MemberOverviewTab,
+  MemberProsConsTab,
+  MemberIncidentsTab,
+  MemberPatternsTab,
+  MemberInteractionsTab,
+  MemberJournalTab,
+  MemberNumerologyTab,
+  MemberAstrologyTab,
+  MemberAIReportTab
+} from '@/components/members/tabs';
+
+type TabId = 'overview' | 'traits' | 'incidents' | 'patterns' | 'interactions' | 'journal' | 'numerology' | 'astrology' | 'report';
+
+interface Tab {
+  id: TabId;
+  label: string;
+  description: string;
+  icon: string;
+}
+
+const tabs: Tab[] = [
+  {
+    id: 'overview',
+    label: 'Overview',
+    description: 'Essential details and connection metrics for this relationship',
+    icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z'
+  },
+  {
+    id: 'traits',
+    label: 'Traits',
+    description: 'The qualities that draw you closer and the patterns that create friction',
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z'
+  },
+  {
+    id: 'incidents',
+    label: 'Incidents',
+    description: 'Significant moments and events that shaped your relationship',
+    icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z'
+  },
+  {
+    id: 'patterns',
+    label: 'Patterns',
+    description: 'Recurring dynamics and behavioral cycles in your interactions',
+    icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+  },
+  {
+    id: 'interactions',
+    label: 'Interactions',
+    description: 'Shared experiences and the emotional flow of your conversations',
+    icon: 'M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z'
+  },
+  {
+    id: 'journal',
+    label: 'Journal',
+    description: 'Private reflections and thoughts about this relationship',
+    icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253'
+  },
+  {
+    id: 'numerology',
+    label: 'Numerology',
+    description: 'Life path numbers and numerological compatibility insights',
+    icon: 'M7 20l4-16m2 16l4-16M6 9h14M4 15h14'
+  },
+  {
+    id: 'astrology',
+    label: 'Astrology',
+    description: 'Their emotional world through the moon — how they feel, what shifts them, and how to meet them there',
+    icon: 'M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z'
+  },
+  {
+    id: 'report',
+    label: 'Report',
+    description: 'AI-generated insights and relationship analysis based on your data',
+    icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'
+  }
+];
+
+export default function MemberDetailPage() {
+  const params = useParams();
+  const router = useRouter();
+  const memberId = params.id as string;
+  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  
+  const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
+  const member = memberResponse?.data;
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        
+        const currentIndex = tabs.findIndex(tab => tab.id === activeTab);
+        let newIndex;
+        
+        if (event.key === 'ArrowUp') {
+          newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+        } else {
+          newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+        }
+        
+        setActiveTab(tabs[newIndex].id);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTab]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-lumis-bg-primary flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 mx-auto mb-6 flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-lumis-accent-primary border-t-transparent rounded-full animate-spin"></div>
+          </div>
+          <p className="text-lumis-text-secondary font-mono text-sm uppercase tracking-widest">Loading luminary...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !member) {
+    return (
+      <div className="min-h-screen bg-lumis-bg-primary flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-16 h-16 mx-auto mb-8 flex items-center justify-center">
+            <svg className="w-12 h-12 text-lumis-text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 className="text-2xl font-serif font-medium text-lumis-text-primary mb-4">
+            Member Not Found
+          </h3>
+          <p className="text-lumis-text-secondary mb-8 leading-relaxed">
+            The luminary you're seeking has drifted beyond our current view.
+          </p>
+          <button 
+            onClick={() => router.push('/orbit')}
+            className="px-8 py-3 bg-lumis-accent-primary text-lumis-text-inverse rounded-xl font-mono text-xs uppercase tracking-widest font-bold hover:bg-lumis-accent-primary-hover transition-all shadow-lg"
+          >
+            Return to Luminaries
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'overview':
+        return <MemberOverviewTab member={member} />;
+      case 'traits':
+        return <MemberProsConsTab member={member} />;
+      case 'incidents':
+        return <MemberIncidentsTab member={member} />;
+      case 'patterns':
+        return <MemberPatternsTab member={member} />;
+      case 'interactions':
+        return <MemberInteractionsTab member={member} />;
+      case 'journal':
+        return <MemberJournalTab member={member} />;
+      case 'numerology':
+        return <MemberNumerologyTab member={member} />;
+      case 'astrology':
+        return <MemberAstrologyTab member={member} />;
+      case 'report':
+        return <MemberAIReportTab member={member} />;
+      default:
+        return <MemberOverviewTab member={member} />;
+    }
+  };
+
+  // Calculate relationship health (mock calculation)
+  const relationshipHealth = 92;
+
+  return (
+    <div className="h-screen flex overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
+      {/* Ultra Narrow Sidebar */}
+      <aside className="w-48 flex flex-col h-full">
+        {/* Back Navigation - Compact */}
+        <div className="pl-12 pr-4 py-6 flex-shrink-0">
+          <button
+            onClick={() => router.push('/orbit')}
+            className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest transition-colors"
+            style={{ color: 'var(--text-tertiary)' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-tertiary)')}
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Luminaries
+          </button>
+        </div>
+
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto flex flex-col justify-between">
+          {/* Member Profile - Compact */}
+          <div className="pl-12 pr-4 pt-6">
+            <div className="text-center">
+              {/* Smaller Profile Image */}
+              <div className="w-14 h-14 mx-auto mb-2 rounded-full overflow-hidden" style={{ border: '1px solid var(--border-tertiary)' }}>
+                {member.photoUrl ? (
+                  <img
+                    src={member.photoUrl}
+                    alt={member.fullName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-sm font-serif" style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverse)' }}>
+                    {member.fullName.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              
+              {/* Member Name - Compact */}
+              <h1 className="font-serif text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+                {member.fullName}
+              </h1>
+              <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>
+                {member.relationTypeCustom || member.relationType}
+              </p>
+            </div>
+          </div>
+
+          {/* Minimal Navigation - Centered */}
+          <nav className="pl-10 pr-4 flex-1 flex items-center">
+            <div className="space-y-3 w-full">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className="w-full text-left transition-all flex items-center gap-2"
+                  style={{ 
+                    color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)'
+                  }}
+                  onMouseEnter={(e) => {
+                    if (activeTab !== tab.id) {
+                      e.currentTarget.style.color = 'var(--text-primary)';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (activeTab !== tab.id) {
+                      e.currentTarget.style.color = 'var(--text-tertiary)';
+                    }
+                  }}
+                >
+                  {/* Active Badge */}
+                  <div 
+                    className="w-1.5 h-1.5 rounded-full transition-all flex-shrink-0"
+                    style={{ 
+                      backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent'
+                    }}
+                  ></div>
+                  
+                  <div className="font-mono text-xs uppercase tracking-widest font-medium">
+                    {tab.label}
+                  </div>
+                </button>
+              ))}
+            </div>
+          </nav>
+
+          {/* Bottom Quote - At Very Bottom */}
+          <div className="pl-8 pr-6 pb-6">
+            <div className="text-center">
+              <p className="font-serif text-xs italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
+                "The resonance of stillness is the loudest frequency."
+              </p>
+              <p className="font-mono text-xs uppercase tracking-widest mt-2" style={{ color: 'var(--text-tertiary)', opacity: '0.6' }}>
+                Internal Resonance
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col h-full ml-12">
+        {/* Reusable Header Component */}
+        <MemberPageHeader 
+          tabs={tabs}
+          activeTab={activeTab}
+          onActionClick={() => {
+            // Handle tab-specific actions
+            if (activeTab === 'journal') {
+              // Trigger journal new entry
+              console.log('Open new journal entry');
+            } else if (activeTab === 'patterns') {
+              // Trigger add pattern
+              console.log('Open add pattern');
+            } else if (activeTab === 'interactions') {
+              // Trigger log interaction
+              console.log('Open log interaction');
+            } else if (activeTab === 'incidents') {
+              // Trigger add incident
+              console.log('Open add incident');
+            } else if (activeTab === 'traits') {
+              // Trigger add trait
+              console.log('Open add trait');
+            } else if (activeTab === 'report') {
+              // Trigger regenerate report
+              console.log('Regenerate report');
+            } else if (activeTab === 'overview') {
+              // Trigger quick log
+              console.log('Open quick log');
+            }
+          }}
+        />
+
+        {/* Scrollable Tab Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-8">
+            {renderTabContent()}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}

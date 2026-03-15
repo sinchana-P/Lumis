@@ -41,20 +41,20 @@ export function Header() {
           >
             Dashboard
           </button>
-          <button 
-            onClick={() => router.push('/members')}
+          <button
+            onClick={() => router.push('/orbit')}
             className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-              isActive('/members')
+              isActive('/orbit')
                 ? 'text-primary border-b border-primary'
                 : 'text-tertiary hover:text-primary'
             }`}
           >
-            Members
+            Orbit
           </button>
-          <button 
-            onClick={() => router.push('/numerology')}
+          <button
+            onClick={() => router.push('/lumen')}
             className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-              isActive('/numerology')
+              isActive('/lumen')
                 ? 'text-primary border-b border-primary'
                 : 'text-tertiary hover:text-primary'
             }`}

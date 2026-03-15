@@ -393,16 +393,16 @@ export default function AddMemberPage() {
         relationTypeCustom: formData.relationTypeCustom.trim() || undefined,
       }).unwrap();
 
-      setSuccessMessage(`${formData.fullName} has been added to your constellation!`);
+      setSuccessMessage(`${formData.fullName} has been added to your luminaries!`);
       
       // Redirect to members list after a short delay
       setTimeout(() => {
-        router.push('/members');
+        router.push('/orbit');
       }, 1500);
       
     } catch (err: any) {
       console.error('Error creating member:', err);
-      setError(err.data?.error?.message || err.message || 'Failed to add to constellation. Please try again.');
+      setError(err.data?.error?.message || err.message || 'Failed to add to luminaries. Please try again.');
     }
   };
 
@@ -427,7 +427,7 @@ export default function AddMemberPage() {
           </h1>
           
           <p className="text-secondary italic">
-            Every soul adds a unique frequency to the constellation.
+            Every soul adds a unique frequency to the luminaries.
           </p>
         </div>
 
@@ -989,7 +989,7 @@ export default function AddMemberPage() {
               disabled={isSubmitting}
               className="px-8 py-3 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl flex items-center space-x-2"
             >
-              <span>{isSubmitting ? 'Adding to Constellation...' : 'Add to Constellation'}</span>
+              <span>{isSubmitting ? 'Adding to Luminaries...' : 'Add to Luminaries'}</span>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
               </svg>

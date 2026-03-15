@@ -7,7 +7,7 @@ import { useSignOutMutation } from '@/store/api/authApi';
 
 const navigation = [
   { name: 'Home', href: '/', icon: '✦' },
-  { name: 'Members', href: '/members', icon: '◉' },
+  { name: 'Members', href: '/orbit', icon: '◉' },
   { name: 'Lumen', href: '/lumen', icon: '◈' },
   { name: 'Insights', href: '/insights', icon: '◇' },
   { name: 'Profile', href: '/profile', icon: '◎' },
@@ -58,7 +58,7 @@ export function MobileNav() {
               )}
             >
               <span className="text-xl">{item.icon}</span>
-              <span className="font-sans text-[10px] font-medium uppercase tracking-wider">
+              <span className="font-sans text-xs font-medium uppercase tracking-wider">
                 {item.name}
               </span>
             </Link>
@@ -76,7 +76,7 @@ export function MobileNav() {
           )}
         >
           <span className="text-xl">⎋</span>
-          <span className="font-sans text-[10px] font-medium uppercase tracking-wider">
+          <span className="font-sans text-xs font-medium uppercase tracking-wider">
             {isSigningOut ? 'Out' : 'Sign Out'}
           </span>
         </button>

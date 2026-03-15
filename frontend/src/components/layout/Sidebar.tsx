@@ -9,7 +9,7 @@ import { useSignOutMutation } from '@/store/api/authApi';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: '✦' },
-  { name: 'Members', href: '/members', icon: '◉' },
+  { name: 'Members', href: '/orbit', icon: '◉' },
   { name: 'Lumen', href: '/lumen', icon: '◈' },
   { name: 'Insights', href: '/insights', icon: '◇' },
   { name: 'Profile', href: '/profile', icon: '◎' },
@@ -112,7 +112,7 @@ export function Sidebar() {
               {isSigningOut ? 'Signing out...' : 'Sign Out'}
             </button>
             
-            <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary opacity-50">
+            <p className="font-mono text-xs uppercase tracking-widest text-tertiary opacity-50">
               Designed for clarity & connection
             </p>
           </div>

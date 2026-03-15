@@ -1,8 +1,6 @@
 'use client';
 
-import { getAstrologyDataForMember } from '@/data/mockAstrologyData';
-import { NorthIndianKundli } from '@/components/astrology';
-import type { HouseData } from '@/components/astrology/NorthIndianKundli';
+import { getEmotionalAstrologyDataForMember, type TipIcon } from '@/data/mockAstrologyData';
 
 interface Member {
   id: string;
@@ -23,227 +21,276 @@ interface MemberAstrologyTabProps {
   member: Member;
 }
 
-export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
-  const astrologyData = getAstrologyDataForMember(member.id);
-  const chartData = astrologyData.vedicChart;
+// ─── Icon box ─────────────────────────────────────────────────────────────────
 
-  // Convert astrology data to Kundli format
-  const houses: HouseData[] = [];
-  for (let i = 1; i <= 12; i++) {
-    const planets = chartData.houses[i]?.map(planet => ({
-      id: planet.planet,
-      label: planet.symbol
-    })) || [];
-    
-    houses.push({
-      houseNumber: i,
-      houseName: i === 1 ? 'Asc' : i.toString(),
-      planets
-    });
-  }
+function TipIconBox({ icon }: { icon: TipIcon }) {
+  const base = `flex items-center justify-center rounded-lg bg-surface border border-primary/20 flex-shrink-0 w-8 h-8`;
+  if (icon === 'circle') return (
+    <div className={base}>
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="text-tertiary">
+        <circle cx="7" cy="7" r="5.5" stroke="currentColor" strokeWidth="1.2" />
+        <circle cx="7" cy="7" r="1.5" fill="currentColor" />
+      </svg>
+    </div>
+  );
+  if (icon === 'half-moon') return (
+    <div className={base}>
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none" className="text-tertiary">
+        <path d="M7 1.5a5.5 5.5 0 0 1 0 11V1.5Z" fill="currentColor" fillOpacity="0.4" />
+        <path d="M7 1.5a5.5 5.5 0 0 1 0 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+        <path d="M7 1.5a5.5 5.5 0 0 0 0 11" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    </div>
+  );
+  return (
+    <div className={base}>
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="none" className="text-tertiary">
+        <path d="M6 0.5L11.5 6L6 11.5L0.5 6L6 0.5Z" stroke="currentColor" strokeWidth="1.2" />
+      </svg>
+    </div>
+  );
+}
+
+// ─── Section label ────────────────────────────────────────────────────────────
+
+function SectionLabel({ text }: { text: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-4">
+      <div className="w-5 h-px bg-tertiary" />
+      <span className="font-mono text-xs uppercase tracking-widest text-tertiary">{text}</span>
+    </div>
+  );
+}
+
+// ─── Availability dashes ──────────────────────────────────────────────────────
+
+function AvailabilityDashes({ level }: { level: 1 | 2 | 3 }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className={`h-1 w-6 rounded-full ${i <= level ? 'bg-accent-gold' : 'bg-surface'}`} />
+      ))}
+    </div>
+  );
+}
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
+export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
+  const data = getEmotionalAstrologyDataForMember(member.id);
+  const firstName = member.fullName.split(' ')[0]; // used in dynamic sub-labels
 
   return (
-    <div className="w-full max-w-none">
-      {/* Main Layout - More Flowing Design */}
-      <div className="grid grid-cols-12 gap-8">
-        
-        {/* Left Column - Birth Details & Essence */}
-        <div className="col-span-3 space-y-8">
-          
-          {/* Birth Data - Minimal Card */}
-          <div className="space-y-6">
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary">
-              Birth Data
-            </h3>
-            
-            <div className="space-y-4 pl-4 border-l-2 border-accent-gold/30">
-              <div>
-                <p className="font-mono text-[9px] uppercase tracking-widest text-tertiary mb-1">Date</p>
-                <p className="font-serif text-base text-primary">{astrologyData.birthData.date}</p>
-              </div>
-              
-              <div>
-                <p className="font-mono text-[9px] uppercase tracking-widest text-tertiary mb-1">Time</p>
-                <p className="font-serif text-base text-primary">{astrologyData.birthData.time}</p>
-              </div>
-              
-              <div>
-                <p className="font-mono text-[9px] uppercase tracking-widest text-tertiary mb-1">Place</p>
-                <p className="font-serif text-base text-primary">{astrologyData.birthData.place}</p>
-              </div>
-            </div>
-          </div>
+    <div className="w-full max-w-none space-y-8">
 
-          {/* Current Transits - Flowing List */}
-          <div className="space-y-6">
-            <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary">
-              Current Transits
-            </h3>
-            
-            <div className="space-y-6">
-              {astrologyData.currentTransits.map((transit, index) => (
-                <div key={index} className="flex items-start gap-4">
-                  <div className="w-8 h-8 rounded-full bg-accent-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-sm text-accent-primary font-bold">{transit.symbol}</span>
-                  </div>
-                  <div className="flex-1">
-                    <p className="font-serif text-base text-primary font-medium mb-2">{transit.aspect}</p>
-                    <p className="font-serif text-sm text-secondary leading-relaxed">
-                      {transit.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* ── Moon Sign + Moon Nakshatra ── */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="bg-accent-ai/8 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-px bg-accent-ai/50" />
+            <span className="font-mono text-xs uppercase tracking-widest text-accent-ai">Moon Sign</span>
+          </div>
+          <p className="font-serif text-2xl text-primary">{data.moonSign.name}</p>
+          <p className="font-mono text-xs text-tertiary tracking-wider">
+            {data.moonSign.element} · {data.moonSign.tagline}
+          </p>
+        </div>
+        <div className="bg-accent-ai/8 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-2">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-px bg-accent-ai/50" />
+            <span className="font-mono text-xs uppercase tracking-widest text-accent-ai">Moon Nakshatra</span>
+          </div>
+          <p className="font-serif text-2xl text-primary">{data.moonNakshatra.name}</p>
+          <p className="font-mono text-xs text-tertiary tracking-wider">{data.moonNakshatra.deity}</p>
+        </div>
+      </div>
+
+      {/* ── Essence Quote ── */}
+      <div className="bg-accent-ai/8 border border-accent-ai/20 rounded-2xl px-6 py-4">
+        <p className="font-serif text-lg italic text-accent-ai leading-relaxed">
+          &ldquo;{data.essenceQuote}&rdquo;
+        </p>
+      </div>
+
+      {/* ── Their Emotional Nature ── */}
+      <div className="space-y-4">
+        <SectionLabel text="Their Emotional Nature" />
+        <p className="font-serif text-base text-primary leading-relaxed">
+          {data.emotionalNature.summary}
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-accent-primary/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
+            <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
+              What Makes Them Feel Safe
+            </p>
+            <p className="font-serif text-sm text-primary leading-relaxed">
+              {data.emotionalNature.whatMakesThemSafe}
+            </p>
+          </div>
+          <div className="bg-error/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
+            <p className="font-mono text-xs uppercase tracking-widest text-error">
+              What Triggers Withdrawal
+            </p>
+            <p className="font-serif text-sm text-primary leading-relaxed">
+              {data.emotionalNature.whatTriggersWithdrawal}
+            </p>
           </div>
         </div>
-
-        {/* Center Column - Vedic Chart */}
-        <div className="col-span-6 flex flex-col items-center justify-start space-y-8">
-          
-          {/* Vedic Chart - Clean Presentation */}
-          <div className="text-center space-y-6">
-            <div className="bg-surface/50 p-12 rounded-2xl border border-primary/20">
-              <NorthIndianKundli
-                size={420}
-                houses={houses}
-              />
-            </div>
-            
-            {/* ASC Label */}
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-accent-gold/10 text-primary rounded-full font-serif text-base font-medium border border-accent-gold/20">
-              <span className="text-accent-gold">✦</span>
-              ASC: {chartData.ascendant.sign.split('(')[0]}
-            </div>
-          </div>
+        <div className="bg-accent-gold/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
+          <p className="font-mono text-xs uppercase tracking-widest text-accent-gold">
+            Their Emotional Gift
+          </p>
+          <p className="font-serif text-sm text-primary leading-relaxed">
+            {data.emotionalNature.emotionalGift}
+          </p>
         </div>
+      </div>
 
-        {/* Right Column - Janam Kundli */}
-        <div className="col-span-3 flex flex-col justify-start">
-          
-          {/* Janam Kundli - Elegant Typography */}
-          <div className="text-center space-y-6">
-            <div className="space-y-4">
-              <h2 className="font-serif text-2xl text-primary italic">Janam Kundli</h2>
-              <div className="w-16 h-px bg-accent-gold mx-auto"></div>
-              <p className="font-serif text-sm text-secondary leading-relaxed italic max-w-xs mx-auto">
-                The map of the heavens at the moment of your breath. A structural blueprint of your karmic journey.
+      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+
+      {/* ── When Things Go Wrong ── */}
+      <div className="bg-accent-secondary/8 border border-primary/30 border-l-4 border-l-accent-secondary rounded-2xl px-5 py-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-px bg-accent-secondary/50" />
+            <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+              When Things Go Wrong
+            </span>
+          </div>
+          <button className="px-3 py-1 border border-primary/30 rounded-full font-mono text-xs uppercase tracking-widest text-tertiary hover:bg-surface transition-colors duration-200">
+            How to Respond
+          </button>
+        </div>
+        <p className="font-serif text-lg text-primary leading-relaxed">
+          {data.whenThingsGoWrong.description}
+        </p>
+        <p className="font-serif text-sm italic text-secondary leading-relaxed">
+          {data.whenThingsGoWrong.howToRespond}
+        </p>
+      </div>
+
+      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+
+      {/* ── Emotional Availability — Right Now ── */}
+      <div className="bg-surface border border-primary/30 rounded-2xl px-5 py-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-px bg-tertiary" />
+          <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+            Emotional Availability — Right Now
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
+          <AvailabilityDashes level={data.emotionalAvailability.level} />
+          <span className="font-serif text-base italic text-accent-gold">
+            {data.emotionalAvailability.label}
+          </span>
+        </div>
+        <p className="font-serif text-sm text-primary leading-relaxed">
+          {data.emotionalAvailability.description}
+        </p>
+        <div className="bg-secondary border border-primary/15 rounded-xl px-4 py-3 space-y-1.5">
+          <p className="font-mono text-xs uppercase tracking-widest text-tertiary">
+            For Your Interactions
+          </p>
+          <p className="font-serif text-sm italic text-secondary leading-relaxed">
+            {data.emotionalAvailability.forYourInteractions}
+          </p>
+        </div>
+      </div>
+
+      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+
+      {/* ── What This Relationship Asks of You ── */}
+      <div className="bg-accent-ai/5 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-4">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-px bg-accent-ai/50" />
+          <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+            What This Relationship Asks of You
+          </span>
+        </div>
+        <div className="space-y-4">
+          <div className="flex items-start gap-3">
+            <TipIconBox icon="circle" />
+            <div className="space-y-1">
+              <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
+                What Lands Well
+              </p>
+              <p className="font-serif text-sm text-primary leading-relaxed">
+                {data.relationshipDynamic.whatLandsWell}
               </p>
             </div>
-            
-            <button className="px-6 py-3 border border-primary/30 rounded-full font-mono text-xs uppercase tracking-widest text-primary hover:bg-surface/30 transition-all duration-300">
-              Export PDF
-            </button>
           </div>
+          <div className="flex items-start gap-3">
+            <TipIconBox icon="half-moon" />
+            <div className="space-y-1">
+              <p className="font-mono text-xs uppercase tracking-widest text-accent-secondary">
+                Where Friction Lives
+              </p>
+              <p className="font-serif text-sm text-primary leading-relaxed">
+                {data.relationshipDynamic.whereFrictionLives}
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="bg-secondary border border-primary/15 rounded-xl px-4 py-3 space-y-1.5">
+          <p className="font-mono text-xs uppercase tracking-widest text-tertiary">
+            The Adjustment — with {firstName}
+          </p>
+          <p className="font-serif text-sm italic text-secondary leading-relaxed">
+            {data.relationshipDynamic.theAdjustment}
+          </p>
         </div>
       </div>
 
-      {/* Bottom Section - Elemental Essence & Planetary Data */}
-      <div className="grid grid-cols-12 gap-8 mt-16">
-        
-        {/* Elemental Essence - Reduced Width */}
-        <div className="col-span-3 space-y-6">
-          <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary">
-            Elemental Essence
-          </h3>
-          
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-serif text-sm text-primary">Fire</span>
-                <span className="font-mono text-sm font-medium text-primary">45%</span>
-              </div>
-              <div className="w-full bg-tertiary rounded-full h-1.5">
-                <div className="bg-accent-secondary h-1.5 rounded-full w-[45%]"></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-serif text-sm text-primary">Water</span>
-                <span className="font-mono text-sm font-medium text-primary">30%</span>
-              </div>
-              <div className="w-full bg-tertiary rounded-full h-1.5">
-                <div className="bg-accent-ai h-1.5 rounded-full w-[30%]"></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-serif text-sm text-primary">Air</span>
-                <span className="font-mono text-sm font-medium text-primary">15%</span>
-              </div>
-              <div className="w-full bg-tertiary rounded-full h-1.5">
-                <div className="bg-accent-ai h-1.5 rounded-full w-[15%]"></div>
-              </div>
-            </div>
-            
-            <div>
-              <div className="flex justify-between items-center mb-3">
-                <span className="font-serif text-sm text-primary">Earth</span>
-                <span className="font-mono text-sm font-medium text-primary">10%</span>
-              </div>
-              <div className="w-full bg-tertiary rounded-full h-1.5">
-                <div className="bg-accent-primary h-1.5 rounded-full w-[10%]"></div>
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
 
-        {/* Gap Column */}
-        <div className="col-span-1"></div>
-
-        {/* Planetary Alignment - Clean Table */}
-        <div className="col-span-8 space-y-6">
-          <h3 className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary">
-            Planetary Alignment
-          </h3>
-          
-          <div className="space-y-1">
-            {/* Table Header */}
-            <div className="grid grid-cols-5 gap-6 pb-4 border-b border-primary/20">
-              <div className="font-mono text-[9px] uppercase tracking-widest text-tertiary">Graha</div>
-              <div className="font-mono text-[9px] uppercase tracking-widest text-tertiary">Rashi</div>
-              <div className="font-mono text-[9px] uppercase tracking-widest text-tertiary">Nakshatra</div>
-              <div className="font-mono text-[9px] uppercase tracking-widest text-tertiary">Degree</div>
-              <div className="font-mono text-[9px] uppercase tracking-widest text-tertiary">Pada</div>
-            </div>
-
-            {/* Table Rows */}
-            {astrologyData.planetaryPositions.map((planet, index) => (
-              <div key={index} className="grid grid-cols-5 gap-6 py-3 hover:bg-surface/20 rounded-lg transition-colors duration-200">
-                <div className="font-serif text-sm font-medium text-primary">{planet.planet.split('(')[0]}</div>
-                <div className="font-serif text-sm text-secondary">{planet.sign.split('(')[0]}</div>
-                <div className="font-serif text-sm text-secondary">{planet.nakshatra}</div>
-                <div className="font-mono text-sm text-secondary">{planet.degree}° {planet.minutes}'</div>
-                <div className="font-mono text-sm text-tertiary">{planet.pada}</div>
+      {/* ── How To Meet Them Well ── */}
+      <div className="space-y-4">
+        <SectionLabel text="How to Meet Them Well" />
+        <div className="space-y-0">
+          {data.howToMeetThemWell.tips.map((tip, i) => (
+            <div key={i}>
+              {i > 0 && <div className="w-full h-px my-3" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />}
+              <div className="flex items-start gap-3 py-1">
+                <TipIconBox icon={tip.icon} />
+                <div className="space-y-0.5">
+                  <p className="font-serif text-base text-primary">{tip.title}</p>
+                  <p className="font-serif text-sm italic text-tertiary leading-relaxed">
+                    {tip.description}
+                  </p>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Synthesized Insight - Elegant Bottom */}
-      <div className="mt-20 space-y-8">
-        <div className="text-center">
-          <h3 className="font-serif text-xl text-primary mb-4">Synthesized Vedic Insight</h3>
-          <div className="w-24 h-px bg-accent-gold mx-auto"></div>
-        </div>
-        
-        <div className="max-w-4xl mx-auto space-y-6">
-          {astrologyData.insights.map((insight, index) => (
-            <p key={index} className="font-serif text-base text-primary leading-relaxed text-center">
-              {insight}
-            </p>
+            </div>
           ))}
-          
-          <div className="text-center pt-8 mt-8 border-t border-primary/20">
-            <p className="font-serif text-sm text-secondary italic">
-              "The stars do not compel, they incline. Your free will is the master that guides the ship through the tides of your karma."
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-accent-primary/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
+            <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
+              Best Moment to Approach
+            </p>
+            <p className="font-serif text-sm text-primary leading-relaxed">
+              {data.howToMeetThemWell.bestMoment}
+            </p>
+          </div>
+          <div className="bg-error/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
+            <p className="font-mono text-xs uppercase tracking-widest text-error">
+              Avoid When
+            </p>
+            <p className="font-serif text-sm text-primary leading-relaxed">
+              {data.howToMeetThemWell.avoidWhen}
             </p>
           </div>
         </div>
       </div>
+
+      {/* ── Footer disclaimer ── */}
+      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+      <p className="font-serif text-xs italic text-tertiary leading-relaxed pt-2">
+        <span className="mr-1.5">⊙</span>
+        Astrological context is one lens among several. Use this alongside Traits, Patterns,
+        and your own lived interactions — not instead of them.
+      </p>
+
     </div>
   );
 }

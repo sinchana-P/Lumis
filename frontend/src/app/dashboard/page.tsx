@@ -17,7 +17,7 @@ export default function DashboardPage() {
   const user = useAppSelector(selectUser);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
   const { data: membersResponse } = useGetMembersQuery();
-  
+
   const members = membersResponse?.data || [];
 
   useEffect(() => {
@@ -32,10 +32,10 @@ export default function DashboardPage() {
         <div className="text-center">
           <div className="w-8 h-8 mx-auto mb-4 flex items-center justify-center">
             <svg className="w-6 h-6 text-accent-primary animate-pulse" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
             </svg>
           </div>
-          <p className="text-secondary">Loading your constellation...</p>
+          <p className="text-secondary">Loading your luminaries...</p>
         </div>
       </div>
     );
@@ -67,14 +67,14 @@ export default function DashboardPage() {
                     EMOTIONAL WEATHER
                   </h2>
                 </div>
-                
+
                 <div className="bg-surface rounded-2xl p-6 shadow-md">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <p className="text-2xl font-serif text-primary leading-relaxed mb-4">
                         "Mostly peaceful this week, with moments of warmth around <em>family connections</em>."
                       </p>
-                      
+
                       <div className="flex items-center space-x-2">
                         <div className="w-2 h-2 bg-accent-secondary rounded-full"></div>
                         <span className="text-xs uppercase tracking-wider text-accent-secondary font-medium">
@@ -93,7 +93,7 @@ export default function DashboardPage() {
                     RECENT INSIGHTS
                   </h2>
                 </div>
-                
+
                 <div className="space-y-6">
                   {/* Pattern Alert */}
                   <div className="bg-surface rounded-2xl p-6 shadow-md">
@@ -151,7 +151,7 @@ export default function DashboardPage() {
                     ENERGY MAP
                   </h2>
                 </div>
-                
+
                 <div className="relative bg-surface rounded-2xl p-12 shadow-md h-96">
                   {members.length > 0 ? (
                     <div className="relative w-full h-full">
@@ -204,55 +204,57 @@ export default function DashboardPage() {
                         // Position members in different circles and angles
                         const positions = [
                           // Inner circle positions
-                          { 
-                            distance: 25, 
+                          {
+                            distance: 25,
                             angle: 0, // Top
                             color: 'bg-accent-primary'
                           },
-                          { 
-                            distance: 35, 
+                          {
+                            distance: 35,
                             angle: 225, // Bottom left
                             color: 'bg-accent-secondary'
                           },
-                          { 
-                            distance: 35, 
+                          {
+                            distance: 35,
                             angle: 315, // Bottom right  
                             color: 'bg-accent-ai'
                           },
                           // Outer circle positions
-                          { 
-                            distance: 45, 
+                          {
+                            distance: 45,
                             angle: 45, // Top right
                             color: 'bg-accent-gold'
                           },
-                          { 
-                            distance: 45, 
+                          {
+                            distance: 45,
                             angle: 135, // Top left
                             color: 'bg-accent-secondary'
                           },
-                          { 
-                            distance: 45, 
+                          {
+                            distance: 45,
                             angle: 270, // Bottom
                             color: 'bg-accent-ai'
                           },
                         ];
-                        
+
                         const position = positions[index];
                         if (!position) return null;
-                        
+
                         // Convert polar to cartesian coordinates
                         const angleRad = (position.angle * Math.PI) / 180;
                         const x = 50 + position.distance * Math.cos(angleRad);
                         const y = 50 + position.distance * Math.sin(angleRad);
-                        
+
                         return (
                           <div
                             key={member.id}
                             className="absolute transform -translate-x-1/2 -translate-y-1/2"
-                            style={{ 
-                              left: `${x}%`, 
-                              top: `${y}%` 
+                            style={{
+                              left: `${x}%`,
+                              top: `${y}%`,
+                              cursor: "pointer"
                             }}
+                            onClick={() => router.push(`/orbit/${member.id}`)}
                           >
                             <div className="text-center">
                               <div className={`w-12 h-12 ${position.color} rounded-full flex items-center justify-center shadow-md border-2 border-surface mb-2`}>
@@ -287,14 +289,14 @@ export default function DashboardPage() {
                             { distance: 45, angle: 135 },
                             { distance: 45, angle: 270 },
                           ];
-                          
+
                           const position = positions[index];
                           if (!position) return null;
-                          
+
                           const angleRad = (position.angle * Math.PI) / 180;
                           const x = 50 + position.distance * Math.cos(angleRad);
                           const y = 50 + position.distance * Math.sin(angleRad);
-                          
+
                           return (
                             <line
                               key={index}
@@ -316,14 +318,14 @@ export default function DashboardPage() {
                       <div className="text-center">
                         <div className="w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                           <svg className="w-8 h-8 text-accent-primary" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                           </svg>
                         </div>
                         <p className="text-secondary text-sm mb-4">
-                          Add members to see your energy constellation
+                          Add members to see your luminaries
                         </p>
                         <button
-                          onClick={() => router.push('/members/add')}
+                          onClick={() => router.push('/orbit/add')}
                           className="px-6 py-2 bg-accent-primary text-white rounded-full text-xs uppercase tracking-wider font-medium hover:bg-accent-primary-hover transition-colors"
                         >
                           ADD FIRST MEMBER
@@ -341,7 +343,7 @@ export default function DashboardPage() {
                     YOUR BLUEPRINT
                   </h2>
                 </div>
-                
+
                 <div className="bg-surface rounded-2xl p-6 shadow-md space-y-6">
                   {/* Sun Sign */}
                   <div className="flex items-center justify-between">
@@ -355,7 +357,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="w-8 h-8 flex items-center justify-center">
                       <svg className="w-6 h-6 text-accent-primary" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
                       </svg>
                     </div>
                   </div>
@@ -372,7 +374,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="w-8 h-8 flex items-center justify-center">
                       <svg className="w-6 h-6 text-accent-secondary" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"/>
+                        <path d="M12 3a9 9 0 1 0 9 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 0 1-4.4 2.26 5.403 5.403 0 0 1-3.14-9.8c-.44-.06-.9-.1-1.36-.1z" />
                       </svg>
                     </div>
                   </div>
@@ -389,7 +391,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="w-8 h-8 flex items-center justify-center">
                       <svg className="w-6 h-6 text-accent-gold" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                       </svg>
                     </div>
                   </div>

@@ -74,7 +74,7 @@ export function NumerologyProfile({ data }: NumerologyProfileProps) {
             <h1 className="text-4xl font-serif italic text-primary mb-2 font-light">
               {data.name}
             </h1>
-            <div className="flex items-center gap-4 font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary">
+            <div className="flex items-center gap-4 font-mono text-xs uppercase tracking-widest text-tertiary">
               <span>{data.relationshipType}</span>
               <span>•</span>
               <span>Numerological Profile</span>
@@ -84,7 +84,7 @@ export function NumerologyProfile({ data }: NumerologyProfileProps) {
 
         {/* Overall Compatibility */}
         <div className="text-right">
-          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary mb-2">
+          <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
             Overall Compatibility
           </div>
           <div className="text-5xl font-display font-light text-accent-secondary">

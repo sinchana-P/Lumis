@@ -163,7 +163,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
               </svg>
             </div>
             <div>
-              <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary font-bold">
+              <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
                 Deep Analysis Complete
               </h3>
               <p className="font-serif text-sm text-secondary mt-1">
@@ -172,7 +172,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
             </div>
           </div>
           <div className="text-right">
-            <div className="font-mono text-[10px] uppercase tracking-widest text-accent-ai font-bold">Last Updated</div>
+            <div className="font-mono text-xs uppercase tracking-widest text-accent-ai font-bold">Last Updated</div>
             <div className="font-mono text-xs text-tertiary">2 hours ago</div>
           </div>
         </div>
@@ -182,7 +182,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="bg-surface-elevated border-2 border-primary/30 p-8 rounded-2xl shadow-md">
           <div className="flex items-center justify-between mb-4">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-tertiary">Compatibility Score</span>
+            <span className="font-mono text-xs uppercase tracking-widest text-tertiary">Compatibility Score</span>
             <svg className="w-5 h-5 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
@@ -195,7 +195,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
 
         <div className="bg-surface-elevated border-2 border-primary/30 p-8 rounded-2xl shadow-md">
           <div className="flex items-center justify-between mb-4">
-            <span className="font-mono text-[10px] uppercase tracking-widest text-tertiary">Relationship Dynamic</span>
+            <span className="font-mono text-xs uppercase tracking-widest text-tertiary">Relationship Dynamic</span>
             <svg className="w-5 h-5 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
@@ -213,7 +213,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
           <svg className="w-6 h-6 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
           </svg>
-          <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary font-bold">
+          <h3 className="font-mono text-xs uppercase tracking-widest text-accent-secondary font-bold">
             Tension Points
           </h3>
         </div>
@@ -236,7 +236,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
       {/* AI Insights */}
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary font-bold">
+          <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
             Detailed Insights
           </h3>
           <button
@@ -265,7 +265,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
                       {insight.title}
                     </h4>
                     <div className="flex items-center gap-3">
-                      <span className={`px-3 py-1 rounded-full font-mono text-[10px] font-bold uppercase tracking-wider border ${getInsightColor(insight.type)}`}>
+                      <span className={`px-3 py-1 rounded-full font-mono text-xs font-bold uppercase tracking-wider border ${getInsightColor(insight.type)}`}>
                         {insight.type}
                       </span>
                       <span className={`font-mono text-sm font-bold ${getConfidenceColor(insight.confidence)}`}>
@@ -280,7 +280,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
                 </p>
 
                 <div className="mb-6">
-                  <div className="font-mono text-[10px] uppercase tracking-widest text-tertiary mb-3">
+                  <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-3">
                     Supporting Evidence
                   </div>
                   <ul className="space-y-2">
@@ -303,7 +303,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
                       <svg className="w-4 h-4 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                       </svg>
-                      <div className="font-mono text-[10px] uppercase tracking-widest text-accent-primary font-bold">
+                      <div className="font-mono text-xs uppercase tracking-widest text-accent-primary font-bold">
                         Actionable Insight
                       </div>
                     </div>
@@ -320,7 +320,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
                   >
                     View detailed analysis →
                   </button>
-                  <span className="font-mono text-[10px] text-tertiary uppercase tracking-widest">
+                  <span className="font-mono text-xs text-tertiary uppercase tracking-widest">
                     Generated {new Date(insight.createdAt).toLocaleDateString()}
                   </span>
                 </div>
@@ -336,7 +336,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
           <svg className="w-6 h-6 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
           </svg>
-          <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary font-bold">
+          <h3 className="font-mono text-xs uppercase tracking-widest text-primary font-bold">
             Relationship Trajectory
           </h3>
         </div>
@@ -390,7 +390,7 @@ export function MemberAIReportTab({ member }: MemberAIReportTabProps) {
           <svg className="w-6 h-6 text-accent-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <h3 className="font-mono text-[11px] uppercase tracking-[0.2em] text-accent-secondary font-bold">
+          <h3 className="font-mono text-xs uppercase tracking-widest text-accent-secondary font-bold">
             Recommended Next Steps
           </h3>
         </div>

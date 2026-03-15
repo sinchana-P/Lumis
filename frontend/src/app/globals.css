@@ -8,9 +8,18 @@
 
 @layer base {
   :root {
-    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-sans: 'Crimson Pro', Georgia, serif;
     --font-serif: 'Crimson Pro', Georgia, serif;
     --font-mono: 'JetBrains Mono', monospace;
+
+    /* Type scale — consistent across the whole app */
+    --text-label: 12px;   /* mono uppercase section labels — minimum readable */
+    --text-meta: 12px;    /* timestamps, badges, counts */
+    --text-body-sm: 14px; /* secondary body text */
+    --text-body: 16px;    /* primary body text */
+    --text-lg: 20px;      /* card headings */
+    --text-xl: 24px;      /* page section headings */
+    --text-2xl: 30px;     /* page titles */
 }
 
   body {
@@ -22,7 +31,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-sans font-semibold;
+    @apply font-serif font-semibold;
   }
 }
 
@@ -95,6 +104,15 @@
   .input:focus {
     border-color: var(--accent-primary);
     box-shadow: var(--glow-focus);
+  }
+
+  /* Standardized section label — use everywhere for mono uppercase labels */
+  .section-label {
+    font-family: var(--font-mono, monospace);
+    font-size: var(--text-label); /* 12px minimum */
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--text-tertiary);
   }
 
   /* Emotion pill styles */
@@ -206,5 +224,28 @@
 *:focus-visible {
   outline: none;
   box-shadow: var(--glow-focus);
+}
+
+/* Thin themed scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-tertiary) transparent;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 99px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+.scrollbar-thin::-webkit-scrollbar-corner {
+  background: transparent;
 }
 

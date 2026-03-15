@@ -46,7 +46,7 @@ export function CoreNumbersTab({ data }: CoreNumbersTabProps) {
     <div className="space-y-8">
       {/* Section Header */}
       <div className="max-w-3xl">
-        <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary mb-4">
+        <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-4">
           Core Numbers
         </div>
         <h2 className="text-2xl font-serif italic text-secondary leading-relaxed">
@@ -67,7 +67,7 @@ export function CoreNumbersTab({ data }: CoreNumbersTabProps) {
                 <div className={`text-7xl font-display font-light ${getNumberColor(coreNumber.type)} mb-2`}>
                   {coreNumber.number}
                 </div>
-                <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary">
+                <div className="font-mono text-xs uppercase tracking-widest text-tertiary">
                   {coreNumber.type.replace(/([A-Z])/g, ' $1').trim()}
                 </div>
               </div>
@@ -79,7 +79,7 @@ export function CoreNumbersTab({ data }: CoreNumbersTabProps) {
                     <h3 className="text-2xl font-serif font-medium text-primary mb-2">
                       {coreNumber.title}
                     </h3>
-                    <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.2em] text-accent-secondary">
+                    <div className="flex items-center gap-3 font-mono text-xs uppercase tracking-widest text-accent-secondary">
                       <span>Independent</span>
                       <span>•</span>
                       <span>Driven</span>
@@ -93,7 +93,7 @@ export function CoreNumbersTab({ data }: CoreNumbersTabProps) {
                 </div>
 
                 <div className="mb-6">
-                  <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary mb-3">
+                  <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-3">
                     {coreNumber.subtitle}
                   </div>
                   <p className="font-serif text-lg leading-relaxed text-secondary">
@@ -104,14 +104,14 @@ export function CoreNumbersTab({ data }: CoreNumbersTabProps) {
                 {/* Traits */}
                 {coreNumber.traits.length > 0 && (
                   <div>
-                    <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-tertiary mb-3">
+                    <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-3">
                       Key Traits
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {coreNumber.traits.map((trait, traitIndex) => (
                         <span 
                           key={traitIndex}
-                          className="px-3 py-1 bg-accent-primary/10 text-accent-primary border border-accent-primary/20 rounded-full font-mono text-[10px] uppercase tracking-wider"
+                          className="px-3 py-1 bg-accent-primary/10 text-accent-primary border border-accent-primary/20 rounded-full font-mono text-xs uppercase tracking-wider"
                         >
                           {trait}
                         </span>

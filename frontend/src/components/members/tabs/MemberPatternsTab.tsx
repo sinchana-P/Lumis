@@ -170,27 +170,6 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
 
   return (
     <div className="w-full">
-      {/* Compact Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h2 className="font-serif text-lg text-primary mb-1">
-            Patterns with {member.fullName}
-          </h2>
-          <p className="font-serif text-xs text-secondary">
-            Recurring behaviors, communication styles, and relationship dynamics
-          </p>
-        </div>
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="px-4 py-2 border border-tertiary rounded-full font-mono text-xs uppercase tracking-widest text-primary hover:bg-surface transition-all duration-300"
-        >
-          + Add Pattern
-        </button>
-      </div>
-
-      {/* Divider */}
-      <div className="w-full h-px bg-accent-gold mx-auto mb-4"></div>
-
       {/* Add Form Modal */}
       {showAddForm && (
         <div className="fixed inset-0 bg-primary/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -204,7 +183,7 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
             
             <form onSubmit={handleSubmit} className="space-y-8">
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   Pattern Title
                 </label>
                 <input
@@ -219,7 +198,7 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                  <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                     Category
                   </label>
                   <select
@@ -237,7 +216,7 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
                 </div>
 
                 <div>
-                  <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                  <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                     Frequency
                   </label>
                   <select
@@ -254,7 +233,7 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
               </div>
 
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   Pattern Description
                 </label>
                 <textarea
@@ -268,7 +247,7 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
               </div>
 
               <div>
-                <label className="font-mono text-[9px] uppercase tracking-widest text-tertiary block mb-3">
+                <label className="font-mono text-xs uppercase tracking-widest text-tertiary block mb-3">
                   Impact Assessment
                 </label>
                 <select
@@ -302,90 +281,93 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
         </div>
       )}
 
-      {/* Timeline - Compact Layout */}
+      {/* Timeline - Clean Minimal Layout */}
       <div className="w-full">
         {mockPatterns.length === 0 ? (
-          <div className="text-center py-8">
-            <div className="w-12 min-h-[3rem] mx-auto mb-3 flex items-center justify-center bg-surface rounded-full p-3">
-              <svg className="w-6 h-6 text-tertiary" fill="currentColor" viewBox="0 0 20 20">
+          <div className="text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-6 flex items-center justify-center rounded-full" style={{ backgroundColor: 'var(--surface)' }}>
+              <svg className="w-8 h-8" style={{ color: 'var(--text-tertiary)' }} fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
               </svg>
             </div>
-            <h3 className="font-serif text-base text-primary mb-2">
+            <h3 className="font-serif text-xl mb-3" style={{ color: 'var(--text-primary)' }}>
               No patterns identified yet
             </h3>
-            <p className="font-serif text-xs text-secondary mb-4 max-w-md mx-auto">
+            <p className="font-serif text-sm mb-8 max-w-md mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               Start identifying recurring behaviors and dynamics in your relationship with {member.fullName}.
             </p>
             <button
               onClick={() => setShowAddForm(true)}
-              className="px-4 py-2 border border-tertiary rounded-full font-mono text-xs uppercase tracking-widest text-primary hover:bg-surface transition-all duration-300"
+              className="px-6 py-3 rounded-lg font-mono text-xs uppercase tracking-widest transition-all duration-300"
+              style={{ 
+                border: '1px solid var(--border-tertiary)',
+                color: 'var(--text-primary)',
+                backgroundColor: 'transparent'
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = 'var(--surface)')}
+              onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = 'transparent')}
             >
               Identify First Pattern
             </button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-8">
             {mockPatterns.map((pattern, index) => (
               <div key={pattern.id}>
-                <div className="flex items-start gap-4">
-                  {/* Compact Timeline Marker */}
-                  <div className="flex-shrink-0 w-10 min-h-[2.5rem] bg-accent-primary-light border-accent-primary rounded-full flex items-center justify-center border p-2">
-                    <div className="text-accent-primary">{getCategoryIcon(pattern.category)}</div>
-                  </div>
+                <div className="flex items-start gap-6">
+                  {/* Simple Timeline Marker */}
+                  <div className="flex-shrink-0 w-3 h-3 rounded-full mt-2" style={{ backgroundColor: 'var(--accent-primary)' }}></div>
                   
-                  {/* Content - Full Width */}
+                  {/* Content */}
                   <div className="flex-1 min-w-0">
-                    {/* Header Row - Compact */}
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="font-serif text-base text-primary font-medium">
-                        {pattern.title}
-                      </h3>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${getCategoryColor(pattern.category)}`}>
-                          {pattern.category}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${getFrequencyColor(pattern.frequency)}`}>
-                          {pattern.frequency}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-mono uppercase tracking-wider border ${getImpactColor(pattern.impact)}`}>
-                          {pattern.impact}
-                        </span>
+                    {/* Header */}
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h3 className="font-serif text-lg font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+                          {pattern.title}
+                        </h3>
+                        <div className="flex items-center gap-4 text-sm">
+                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                            {pattern.category}
+                          </span>
+                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                            {pattern.frequency}
+                          </span>
+                          <span className="font-mono uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+                            {pattern.impact}
+                          </span>
+                        </div>
                       </div>
                     </div>
                     
-                    {/* Description - Compact */}
-                    <div className="bg-surface rounded-lg p-3 mb-2">
-                      <p className="font-serif text-sm text-primary leading-relaxed">
+                    {/* Description */}
+                    <div className="mb-4">
+                      <p className="font-serif leading-relaxed" style={{ color: 'var(--text-primary)' }}>
                         {pattern.description}
                       </p>
                     </div>
                     
                     {/* Triggers */}
                     {pattern.triggers.length > 0 && (
-                      <div className="bg-surface rounded-lg p-3 mb-2 border-l-2 border-accent-secondary">
-                        <div className="font-mono text-[8px] uppercase tracking-widest text-accent-secondary mb-1">
+                      <div className="mb-4 pl-4">
+                        <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--accent-secondary)' }}>
                           Common Triggers
                         </div>
-                        <div className="flex flex-wrap gap-1">
-                          {pattern.triggers.map((trigger, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-accent-secondary-light text-accent-secondary rounded-full text-xs font-serif border border-accent-secondary">
-                              {trigger}
-                            </span>
-                          ))}
-                        </div>
+                        <p className="font-serif text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                          {pattern.triggers.join(', ')}
+                        </p>
                       </div>
                     )}
                     
                     {/* Examples */}
                     {pattern.examples.length > 0 && (
-                      <div className="bg-surface rounded-lg p-3 mb-2 border-l-2 border-accent-gold">
-                        <div className="font-mono text-[8px] uppercase tracking-widest text-accent-gold mb-1">
+                      <div className="mb-4 pl-4">
+                        <div className="font-mono text-xs uppercase tracking-widest mb-2" style={{ color: 'var(--accent-gold)' }}>
                           Examples
                         </div>
                         <ul className="space-y-1">
                           {pattern.examples.map((example, idx) => (
-                            <li key={idx} className="font-serif text-sm text-primary leading-relaxed">
+                            <li key={idx} className="font-serif text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                               • {example}
                             </li>
                           ))}
@@ -395,9 +377,12 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
                   </div>
                 </div>
                 
-                {/* Divider between patterns */}
+                {/* Subtle Divider */}
                 {index < mockPatterns.length - 1 && (
-                  <div className="w-full h-px bg-tertiary mt-4"></div>
+                  <div className="w-full h-px mt-8" style={{ 
+                    backgroundImage: 'repeating-linear-gradient(to right, var(--border-tertiary) 0px, var(--border-tertiary) 4px, transparent 4px, transparent 8px)',
+                    opacity: '0.4'
+                  }}></div>
                 )}
               </div>
             ))}
@@ -405,36 +390,36 @@ export function MemberPatternsTab({ member }: MemberPatternsTabProps) {
         )}
       </div>
 
-      {/* Divider before summary */}
+      {/* Summary Section */}
       {mockPatterns.length > 0 && (
-        <div className="w-full h-px bg-accent-gold mt-6 mb-4"></div>
-      )}
-
-      {/* Compact Summary Insights */}
-      {mockPatterns.length > 0 && (
-        <div className="w-full">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-serif text-base text-primary">Pattern Analysis</h3>
-            <div className="flex-1 h-px bg-accent-gold ml-4"></div>
-          </div>
+        <>
+          <div className="w-full h-px mt-12 mb-8" style={{ 
+            backgroundImage: 'repeating-linear-gradient(to right, var(--accent-gold) 0px, var(--accent-gold) 6px, transparent 6px, transparent 12px)',
+            opacity: '0.6'
+          }}></div>
           
-          <div className="grid grid-cols-6 gap-4">
-            {['communication', 'conflict', 'affection', 'decision-making', 'stress-response', 'social'].map((category) => {
-              const count = mockPatterns.filter(p => p.category === category).length;
-              return (
-                <div key={category} className="text-center">
-                  <div className="w-8 min-h-[2rem] mx-auto bg-surface rounded-full flex items-center justify-center mb-1 p-1">
-                    <div className="text-accent-primary">{getCategoryIcon(category)}</div>
+          <div className="w-full">
+            <h3 className="font-serif text-lg mb-6" style={{ color: 'var(--text-primary)' }}>
+              Pattern Analysis
+            </h3>
+            
+            <div className="grid grid-cols-6 gap-6">
+              {['communication', 'conflict', 'affection', 'decision-making', 'stress-response', 'social'].map((category) => {
+                const count = mockPatterns.filter(p => p.category === category).length;
+                return (
+                  <div key={category} className="text-center">
+                    <div className="text-2xl font-serif font-light mb-1" style={{ color: 'var(--text-primary)' }}>
+                      {count}
+                    </div>
+                    <div className="font-mono text-xs uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
+                      {category.replace('-', ' ')}{count !== 1 ? 's' : ''}
+                    </div>
                   </div>
-                  <div className="font-serif text-lg font-medium text-primary">{count}</div>
-                  <div className="font-mono text-xs uppercase tracking-wider text-secondary">
-                    {category.replace('-', ' ')}{count !== 1 ? 's' : ''}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

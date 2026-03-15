@@ -244,7 +244,7 @@ Create API slices for:
 - `src/components/features/members/JournalSection.tsx`
 
 **Reference:** 
-- `stitch_flows/stitch_onboarding/members_list_constellation_view_1/`
+- `stitch_flows/stitch_onboarding/members_list_luminary_view_1/`
 - `stitch_flows/stitch_onboarding/member_profile_deep_dive_zara/`
 - `stitch_flows/stitch_onboarding/add_new_member_1/`
 

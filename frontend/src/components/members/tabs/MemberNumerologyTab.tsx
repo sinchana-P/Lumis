@@ -65,7 +65,7 @@ function InsightCard({ icon, title, body, accent }: { icon: React.ReactNode; tit
     <div className="bg-secondary border border-primary/30 rounded-xl p-5 shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-4 h-4 ${accent}`}>{icon}</span>
-        <h4 className="font-mono text-[11px] uppercase tracking-[0.2em] text-primary font-medium">{title}</h4>
+        <h4 className="font-mono text-xs uppercase tracking-widest text-primary font-medium">{title}</h4>
       </div>
       <p className="font-serif text-base leading-relaxed text-secondary italic">{body}</p>
     </div>
@@ -80,12 +80,8 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
 }) {
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-0.5 h-5 bg-accent-primary rounded-full" />
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-accent-primary font-medium">Core Numbers</span>
-      </div>
-      <p className="font-serif text-base leading-relaxed text-secondary italic mb-4">
+      {/* Description only - no duplicate header */}
+      <p className="font-serif text-base leading-relaxed text-secondary font-light tracking-wide mb-4">
         The permanent blueprint — calculated from name and date of birth
       </p>
 
@@ -107,8 +103,8 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
                   <span className={`text-5xl font-serif italic font-light leading-none ${theme.number}`}>
                     {n.number}
                   </span>
-                  <span className={`font-mono text-[9px] uppercase tracking-widest ${theme.accent} mt-1 text-center leading-tight`}>
-                    {CIRCLED[index]} {n.subtitle}
+                  <span className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mt-1 text-center leading-tight font-medium`}>
+                    {n.subtitle}
                   </span>
                 </div>
 
@@ -120,10 +116,10 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
                   <div className="flex items-baseline gap-3 mb-1">
                     <h3 className="font-serif text-lg font-medium text-primary leading-tight">{n.title}</h3>
                   </div>
-                  <div className={`font-mono text-[10px] uppercase tracking-[0.15em] ${theme.accent} mb-1`}>
+                  <div className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mb-1 font-medium`}>
                     {n.traits.join(' · ')}
                   </div>
-                  <p className="font-serif text-sm italic text-secondary leading-snug">{n.description}</p>
+                  <p className="font-serif text-sm text-secondary leading-snug font-light tracking-wide">{n.description}</p>
                 </div>
 
                 <Chevron open={expanded} accent={theme.accent} />
@@ -165,12 +161,8 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-0.5 h-5 bg-accent-ai rounded-full" />
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-accent-ai font-medium">Timing Numbers</span>
-      </div>
-      <p className="font-serif text-base leading-relaxed text-secondary italic mb-3">
+      {/* Description only - no duplicate header */}
+      <p className="font-serif text-base leading-relaxed text-secondary font-light tracking-wide mb-3">
         The cyclical influences — energies that shift and evolve through time,
         revealing the cosmic rhythm of {member.fullName}'s journey.
       </p>
@@ -179,10 +171,10 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
       <div className="bg-accent-gold/12 border border-accent-gold/30 rounded-xl px-5 py-3 flex items-center gap-3 mb-2">
         <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse flex-shrink-0" />
         <div>
-          <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-accent-gold font-bold mr-2">
+          <span className="font-mono text-xs uppercase tracking-widest text-accent-gold font-bold mr-2">
             Current Year Energy: {currentYear}
           </span>
-          <span className="font-serif text-sm italic text-secondary">
+          <span className="font-serif text-sm text-secondary font-light tracking-wide">
             {personalYear ? `${personalYear.title} — ${personalYear.influence}` : `Deep inner work and intentional growth.`}
           </span>
         </div>
@@ -207,11 +199,9 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                   <span className={`text-5xl font-serif italic font-light leading-none ${theme.number}`}>
                     {n.number}
                   </span>
-                  {n.year && (
-                    <span className={`font-mono text-[9px] uppercase tracking-widest ${theme.accent} mt-1`}>
-                      {n.year}
-                    </span>
-                  )}
+                  <span className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mt-1 text-center leading-tight font-medium`}>
+                    {n.period}
+                  </span>
                 </div>
 
                 {/* Divider */}
@@ -221,17 +211,26 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-serif text-lg font-medium text-primary leading-tight">{n.title}</h3>
-                    {isCurrentYear && (
-                      <span className="flex items-center gap-1 px-2 py-0.5 bg-accent-gold/20 text-accent-gold border border-accent-gold/30 rounded-full font-mono text-[9px] uppercase tracking-wider font-bold">
-                        <span className="w-1.5 h-1.5 bg-accent-gold rounded-full animate-pulse" />
-                        Active Now
+                    {n.period === 'Personal Year' && (
+                      <span className="px-2 py-0.5 bg-accent-secondary/15 text-accent-secondary border border-accent-secondary/25 rounded-full font-serif text-xs uppercase tracking-wider font-medium">
+                        Live
+                      </span>
+                    )}
+                    {n.period === 'Personal Month' && (
+                      <span className="px-2 py-0.5 bg-accent-ai/15 text-accent-ai border border-accent-ai/25 rounded-full font-mono text-xs uppercase tracking-wider font-medium">
+                        This Month
+                      </span>
+                    )}
+                    {n.period === 'Life Cycles' && (
+                      <span className="px-2 py-0.5 bg-accent-primary/15 text-accent-primary border border-accent-primary/25 rounded-full font-mono text-xs uppercase tracking-wider font-medium">
+                        Current Phase
                       </span>
                     )}
                   </div>
-                  <div className={`font-mono text-[10px] uppercase tracking-[0.15em] ${theme.accent} mb-1`}>
-                    {n.period}
+                  <div className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mb-1 font-medium`}>
+                    {n.year ? `${n.year} • ${n.period}` : n.period}
                   </div>
-                  <p className="font-serif text-sm italic text-secondary leading-snug">{n.description}</p>
+                  <p className="font-serif text-sm text-secondary leading-snug font-light tracking-wide">{n.description}</p>
                 </div>
 
                 <Chevron open={expanded} accent={theme.accent} />
@@ -282,12 +281,8 @@ function CompatibilityContent({ compatibility, member }: {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-0.5 h-5 bg-accent-secondary rounded-full" />
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-accent-secondary font-medium">Compatibility Analysis</span>
-      </div>
-      <p className="font-serif text-base leading-relaxed text-secondary italic mb-3">
+      {/* Description only - no duplicate header */}
+      <p className="font-serif text-base leading-relaxed text-secondary font-light tracking-wide mb-3">
         How your numerological blueprint meets theirs — both sides examined
       </p>
 
@@ -297,12 +292,12 @@ function CompatibilityContent({ compatibility, member }: {
           <span className={`text-5xl font-serif italic font-light leading-none ${overallTheme.number}`}>
             {compatibility.overallScore}
           </span>
-          <span className="font-mono text-[9px] uppercase tracking-widest text-tertiary mt-1">Overall</span>
+          <span className="font-mono text-xs uppercase tracking-widest text-tertiary mt-1">Overall</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-serif text-base italic text-secondary mb-2">{getCompatibilityDescription(compatibility.overallScore)}</p>
+          <p className="font-serif text-base font-light tracking-wide text-secondary mb-2">{getCompatibilityDescription(compatibility.overallScore)}</p>
           <div className="h-[2px] w-full rounded-full mb-1" style={{ background: 'linear-gradient(to right, #9CAF9E, #C9A58F)' }} />
-          <div className="flex justify-between font-mono text-[9px] uppercase tracking-[0.15em] text-tertiary">
+          <div className="flex justify-between font-mono text-xs uppercase tracking-widest text-tertiary">
             <span>You — LP {compatibility.lifePath.yourNumber}</span>
             <span>{member.fullName} — LP {compatibility.lifePath.theirNumber}</span>
           </div>
@@ -341,7 +336,7 @@ function CompatibilityContent({ compatibility, member }: {
                     <div className={`flex-1 h-1.5 ${theme.progressBg} rounded-full overflow-hidden`}>
                       <div className={`h-full ${theme.number.replace('text-', 'bg-')} transition-all duration-700`} style={{ width: `${card.score}%` }} />
                     </div>
-                    <span className={`font-mono text-[10px] uppercase tracking-wider ${theme.accent} font-medium flex-shrink-0`}>
+                    <span className={`font-mono text-xs uppercase tracking-wider ${theme.accent} font-medium flex-shrink-0`}>
                       {card.score}% · {theme.label}
                     </span>
                   </div>
@@ -390,23 +385,12 @@ export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
     setTimingNumbers(prev => prev.map(n => n.id === id ? { ...n, expanded: !n.expanded } : n));
 
   const tabStyle = (id: TabId, color: string) =>
-    `group flex items-center gap-2 pb-4 whitespace-nowrap transition-all duration-300 font-mono text-xs uppercase tracking-[0.15em] font-medium outline-none focus:outline-none ${
+    `group flex items-center gap-2 pb-4 whitespace-nowrap transition-all duration-300 font-mono text-xs uppercase tracking-widest font-medium outline-none focus:outline-none ${
       activeTab === id ? `${color} border-b border-current` : 'text-tertiary hover:text-primary'
     }`;
 
   return (
     <div className="w-full max-w-none">
-      {/* Header */}
-      <div className="mb-6">
-        <h2 className="text-3xl font-serif italic font-light text-primary mb-2 leading-tight">
-          Numerological Blueprint
-        </h2>
-        <p className="font-serif text-base leading-relaxed text-secondary italic">
-          The sacred mathematics of {member.fullName}'s soul path and life purpose,
-          revealed through the ancient wisdom of numbers.
-        </p>
-      </div>
-
       {/* Tab Navigation */}
       <div className="flex border-b border-primary/20 gap-10 overflow-x-auto mb-8">
         <button onClick={() => setActiveTab('core')} className={tabStyle('core', 'text-accent-primary')}>

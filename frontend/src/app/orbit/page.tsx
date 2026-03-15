@@ -7,7 +7,7 @@ import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import { useZoom } from '@/hooks/useZoom';
 import { MinimalButton } from '@/components/ui/MinimalButton';
 import { MinimalButtonGroup, MinimalButtonGroupItem } from '@/components/ui/MinimalButtonGroup';
-import { ConstellationControls } from '@/components/ui/ConstellationControls';
+import { LuminaryControls } from '@/components/ui/LuminaryControls';
 import { Header } from '@/components/layout/Header';
 
 export default function MembersPage() {
@@ -17,8 +17,8 @@ export default function MembersPage() {
   const [energyFilter, setEnergyFilter] = useState<'all' | 'nourishing' | 'draining'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'health' | 'type' | 'date'>('name');
-  const [viewMode, setViewMode] = useState<'constellation' | 'list'>('constellation');
-  const constellationRef = useRef<HTMLDivElement>(null);
+  const [viewMode, setViewMode] = useState<'orbit' | 'list'>('orbit');
+  const luminaryRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const members = membersResponse?.data || [];
@@ -37,7 +37,7 @@ export default function MembersPage() {
     fitAllItems: fitAllMembers
   } = useDragAndDrop({
     items: displayMembers,
-    containerRef: constellationRef,
+    containerRef: luminaryRef,
     boundaryPadding: 5,
     minDistance: 32
   });
@@ -111,7 +111,7 @@ export default function MembersPage() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
         e.preventDefault();
-        const searchInput = document.querySelector('input[placeholder="Search members..."]') as HTMLInputElement;
+        const searchInput = document.querySelector('input[placeholder="Search luminaries..."]') as HTMLInputElement;
         if (searchInput) {
           searchInput.focus();
           searchInput.select();
@@ -142,7 +142,7 @@ export default function MembersPage() {
               <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
             </svg>
           </div>
-          <p className="text-secondary">Loading your constellation...</p>
+          <p className="text-secondary">Loading your luminaries...</p>
         </div>
       </div>
     );
@@ -161,7 +161,7 @@ export default function MembersPage() {
             Something went wrong
           </h3>
           <p className="text-secondary mb-6">
-            We couldn't load your constellation. Please try again.
+            We couldn't load your luminaries. Please try again.
           </p>
           <MinimalButton 
             onClick={() => window.location.reload()}
@@ -211,47 +211,38 @@ export default function MembersPage() {
       <Header />
 
       {/* Main Content */}
-      <main className="w-full px-6 lg:px-12 py-6 pt-20">
-        {/* Page Header */}
-        <div className="mb-4">
-          <h1 className="text-4xl font-serif text-primary mb-2 font-light tracking-tight">
-            Members Constellation
+      <main className="w-full px-6 lg:px-12 pt-16 pb-4">
+        {/* Compact page header row */}
+        <div className="flex items-baseline gap-4 mb-3">
+          <h1 className="text-2xl font-serif font-light tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            Luminaries
           </h1>
-          <p className="text-secondary leading-relaxed mb-4">
-            A quiet map of your relational energy. Larger nodes represent higher relationship health.
-          </p>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 text-sm text-accent-primary">
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M13,6V11H18V7.75L22.25,12L18,16.25V13H13V18H16.25L12,22.25L7.75,18H11V13H6V16.25L1.75,12L6,7.75V11H11V6H7.75L12,1.75L16.25,6H13Z" />
-              </svg>
-              <span className="italic">Drag the circles to rearrange your constellation</span>
-              <span className="text-tertiary">•</span>
-              <span className="text-xs">Ctrl/Cmd + / - / 0 / 9 to zoom</span>
-            </div>
-            
-            {searchQuery && (
-              <div className="text-sm text-secondary">
-                {sortedMembers.length} of {displayMembers.length} members found
-              </div>
-            )}
-          </div>
+          <span className="font-serif text-sm italic hidden md:block" style={{ color: 'var(--text-tertiary)' }}>
+            {searchQuery
+              ? `${sortedMembers.length} of ${displayMembers.length} luminaries found`
+              : 'The people in your orbit'}
+          </span>
+          {viewMode === 'orbit' && displayMembers.length > 0 && (
+            <span className="font-mono text-xs uppercase tracking-widest hidden lg:block" style={{ color: 'var(--text-tertiary)' }}>
+              Drag to rearrange · Ctrl/Cmd + / - / 0 / 9
+            </span>
+          )}
         </div>
 
         {/* Controls */}
-        <div className="mb-8 flex items-center justify-between">
+        <div className="mb-3 flex items-center justify-between">
           {/* Left side: View Toggle and Controls */}
           <div className="flex items-center gap-4">
             {/* View Toggle */}
             <MinimalButtonGroup>
               <MinimalButtonGroupItem
-                onClick={() => setViewMode('constellation')}
-                active={viewMode === 'constellation'}
+                onClick={() => setViewMode('orbit')}
+                active={viewMode === 'orbit'}
               >
                 <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
-                Constellation
+                Orbit
               </MinimalButtonGroupItem>
               <MinimalButtonGroupItem
                 onClick={() => setViewMode('list')}
@@ -264,22 +255,6 @@ export default function MembersPage() {
               </MinimalButtonGroupItem>
             </MinimalButtonGroup>
 
-            {/* Constellation Controls - only show in constellation view */}
-            {viewMode === 'constellation' && (
-              <ConstellationControls
-                onReset={resetMemberPositions}
-                onZoomIn={handleZoomIn}
-                onZoomOut={handleZoomOut}
-                onResetZoom={resetZoom}
-                onFitAll={fitAllNodes}
-                zoomLevel={zoomLevel}
-                memberCount={sortedMembers.length}
-                canZoomIn={zoomLevel < 3}
-                canZoomOut={zoomLevel > 0.5}
-                canResetZoom={zoomLevel !== 1}
-                canFitAll={sortedMembers.length > 0}
-              />
-            )}
           </div>
 
           {/* Search and Controls */}
@@ -288,7 +263,7 @@ export default function MembersPage() {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search members..."
+                placeholder="Search luminaries..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-48 px-4 py-2 pl-10 bg-surface border-2 border-primary/30 rounded-lg text-sm text-primary placeholder:text-tertiary focus:outline-none focus:border-accent-primary transition-colors shadow-sm"
@@ -309,7 +284,7 @@ export default function MembersPage() {
             </div>
 
             <MinimalButton 
-              onClick={() => router.push('/members/add')}
+              onClick={() => router.push('/orbit/add')}
               variant="primary"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -328,13 +303,13 @@ export default function MembersPage() {
                 </svg>
               </div>
               <h3 className="text-2xl font-serif text-primary mb-4">
-                Your constellation awaits
+                Your luminaries await
               </h3>
               <p className="text-secondary mb-8 leading-relaxed">
-                Begin by adding the people who shape your world. Each person becomes a node in your relational universe.
+                Begin by adding the people who shape your world. Each luminary becomes a presence in your orbit.
               </p>
               <MinimalButton
-                onClick={() => router.push('/members/add')}
+                onClick={() => router.push('/orbit/add')}
                 variant="primary"
                 size="md"
               >
@@ -345,17 +320,30 @@ export default function MembersPage() {
               </MinimalButton>
             </div>
           </div>
-        ) : viewMode === 'constellation' ? (
+        ) : viewMode === 'orbit' ? (
           <div className="relative">
-            <div 
+            <LuminaryControls
+              onReset={resetMemberPositions}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              onResetZoom={resetZoom}
+              onFitAll={fitAllNodes}
+              zoomLevel={zoomLevel}
+              memberCount={sortedMembers.length}
+              canZoomIn={zoomLevel < 3}
+              canZoomOut={zoomLevel > 0.5}
+              canResetZoom={zoomLevel !== 1}
+              canFitAll={sortedMembers.length > 0}
+            />
+            <div
               ref={scrollContainerRef}
-              className="relative overflow-auto border-2 border-primary/30 rounded-lg shadow-inner" 
+              className="relative overflow-auto border-2 border-primary/30 rounded-lg shadow-inner scrollbar-thin"
               style={{ height: '60vh' }}
             >
               <div 
-                ref={constellationRef}
+                ref={luminaryRef}
                 className="relative select-none" 
-                data-constellation-container
+                data-luminary-container
                 style={{ 
                   width: '160%',
                   height: '140%',
@@ -395,7 +383,7 @@ export default function MembersPage() {
                       onClick={(e) => {
                         e.stopPropagation();
                         if (!isDragging && !hasDragged) {
-                          router.push(`/members/${member.id}`);
+                          router.push(`/orbit/${member.id}`);
                         }
                       }}
                     >
@@ -473,7 +461,7 @@ export default function MembersPage() {
                   className={`bg-surface rounded-2xl p-6 hover:shadow-md transition-all duration-200 cursor-pointer shadow-md ${
                     isHighlighted ? 'ring-2 ring-accent-gold' : ''
                   }`}
-                  onClick={() => router.push(`/members/${member.id}`)}
+                  onClick={() => router.push(`/orbit/${member.id}`)}
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-4">

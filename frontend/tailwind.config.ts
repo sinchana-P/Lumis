@@ -77,7 +77,7 @@ const config: Config = {
       },
       fontFamily: {
         serif: ['Crimson Pro', 'Georgia', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Crimson Pro', 'Georgia', 'serif'],
         mono: ['JetBrains Mono', 'monospace'],
       },
       fontSize: {
