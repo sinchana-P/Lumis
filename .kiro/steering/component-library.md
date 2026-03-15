@@ -359,3 +359,53 @@ Use for: Lumen chat header, AI report headers
 - Small badge/pill
 - Color-coded by mode
 - Clickable to open depth selector
+
+
+---
+
+## Danger Action Pattern — Confirmation Modal
+
+**Rule: Any destructive / irreversible action (delete, remove, archive, revoke) MUST show a confirmation modal before executing. Never fire the action directly on click.**
+
+### Pattern
+
+```tsx
+const [deletingItem, setDeletingItem] = useState<Item | null>(null);
+const [deleteItem, { isLoading: deleting }] = useDeleteItemMutation();
+
+// Trigger — just opens modal, NO side effects
+<button onClick={() => setDeletingItem(item)}>Remove</button>
+
+// Modal — shown when deletingItem !== null
+{deletingItem && (
+  <ConfirmDeleteModal
+    label={deletingItem.name}
+    onConfirm={async () => { await deleteItem(deletingItem.id); setDeletingItem(null); }}
+    onCancel={() => setDeletingItem(null)}
+    deleting={deleting}
+  />
+)}
+```
+
+### Modal structure
+
+- **Backdrop**: `rgba(0,0,0,0.25)` + `backdropFilter: blur(4px)` — same as all modals
+- **Width**: `maxWidth: 360` (narrower than form modals at 420)
+- **Content**: mono label `REMOVE <ENTITY>` → serif quote of the item being deleted → italic serif warning line
+- **Actions**: Cancel LEFT (muted border), Confirm RIGHT (`#C47A7A` red background)
+- **Confirm button**: disabled + `opacity: 0.6` while `deleting` is true, text changes to `Removing…`
+- **Escape key**: always closes without action
+
+### What counts as a danger action
+
+- Deleting any record (trait, member, incident, log, pattern)
+- Archiving a member
+- Revoking a share link
+- Clearing a conversation
+- Disconnecting an integration
+
+### What does NOT need a confirmation modal
+
+- Closing/cancelling a form modal
+- Toggling visibility (archive toggle that's easily reversible)
+- Navigating away from a page

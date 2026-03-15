@@ -2,6 +2,15 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
 import { CreateMemberDto, UpdateMemberDto, MembersQueryDto } from './dto';
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
+
 @Injectable()
 export class MembersService {
   constructor(private supabaseService: SupabaseService) {}
@@ -73,7 +82,7 @@ export class MembersService {
     return this.formatMember(data);
   }
 
-  async update(userId: string, memberId: string, updateMemberDto: UpdateMemberDto, photo?: Express.Multer.File) {
+  async update(userId: string, memberId: string, updateMemberDto: UpdateMemberDto, photo?: MulterFile) {
     const supabase = this.supabaseService.getAdminClient();
 
     // Build update payload — only include defined fields (PATCH semantics)

@@ -120,6 +120,7 @@ export const baseApi = createApi({
     'User',
     'UserNumerology',
     'UserVedic',
+    'Traits',
     'UserTraits',
     'UserReport',
     'Members',

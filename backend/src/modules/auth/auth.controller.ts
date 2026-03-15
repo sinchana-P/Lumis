@@ -14,6 +14,15 @@ import {
   ChangePasswordDto,
 } from './dto';
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
+
 @ApiTags('Authentication')
 @Controller('auth')
 @UseGuards(ThrottlerGuard)
@@ -197,7 +206,7 @@ export class AuthController {
   async updateProfile(
     @User() user: any,
     @Body() dto: UpdateProfileDto,
-    @UploadedFile() avatar?: Express.Multer.File,
+    @UploadedFile() avatar?: MulterFile,
   ): Promise<any> {
     try {
       const validAvatar = avatar && avatar.buffer && avatar.buffer.length > 0 ? avatar : undefined;

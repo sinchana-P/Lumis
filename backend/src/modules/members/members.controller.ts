@@ -6,6 +6,15 @@ import { AuthGuard } from '../../common/guards/auth.guard';
 import { User } from '../../common/decorators/user.decorator';
 import { CreateMemberDto, UpdateMemberDto, MembersQueryDto } from './dto';
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
+
 @ApiTags('Members')
 @Controller('members')
 @UseGuards(AuthGuard)
@@ -63,7 +72,7 @@ export class MembersController {
     @User() user: any,
     @Param('id') id: string,
     @Body() updateMemberDto: UpdateMemberDto,
-    @UploadedFile() photo?: Express.Multer.File,
+    @UploadedFile() photo?: MulterFile,
   ) {
     try {
       // Discard empty-buffer uploads (browser may send filename with no actual bytes)

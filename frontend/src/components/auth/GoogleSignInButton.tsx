@@ -34,10 +34,12 @@ export function GoogleSignInButton({ onSuccess, onError }: GoogleSignInButtonPro
       const { supabase } = await import('@/lib/supabase');
       
       // Redirect to Google authorization URL
+      const redirectUrl = `${window.location.origin}/auth/callback`;
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: redirectUrl,
         },
       });
 

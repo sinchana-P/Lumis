@@ -6,6 +6,15 @@ import {
 } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
 
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
+
 @Injectable()
 export class AuthService {
   constructor(private supabaseService: SupabaseService) {}
@@ -606,7 +615,7 @@ export class AuthService {
     const { user } = await this.supabaseService.getUserById(userId);
     return user?.date_of_birth ? true : false;
   }
-  async updateProfile(userId: string, updateData: any, avatar?: Express.Multer.File) {
+  async updateProfile(userId: string, updateData: any, avatar?: MulterFile) {
     const supabase = this.supabaseService.getAdminClient();
 
     // Build update object with only provided fields
