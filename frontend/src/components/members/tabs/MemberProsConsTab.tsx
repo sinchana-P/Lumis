@@ -377,9 +377,9 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
             </button>
           </div>
           {pros.length === 0
-            ? <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+            ? <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
                 No strengths captured yet.{' '}
-                <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7FA87A', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline' }}>Add one →</button>
+                <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
               </p>
             : <div>{pros.map(p => <TraitRow key={p.id} item={p} accentColor="#7FA87A" />)}</div>
           }
@@ -404,9 +404,9 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
             </button>
           </div>
           {cons.length === 0
-            ? <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+            ? <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
                 No challenges identified yet.{' '}
-                <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline' }}>Add one →</button>
+                <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
               </p>
             : <div>{cons.map(c => <TraitRow key={c.id} item={c} accentColor="#C47A7A" />)}</div>
           }
