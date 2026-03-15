@@ -52,7 +52,7 @@ export default function AddMemberPage() {
     { value: 'friend', label: 'Friend' },
     { value: 'partner', label: 'Partner' },
     { value: 'mentor', label: 'Mentor' },
-    { value: 'ancestor', label: 'Ancestor' },
+    { value: 'colleague', label: 'Colleague' },
   ];
 
   // Debounced search function for Nominatim API
@@ -417,25 +417,23 @@ export default function AddMemberPage() {
       
       <div className="w-full max-w-lg">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="text-xs uppercase tracking-wider text-tertiary mb-4">
+        <div className="text-center mb-6">
+          <div className="text-xs uppercase tracking-wider text-tertiary mb-2">
             NEW LUMINARY
           </div>
-          
-          <h1 className="text-4xl font-serif text-primary mb-6 leading-tight">
+          <h1 className="text-3xl font-serif text-primary mb-1 leading-tight">
             Who are we bringing into the light?
           </h1>
-          
-          <p className="text-secondary italic">
+          <p className="text-sm text-secondary italic">
             Every soul adds a unique frequency to the luminaries.
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-8">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Full Name */}
-          <div className="space-y-3">
-            <label className="block text-xs uppercase tracking-wider text-secondary">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">
               FULL NAME
             </label>
             <input
@@ -443,13 +441,13 @@ export default function AddMemberPage() {
               value={formData.fullName}
               onChange={(e) => handleInputChange('fullName', e.target.value)}
               placeholder="Enter their name in the stars..."
-              className="w-full px-0 py-4 text-lg font-serif bg-transparent border-0 border-b-2 border-primary focus:border-accent-primary focus:outline-none text-primary placeholder:text-tertiary"
+              className="w-full px-0 py-2 text-base font-serif bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary"
             />
           </div>
 
           {/* Nickname */}
-          <div className="space-y-3">
-            <label className="block text-xs uppercase tracking-wider text-secondary">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">
               NICKNAME <span className="text-tertiary">(OPTIONAL)</span>
             </label>
             <input
@@ -457,17 +455,17 @@ export default function AddMemberPage() {
               value={formData.nickname}
               onChange={(e) => handleInputChange('nickname', e.target.value)}
               placeholder="What do you call them?"
-              className="w-full px-0 py-4 text-lg font-serif bg-transparent border-0 border-b-2 border-primary focus:border-accent-primary focus:outline-none text-primary placeholder:text-tertiary"
+              className="w-full px-0 py-2 text-base font-serif bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary"
             />
           </div>
 
           {/* Photo Upload */}
-          <div className="space-y-4">
-            <label className="block text-xs uppercase tracking-wider text-secondary">
+          <div className="space-y-2">
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">
               PHOTO <span className="text-tertiary">(OPTIONAL)</span>
             </label>
-            
-            <div className="flex items-center space-x-6">
+
+            <div className="flex items-center space-x-4">
               {/* Photo Preview */}
               <div className="flex-shrink-0">
                 {photoPreview ? (
@@ -475,27 +473,27 @@ export default function AddMemberPage() {
                     <img
                       src={photoPreview}
                       alt="Preview"
-                      className="w-20 h-20 rounded-full object-cover border-4 border-accent-primary shadow-md"
+                      className="w-14 h-14 rounded-full object-cover border-2 border-accent-primary shadow-md"
                     />
                     <button
                       type="button"
                       onClick={removePhoto}
-                      className="absolute -top-2 -right-2 w-6 h-6 bg-error rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
                     >
-                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
                     </button>
                   </div>
                 ) : (
-                  <div className="w-20 h-20 rounded-full bg-surface border-2 border-dashed border-primary flex items-center justify-center">
-                    <svg className="w-8 h-8 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-14 h-14 rounded-full bg-surface border-2 border-dashed border-primary flex items-center justify-center">
+                    <svg className="w-6 h-6 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
                   </div>
                 )}
               </div>
-              
+
               {/* Upload Button */}
               <div className="flex-1">
                 <input
@@ -508,30 +506,30 @@ export default function AddMemberPage() {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-6 py-3 bg-surface hover:bg-secondary text-primary rounded-full text-sm font-medium transition-colors border border-primary"
+                  className="px-4 py-1.5 bg-surface hover:bg-secondary text-primary rounded-full text-xs font-medium transition-colors border border-primary"
                 >
                   {photoPreview ? 'Change Photo' : 'Upload Photo'}
                 </button>
-                <p className="text-xs text-tertiary mt-2">
-                  JPG, PNG or GIF • Max 5MB • Photo upload coming soon
+                <p className="text-xs text-tertiary mt-1">
+                  JPG, PNG or GIF • Max 5MB
                 </p>
               </div>
             </div>
           </div>
 
           {/* Connection Type */}
-          <div className="space-y-4">
-            <label className="block text-xs uppercase tracking-wider text-secondary">
+          <div className="space-y-2">
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">
               CONNECTION
             </label>
-            
-            <div className="flex flex-wrap gap-3">
+
+            <div className="flex flex-wrap gap-2">
               {relationTypes.map((type) => (
                 <button
                   key={type.value}
                   type="button"
                   onClick={() => handleInputChange('relationType', type.value)}
-                  className={`px-6 py-3 rounded-full text-sm font-medium transition-all ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                     formData.relationType === type.value
                       ? 'bg-accent-primary text-white shadow-md'
                       : 'bg-surface text-secondary hover:bg-secondary'
@@ -540,11 +538,11 @@ export default function AddMemberPage() {
                   {type.label}
                 </button>
               ))}
-              
+
               <button
                 type="button"
                 onClick={() => handleInputChange('relationType', 'other')}
-                className={`px-6 py-3 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                   formData.relationType === 'other'
                     ? 'bg-accent-primary text-white shadow-md'
                     : 'bg-surface text-secondary hover:bg-secondary'
@@ -560,16 +558,16 @@ export default function AddMemberPage() {
                 value={formData.relationTypeCustom}
                 onChange={(e) => handleInputChange('relationTypeCustom', e.target.value)}
                 placeholder="Describe their connection..."
-                className="w-full px-0 py-3 bg-transparent border-0 border-b border-primary focus:border-accent-primary focus:outline-none text-primary placeholder:text-tertiary"
+                className="w-full px-0 py-2 text-sm bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary"
               />
             )}
           </div>
 
           {/* Birth Information */}
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-4">
             {/* Custom Date Picker */}
-            <div className="space-y-3 relative" data-date-picker>
-              <label className="block text-xs uppercase tracking-wider text-secondary">
+            <div className="space-y-1.5 relative" data-date-picker>
+              <label className="block text-[10px] uppercase tracking-widest text-secondary">
                 BIRTH DATE
               </label>
               <div className="relative">
@@ -579,10 +577,10 @@ export default function AddMemberPage() {
                   onClick={handleDateClick}
                   readOnly
                   placeholder="dd/mm/yyyy"
-                  className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-primary focus:border-accent-primary focus:outline-none text-primary cursor-pointer placeholder:text-tertiary"
+                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary outline-none focus:outline-none focus:ring-0 text-primary cursor-pointer placeholder:text-tertiary"
                 />
-                <div className="absolute right-0 top-4 text-tertiary">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <div className="absolute right-0 top-2.5 text-tertiary">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
                   </svg>
                 </div>
@@ -590,159 +588,89 @@ export default function AddMemberPage() {
               
               {/* Custom Date Picker Dropdown */}
               {showDatePicker && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-surface-elevated border border-primary rounded-lg shadow-xl z-50 p-6">
-                  {/* Custom Month/Year Dropdowns */}
-                  <div className="flex items-center justify-center space-x-4 mb-6">
-                    {/* Month Dropdown */}
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-50 p-3">
+                  {/* Month / Year row */}
+                  <div className="flex items-center justify-center gap-2 mb-2">
                     <div className="relative">
                       <button
                         type="button"
-                        onClick={() => {
-                          setShowMonthDropdown(!showMonthDropdown);
-                          setShowYearDropdown(false);
-                        }}
-                        className="px-4 py-3 bg-surface-elevated border-2 border-primary rounded-lg text-primary font-serif text-base focus:outline-none focus:border-accent-primary transition-all duration-200 hover:border-accent-primary cursor-pointer min-w-[120px] flex items-center justify-between"
+                        onClick={() => { setShowMonthDropdown(!showMonthDropdown); setShowYearDropdown(false); }}
+                        className="px-2.5 py-1 bg-transparent border border-primary rounded-md text-primary font-serif text-sm flex items-center gap-1 hover:border-accent-primary transition-colors"
                       >
-                        <span>{months[generateCalendarDays().currentMonth]}</span>
-                        <svg className="w-4 h-4 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                        {months[generateCalendarDays().currentMonth]}
+                        <svg className="w-3 h-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                       </button>
-                      
                       {showMonthDropdown && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+                        <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 w-32 max-h-44 overflow-y-auto">
                           {months.map((month, index) => (
-                            <button
-                              key={month}
-                              type="button"
-                              onClick={() => {
-                                const newDate = new Date(calendarDate);
-                                newDate.setMonth(index);
-                                setCalendarDate(newDate);
-                                setShowMonthDropdown(false);
-                              }}
-                              className={`w-full text-left px-4 py-2 text-primary font-serif hover:bg-accent-primary hover:text-white transition-colors ${
-                                index === generateCalendarDays().currentMonth ? 'bg-accent-primary text-white' : ''
-                              }`}
-                            >
-                              {month}
-                            </button>
+                            <button key={month} type="button"
+                              onClick={() => { const d = new Date(calendarDate); d.setMonth(index); setCalendarDate(d); setShowMonthDropdown(false); }}
+                              className={`w-full text-left px-3 py-1.5 text-xs font-serif hover:bg-accent-primary hover:text-inverse transition-colors ${index === generateCalendarDays().currentMonth ? 'bg-accent-primary text-inverse' : 'text-primary'}`}
+                            >{month}</button>
                           ))}
                         </div>
                       )}
                     </div>
-                    
-                    {/* Year Dropdown */}
                     <div className="relative">
                       <button
                         type="button"
-                        onClick={() => {
-                          setShowYearDropdown(!showYearDropdown);
-                          setShowMonthDropdown(false);
-                        }}
-                        className="px-4 py-3 bg-surface-elevated border-2 border-primary rounded-lg text-primary font-serif text-base focus:outline-none focus:border-accent-primary transition-all duration-200 hover:border-accent-primary cursor-pointer min-w-[100px] flex items-center justify-between"
+                        onClick={() => { setShowYearDropdown(!showYearDropdown); setShowMonthDropdown(false); }}
+                        className="px-2.5 py-1 bg-transparent border border-primary rounded-md text-primary font-serif text-sm flex items-center gap-1 hover:border-accent-primary transition-colors"
                       >
-                        <span>{generateCalendarDays().currentYear}</span>
-                        <svg className="w-4 h-4 text-accent-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
+                        {generateCalendarDays().currentYear}
+                        <svg className="w-3 h-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                       </button>
-                      
                       {showYearDropdown && (
-                        <div className="absolute top-full left-0 right-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-xl z-50 max-h-48 overflow-y-auto">
+                        <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 w-24 max-h-44 overflow-y-auto">
                           {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                            <button
-                              key={year}
-                              type="button"
-                              onClick={() => {
-                                const newDate = new Date(calendarDate);
-                                newDate.setFullYear(year);
-                                setCalendarDate(newDate);
-                                setShowYearDropdown(false);
-                              }}
-                              className={`w-full text-left px-4 py-2 text-primary font-serif hover:bg-accent-primary hover:text-white transition-colors ${
-                                year === generateCalendarDays().currentYear ? 'bg-accent-primary text-white' : ''
-                              }`}
-                            >
-                              {year}
-                            </button>
+                            <button key={year} type="button"
+                              onClick={() => { const d = new Date(calendarDate); d.setFullYear(year); setCalendarDate(d); setShowYearDropdown(false); }}
+                              className={`w-full text-left px-3 py-1.5 text-xs font-serif hover:bg-accent-primary hover:text-inverse transition-colors ${year === generateCalendarDays().currentYear ? 'bg-accent-primary text-inverse' : 'text-primary'}`}
+                            >{year}</button>
                           ))}
                         </div>
                       )}
                     </div>
                   </div>
-                  
-                  {/* Calendar Grid */}
-                  <div className="grid grid-cols-7 gap-1 mb-4">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-                      <div key={day} className="text-center text-xs font-medium text-tertiary p-2">
-                        {day}
-                      </div>
+
+                  {/* Day labels */}
+                  <div className="grid grid-cols-7 mb-1">
+                    {['S','M','T','W','T','F','S'].map((d, i) => (
+                      <div key={i} className="text-center text-[10px] text-tertiary py-0.5">{d}</div>
                     ))}
-                    
+                  </div>
+
+                  {/* Calendar days */}
+                  <div className="grid grid-cols-7 gap-0.5">
                     {generateCalendarDays().days.map((day, index) => {
-                      const isToday = day === new Date().getDate() && 
+                      const isToday = day === new Date().getDate() &&
                         generateCalendarDays().currentMonth === new Date().getMonth() &&
                         generateCalendarDays().currentYear === new Date().getFullYear();
-                      
+                      const isSelected = day && selectedDate.day === day.toString() &&
+                        selectedDate.month === (generateCalendarDays().currentMonth + 1).toString() &&
+                        selectedDate.year === generateCalendarDays().currentYear.toString();
                       return (
-                        <button
-                          key={index}
-                          type="button"
-                          onClick={() => day && handleDateSelect(
-                            day.toString(), 
-                            (generateCalendarDays().currentMonth + 1).toString(), 
-                            generateCalendarDays().currentYear.toString()
-                          )}
-                          disabled={!day}
-                          className={`p-2 text-sm rounded-md transition-colors ${
-                            day 
-                              ? 'text-primary hover:bg-accent-primary hover:text-white' 
-                              : 'text-transparent'
-                          } ${
-                            isToday ? 'bg-accent-primary text-white' : ''
-                          }`}
-                        >
-                          {day}
-                        </button>
+                        <button key={index} type="button" disabled={!day}
+                          onClick={() => day && handleDateSelect(day.toString(), (generateCalendarDays().currentMonth + 1).toString(), generateCalendarDays().currentYear.toString())}
+                          className={`aspect-square text-xs rounded-full transition-colors flex items-center justify-center
+                            ${!day ? 'invisible' : ''}
+                            ${isSelected ? 'bg-accent-primary text-inverse' : isToday ? 'border border-accent-primary text-accent-primary' : 'text-primary hover:bg-accent-primary hover:text-inverse'}`}
+                        >{day}</button>
                       );
                     })}
                   </div>
-                  
-                  <div className="flex justify-between">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFormData(prev => ({ ...prev, dateOfBirth: '' }));
-                        setShowDatePicker(false);
-                      }}
-                      className="text-accent-primary text-sm font-medium hover:text-accent-primary-hover transition-colors"
-                    >
-                      Clear
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const today = new Date();
-                        setCalendarDate(today);
-                        handleDateSelect(
-                          today.getDate().toString(),
-                          (today.getMonth() + 1).toString(),
-                          today.getFullYear().toString()
-                        );
-                      }}
-                      className="text-accent-primary text-sm font-medium hover:text-accent-primary-hover transition-colors"
-                    >
-                      Today
-                    </button>
+
+                  <div className="flex justify-start mt-2 pt-2 border-t border-primary">
+                    <button type="button" onClick={() => { setFormData(prev => ({ ...prev, dateOfBirth: '' })); setSelectedDate({ day: '', month: '', year: '' }); setShowDatePicker(false); }}
+                      className="text-xs text-tertiary hover:text-primary transition-colors font-serif">clear</button>
                   </div>
                 </div>
               )}
             </div>
 
             {/* Custom Time Picker */}
-            <div className="space-y-3 relative" data-time-picker>
-              <label className="block text-xs uppercase tracking-wider text-secondary">
+            <div className="space-y-1.5 relative" data-time-picker>
+              <label className="block text-[10px] uppercase tracking-widest text-secondary">
                 BIRTH TIME
               </label>
               <div className="relative">
@@ -752,10 +680,11 @@ export default function AddMemberPage() {
                   onClick={handleTimeClick}
                   readOnly
                   placeholder="--:-- --"
-                  className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-primary focus:border-accent-primary focus:outline-none text-primary cursor-pointer placeholder:text-tertiary"
+                  tabIndex={-1}
+                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary outline-none focus:outline-none focus:ring-0 text-primary cursor-pointer placeholder:text-tertiary"
                 />
-                <div className="absolute right-0 top-4 text-tertiary">
-                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <div className="absolute right-0 top-2.5 text-tertiary">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/>
                   </svg>
                 </div>
@@ -763,92 +692,62 @@ export default function AddMemberPage() {
               
               {/* Custom Time Picker Dropdown */}
               {showTimePicker && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-surface-elevated border border-primary rounded-lg shadow-xl z-50 p-6">
-                  <div className="grid grid-cols-3 gap-4">
-                    {/* Hours */}
-                    <div>
-                      <div className="text-center text-sm font-medium text-secondary mb-3">Hour</div>
-                      <div className="max-h-32 overflow-y-auto space-y-1">
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-50 p-2.5">
+                  {/* Two vertical columns + AM/PM */}
+                  <div className="flex gap-2">
+                    {/* Hour column */}
+                    <div className="flex-1">
+                      <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-sans text-center">Hr</p>
+                      <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
                         {hours.map(hour => (
-                          <button
-                            key={hour}
-                            type="button"
+                          <button key={hour} type="button"
                             onClick={() => setSelectedTime(prev => ({ ...prev, hour }))}
-                            className={`w-full p-2 text-sm rounded-md transition-colors ${
-                              selectedTime.hour === hour
-                                ? 'bg-accent-primary text-white'
-                                : 'text-primary hover:bg-secondary'
-                            }`}
-                          >
-                            {hour.padStart(2, '0')}
-                          </button>
+                            className={`py-1 text-xs rounded font-serif transition-colors text-center
+                              ${selectedTime.hour === hour ? 'bg-accent-primary text-inverse' : 'text-primary hover:bg-accent-primary hover:text-inverse'}`}
+                          >{hour.padStart(2, '0')}</button>
                         ))}
                       </div>
                     </div>
-                    
-                    {/* Minutes */}
-                    <div>
-                      <div className="text-center text-sm font-medium text-secondary mb-3">Min</div>
-                      <div className="max-h-32 overflow-y-auto space-y-1">
-                        {minutes.filter((_, i) => i % 5 === 0).map(minute => (
-                          <button
-                            key={minute}
-                            type="button"
+
+                    {/* Divider */}
+                    <div className="w-px bg-primary self-stretch opacity-30" />
+
+                    {/* Minute column */}
+                    <div className="flex-1">
+                      <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-sans text-center">Min</p>
+                      <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
+                        {minutes.map(minute => (
+                          <button key={minute} type="button"
                             onClick={() => setSelectedTime(prev => ({ ...prev, minute }))}
-                            className={`w-full p-2 text-sm rounded-md transition-colors ${
-                              selectedTime.minute === minute
-                                ? 'bg-accent-primary text-white'
-                                : 'text-primary hover:bg-secondary'
-                            }`}
-                          >
-                            {minute}
-                          </button>
+                            className={`py-1 text-xs rounded font-serif transition-colors text-center
+                              ${selectedTime.minute === minute ? 'bg-accent-primary text-inverse' : 'text-primary hover:bg-accent-primary hover:text-inverse'}`}
+                          >{minute}</button>
                         ))}
                       </div>
                     </div>
-                    
-                    {/* AM/PM */}
-                    <div>
-                      <div className="text-center text-sm font-medium text-secondary mb-3">Period</div>
-                      <div className="space-y-1">
-                        {['AM', 'PM'].map(period => (
-                          <button
-                            key={period}
-                            type="button"
-                            onClick={() => setSelectedTime(prev => ({ ...prev, period }))}
-                            className={`w-full p-2 text-sm rounded-md transition-colors ${
-                              selectedTime.period === period
-                                ? 'bg-accent-primary text-white'
-                                : 'text-primary hover:bg-secondary'
-                            }`}
-                          >
-                            {period}
-                          </button>
-                        ))}
-                      </div>
+
+                    {/* Divider */}
+                    <div className="w-px bg-primary self-stretch opacity-30" />
+
+                    {/* AM/PM column */}
+                    <div className="flex flex-col justify-center gap-1.5 px-1">
+                      {['AM', 'PM'].map(period => (
+                        <button key={period} type="button"
+                          onClick={() => setSelectedTime(prev => ({ ...prev, period }))}
+                          className={`px-2 py-1.5 text-xs rounded font-sans tracking-widest uppercase transition-colors
+                            ${selectedTime.period === period ? 'bg-accent-primary text-inverse' : 'border border-primary text-secondary hover:border-accent-primary hover:text-primary'}`}
+                        >{period}</button>
+                      ))}
                     </div>
                   </div>
-                  
-                  <div className="flex justify-between mt-4 pt-4 border-t border-primary">
-                    <button
-                      type="button"
-                      onClick={() => setShowTimePicker(false)}
-                      className="text-accent-primary text-sm font-medium"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (selectedTime.hour && selectedTime.minute) {
-                          handleTimeSelect(selectedTime.hour, selectedTime.minute, selectedTime.period);
-                        }
-                      }}
+
+                  <div className="flex justify-between pt-2 mt-2 border-t border-primary">
+                    <button type="button" onClick={() => setShowTimePicker(false)}
+                      className="text-xs text-tertiary hover:text-primary font-serif transition-colors">cancel</button>
+                    <button type="button"
+                      onClick={() => { if (selectedTime.hour && selectedTime.minute) handleTimeSelect(selectedTime.hour, selectedTime.minute, selectedTime.period); }}
                       disabled={!selectedTime.hour || !selectedTime.minute}
-                      className="text-accent-primary text-sm font-medium disabled:text-tertiary"
-                    >
-                      Set Time
-                    </button>
+                      className="text-xs text-accent-primary disabled:text-tertiary font-serif transition-colors">set time</button>
                   </div>
                 </div>
               )}
@@ -856,8 +755,8 @@ export default function AddMemberPage() {
           </div>
 
           {/* Place of Birth */}
-          <div className="space-y-3">
-            <label className="block text-xs uppercase tracking-wider text-secondary">
+          <div className="space-y-1.5">
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">
               PLACE OF ARRIVAL
             </label>
             <div className="relative" ref={placeInputRef}>
@@ -871,10 +770,10 @@ export default function AddMemberPage() {
                   }
                 }}
                 placeholder="City, Country"
-                className="w-full px-0 py-4 bg-transparent border-0 border-b-2 border-primary focus:border-accent-primary focus:outline-none text-primary placeholder:text-tertiary"
+                className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary"
                 autoComplete="off"
               />
-              <div className="absolute right-0 top-4 text-tertiary">
+              <div className="absolute right-0 top-2.5 text-tertiary">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5C10.62,11.5 9.5,10.38 9.5,9C9.5,7.62 10.62,6.5 12,6.5C13.38,6.5 14.5,7.62 14.5,9C14.5,10.38 13.38,11.5 12,11.5Z"/>
                 </svg>
@@ -972,7 +871,7 @@ export default function AddMemberPage() {
           )}
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-8">
+          <div className="flex items-center justify-between pt-4">
             <button
               type="button"
               onClick={() => router.back()}
@@ -998,7 +897,7 @@ export default function AddMemberPage() {
         </form>
 
         {/* Footer */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-6">
           <div className="flex items-center justify-center space-x-2">
             <span className="text-xs text-tertiary">LUMIS</span>
             <svg className="w-3 h-3 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
