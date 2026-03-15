@@ -4,6 +4,8 @@ interface ButtonProps {
   children: React.ReactNode;
   variant?: 'primary' | 'secondary';
   size?: 'sm' | 'md';
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
   onClick?: () => void;
   className?: string;
 }
@@ -11,7 +13,9 @@ interface ButtonProps {
 export function Button({ 
   children, 
   variant = 'primary', 
-  size = 'sm', 
+  size = 'sm',
+  type = 'button',
+  disabled = false,
   onClick, 
   className = '' 
 }: ButtonProps) {
@@ -55,11 +59,13 @@ export function Button({
 
   return (
     <button
-      className={`${baseStyles} ${sizeStyles[size]} ${className}`}
+      type={type}
+      disabled={disabled}
+      className={`${baseStyles} ${sizeStyles[size]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       style={getVariantStyles()}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={onClick}
+      onMouseEnter={disabled ? undefined : handleMouseEnter}
+      onMouseLeave={disabled ? undefined : handleMouseLeave}
+      onClick={disabled ? undefined : onClick}
     >
       {children}
     </button>

@@ -77,7 +77,7 @@ export function TimelineLog({
         <div className="text-center py-12">
           <p className="font-serif text-tertiary">{emptyMessage}</p>
           {onAdd && (
-            <Button variant="ghost" size="sm" onClick={onAdd} className="mt-4">
+            <Button variant="secondary" size="sm" onClick={onAdd} className="mt-4">
               Add your first entry
             </Button>
           )}

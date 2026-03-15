@@ -987,7 +987,7 @@ export default function AddMemberPage() {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="px-8 py-3 bg-accent-primary hover:bg-accent-primary-hover text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl flex items-center space-x-2"
+              className="px-8 py-3 bg-lumis-accent-primary hover:bg-lumis-accent-primary-hover text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl flex items-center space-x-2"
             >
               <span>{isSubmitting ? 'Adding to Luminaries...' : 'Add to Luminaries'}</span>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
