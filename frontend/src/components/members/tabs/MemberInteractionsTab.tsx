@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { DottedDivider } from '@/components/ui/DottedDivider';
 
 interface Member {
   id: string;
@@ -391,10 +392,7 @@ export function MemberInteractionsTab({ member }: MemberInteractionsTabProps) {
                 
                 {/* Subtle Divider */}
                 {index < mockInteractions.length - 1 && (
-                  <div className="w-full h-px mt-8" style={{ 
-                    backgroundImage: 'repeating-linear-gradient(to right, var(--border-tertiary) 0px, var(--border-tertiary) 4px, transparent 4px, transparent 8px)',
-                    opacity: '0.4'
-                  }}></div>
+                  <DottedDivider style={{ marginTop: 32 }} />
                 )}
               </div>
             ))}

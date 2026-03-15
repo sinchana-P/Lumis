@@ -1,6 +1,7 @@
 'use client';
 
 import { getEmotionalAstrologyDataForMember, type TipIcon } from '@/data/mockAstrologyData';
+import { DottedDivider } from '@/components/ui/DottedDivider';
 
 interface Member {
   id: string;
@@ -146,7 +147,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
         </div>
       </div>
 
-      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+      <DottedDivider />
 
       {/* ── When Things Go Wrong ── */}
       <div className="bg-accent-secondary/8 border border-primary/30 border-l-4 border-l-accent-secondary rounded-2xl px-5 py-4 space-y-3">
@@ -169,7 +170,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
         </p>
       </div>
 
-      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+      <DottedDivider />
 
       {/* ── Emotional Availability — Right Now ── */}
       <div className="bg-surface border border-primary/30 rounded-2xl px-5 py-4 space-y-4">
@@ -198,7 +199,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
         </div>
       </div>
 
-      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+      <DottedDivider />
 
       {/* ── What This Relationship Asks of You ── */}
       <div className="bg-accent-ai/5 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-4">
@@ -242,7 +243,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
         </div>
       </div>
 
-      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+      <DottedDivider />
 
       {/* ── How To Meet Them Well ── */}
       <div className="space-y-4">
@@ -250,7 +251,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
         <div className="space-y-0">
           {data.howToMeetThemWell.tips.map((tip, i) => (
             <div key={i}>
-              {i > 0 && <div className="w-full h-px my-3" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />}
+              {i > 0 && <DottedDivider style={{ marginTop: 12, marginBottom: 12 }} />}
               <div className="flex items-start gap-3 py-1">
                 <TipIconBox icon={tip.icon} />
                 <div className="space-y-0.5">
@@ -284,7 +285,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
       </div>
 
       {/* ── Footer disclaimer ── */}
-      <div className="w-full h-px" style={{ backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)' }} />
+      <DottedDivider />
       <p className="font-serif text-xs italic text-tertiary leading-relaxed pt-2">
         <span className="mr-1.5">⊙</span>
         Astrological context is one lens among several. Use this alongside Traits, Patterns,

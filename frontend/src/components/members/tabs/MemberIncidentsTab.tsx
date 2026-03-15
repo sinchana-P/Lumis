@@ -12,6 +12,7 @@ import {
   type IncidentSeverity,
 } from '@/store/api/incidentsApi';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
+import { DottedDivider } from '@/components/ui/DottedDivider';
 
 interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberIncidentsTabProps {
@@ -488,9 +489,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
 
                   {/* Dashed divider between items */}
                   {index < incidents.length - 1 && (
-                    <div style={{ marginLeft: 15, marginBottom: 0, height: 1,
-                      backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)',
-                      opacity: 0.5, marginTop: -20, marginBottom: 8 }} />
+                    <DottedDivider style={{ marginLeft: 15, marginTop: -20, marginBottom: 8 }} />
                   )}
                 </div>
               );

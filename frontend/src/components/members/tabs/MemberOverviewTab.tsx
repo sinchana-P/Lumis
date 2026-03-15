@@ -1,5 +1,7 @@
 'use client';
 
+import { DottedDivider } from '@/components/ui/DottedDivider';
+
 interface Member {
   id: string;
   fullName: string;
@@ -19,11 +21,6 @@ interface MemberOverviewTabProps {
   member: Member;
 }
 
-const Divider = () => (
-  <div className="w-full h-px" style={{
-    backgroundImage: 'repeating-linear-gradient(to right, var(--bg-tertiary) 0px, var(--bg-tertiary) 4px, transparent 4px, transparent 8px)',
-  }} />
-);
 
 const mockData = {
   activityPulse: {
@@ -94,7 +91,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
         )}
       </div>
 
-      <Divider />
+      <DottedDivider />
 
       {/* ── Activity Pulse ───────────────────────────────── */}
       <div>
@@ -120,7 +117,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
         </div>
       </div>
 
-      <Divider />
+      <DottedDivider />
 
       {/* ── Last Journal Signal ───────────────────────────── */}
       <div>
@@ -138,7 +135,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
         </div>
       </div>
 
-      <Divider />
+      <DottedDivider />
 
       {/* ── How You Tend to Feel Around Them ─────────────── */}
       <div>
@@ -148,7 +145,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
         </div>
       </div>
 
-      <Divider />
+      <DottedDivider />
 
       {/* ── Connection Health ─────────────────────────────── */}
       <div>
@@ -174,7 +171,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
       {/* ── Essence ───────────────────────────────────────── */}
       {member.notes && (
         <>
-          <Divider />
+          <DottedDivider />
           <div className="relative pl-5">
             <span
               className="absolute left-0 top-0 font-serif select-none"
