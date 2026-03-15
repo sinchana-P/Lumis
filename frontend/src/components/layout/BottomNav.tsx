@@ -75,14 +75,6 @@ function useGlobalSwipe(activeIndex: number, onSwipe: (index: number) => void) {
   const startY = useRef<number | null>(null);
 
   useEffect(() => {
-    const onMouseDown = (e: MouseEvent) => { startX.current = e.clientX; startY.current = null; };
-    const onMouseUp   = (e: MouseEvent) => {
-      if (startX.current === null) return;
-      const dx = e.clientX - startX.current;
-      if (Math.abs(dx) > 60) onSwipe(dx < 0 ? activeIndex + 1 : activeIndex - 1);
-      startX.current = null;
-    };
-
     const onTouchStart = (e: TouchEvent) => {
       startX.current = e.touches[0].clientX;
       startY.current = e.touches[0].clientY;
@@ -98,13 +90,9 @@ function useGlobalSwipe(activeIndex: number, onSwipe: (index: number) => void) {
       startY.current = null;
     };
 
-    window.addEventListener('mousedown',  onMouseDown);
-    window.addEventListener('mouseup',    onMouseUp);
     window.addEventListener('touchstart', onTouchStart, { passive: true });
     window.addEventListener('touchend',   onTouchEnd);
     return () => {
-      window.removeEventListener('mousedown',  onMouseDown);
-      window.removeEventListener('mouseup',    onMouseUp);
       window.removeEventListener('touchstart', onTouchStart);
       window.removeEventListener('touchend',   onTouchEnd);
     };
