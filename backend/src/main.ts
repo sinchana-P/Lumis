@@ -21,6 +21,21 @@ async function bootstrap() {
     }),
   );
 
+  // Add a simple root route before setting global prefix
+  app.getHttpAdapter().get('/', (req, res) => {
+    res.json({
+      message: 'Lumis Backend API',
+      version: '1.0.0',
+      status: 'running',
+      endpoints: {
+        health: '/api/v1/',
+        status: '/api/v1/status',
+        docs: '/api/docs'
+      },
+      timestamp: new Date().toISOString()
+    });
+  });
+
   // API prefix
   app.setGlobalPrefix('api/v1');
 
@@ -39,11 +54,11 @@ async function bootstrap() {
 
   console.log(`
     🚀 Lumis Backend is running!
-    
+
     📍 API: http://localhost:${port}/api/v1
     📚 Docs: http://localhost:${port}/api/docs
     🎨 Frontend: http://localhost:3000
-    
+
     ✨ Ready to build something amazing!
   `);
 }

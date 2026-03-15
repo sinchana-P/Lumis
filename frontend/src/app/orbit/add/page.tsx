@@ -4,34 +4,23 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCreateMemberMutation } from '@/store/api/membersApi';
 import { Button } from '@/components/ui/Button';
-// Using Nominatim API for comprehensive global place search
+import { DatePicker } from '@/components/ui/DatePicker';
+import { TimePicker } from '@/components/ui/TimePicker';
+import { getPlaces, formatPlaceName, type PlaceResult } from '@/lib/places';
 
-/**
- * Add Member Page - Lumis Style
- * 
- * "Who are we bringing into the light?"
- */
 export default function AddMemberPage() {
   const router = useRouter();
   const [createMember, { isLoading: isSubmitting }] = useCreateMemberMutation();
+
+  // Place autocomplete state
   const [showPlaceSuggestions, setShowPlaceSuggestions] = useState(false);
-  const [placeSuggestions, setPlaceSuggestions] = useState<any[]>([]);
+  const [placeSuggestions, setPlaceSuggestions] = useState<PlaceResult[]>([]);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
   const [isSearching, setIsSearching] = useState(false);
-  
-  const [showMonthDropdown, setShowMonthDropdown] = useState(false);
-  const [showYearDropdown, setShowYearDropdown] = useState(false);
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showTimePicker, setShowTimePicker] = useState(false);
-  const [calendarDate, setCalendarDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState({ day: '', month: '', year: '' });
-  const [selectedTime, setSelectedTime] = useState({ hour: '', minute: '', period: 'AM' });
-  
-  const dateInputRef = useRef<HTMLInputElement>(null);
-  const timeInputRef = useRef<HTMLInputElement>(null);
-  const placeInputRef = useRef<HTMLInputElement>(null);
+  const placeInputRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout>();
-  
+
+  // Form state
   const [formData, setFormData] = useState({
     fullName: '',
     nickname: '',
@@ -41,11 +30,9 @@ export default function AddMemberPage() {
     timeOfBirth: '',
     placeOfBirth: '',
   });
-  
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -57,35 +44,13 @@ export default function AddMemberPage() {
     { value: 'colleague', label: 'Colleague' },
   ];
 
-  // Photon geocoding API — free, no API key, browser-safe, built for place search
-  const searchPlaces = useCallback(async (searchTerm: string) => {
-    if (searchTerm.length < 2) {
-      setShowPlaceSuggestions(false);
-      setPlaceSuggestions([]);
-      return;
-    }
-
+  // Place search — debounced, using getPlaces utility
+  const searchPlaces = useCallback(async (query: string) => {
+    if (query.length < 2) { setShowPlaceSuggestions(false); setPlaceSuggestions([]); return; }
     setIsSearching(true);
     try {
-      const response = await fetch(
-        `https://photon.komoot.io/api/?q=${encodeURIComponent(searchTerm)}&limit=8&lang=en`
-      );
-      if (!response.ok) throw new Error('Failed');
-
-      const data = await response.json();
-      const PLACE_TYPES = ['city', 'town', 'village', 'municipality', 'hamlet', 'suburb', 'district', 'county', 'state'];
-
-      const places = (data.features || [])
-        .filter((f: any) => PLACE_TYPES.includes(f.properties?.type))
-        .map((f: any) => ({
-          name: f.properties.name,
-          state: f.properties.state,
-          country: f.properties.country,
-          type: f.properties.type,
-          countryCode: f.properties.countrycode?.toUpperCase(),
-        }));
-
-      setPlaceSuggestions(places);
+      const results = await getPlaces(query);
+      setPlaceSuggestions(results);
       setShowPlaceSuggestions(true);
       setActiveSuggestionIndex(-1);
     } catch {
@@ -101,225 +66,62 @@ export default function AddMemberPage() {
     searchTimeoutRef.current = setTimeout(() => searchPlaces(value), 300);
   };
 
-  const formatPlaceName = (place: any) => {
-    const parts = [place.name];
-    if (place.state && place.state !== place.name) parts.push(place.state);
-    if (place.country) parts.push(place.country);
-    return parts.join(', ');
-  };
-
-  const selectPlace = (place: any) => {
+  const selectPlace = (place: PlaceResult) => {
     setFormData(prev => ({ ...prev, placeOfBirth: formatPlaceName(place) }));
     setShowPlaceSuggestions(false);
     setActiveSuggestionIndex(-1);
   };
 
-  // Handle clicking outside to close dropdowns
+  // Close place dropdown on outside click
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (placeInputRef.current && !placeInputRef.current.contains(event.target as Node)) {
+    const handler = (e: MouseEvent) => {
+      if (placeInputRef.current && !placeInputRef.current.contains(e.target as Node)) {
         setShowPlaceSuggestions(false);
       }
-      
-      // Close date/time pickers when clicking outside
-      const target = event.target as Node;
-      const datePickerElement = document.querySelector('[data-date-picker]');
-      const timePickerElement = document.querySelector('[data-time-picker]');
-      
-      if (datePickerElement && !datePickerElement.contains(target)) {
-        setShowDatePicker(false);
-        setShowMonthDropdown(false);
-        setShowYearDropdown(false);
-      }
-      
-      if (timePickerElement && !timePickerElement.contains(target)) {
-        setShowTimePicker(false);
-      }
     };
-
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handler);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-      // Cleanup search timeout
-      if (searchTimeoutRef.current) {
-        clearTimeout(searchTimeoutRef.current);
-      }
+      document.removeEventListener('mousedown', handler);
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
     };
   }, []);
 
-  // Custom date picker functions
-  const handleDateSelect = (day: string, month: string, year: string) => {
-    setSelectedDate({ day, month, year });
-    const dateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-    setFormData(prev => ({ ...prev, dateOfBirth: dateString }));
-    setShowDatePicker(false);
-  };
-
-  const handleTimeSelect = (hour: string, minute: string, period: string) => {
-    setSelectedTime({ hour, minute, period });
-    let hour24 = parseInt(hour);
-    if (period === 'PM' && hour24 !== 12) hour24 += 12;
-    if (period === 'AM' && hour24 === 12) hour24 = 0;
-    const timeString = `${hour24.toString().padStart(2, '0')}:${minute.padStart(2, '0')}`;
-    setFormData(prev => ({ ...prev, timeOfBirth: timeString }));
-    setShowTimePicker(false);
-  };
-
-  const formatDisplayDate = () => {
-    if (!formData.dateOfBirth) return '';
-    const date = new Date(formData.dateOfBirth);
-    return date.toLocaleDateString('en-US', { 
-      day: '2-digit', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  };
-
-  const formatDisplayTime = () => {
-    if (!formData.timeOfBirth) return '';
-    const [hour, minute] = formData.timeOfBirth.split(':');
-    const hour12 = parseInt(hour) === 0 ? 12 : parseInt(hour) > 12 ? parseInt(hour) - 12 : parseInt(hour);
-    const period = parseInt(hour) >= 12 ? 'PM' : 'AM';
-    return `${hour12}:${minute} ${period}`;
-  };
-
-  // Generate calendar days for any month/year
-  const generateCalendarDays = () => {
-    const currentMonth = calendarDate.getMonth();
-    const currentYear = calendarDate.getFullYear();
-    const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
-    
-    const days = [];
-    
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(null);
-    }
-    
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(day);
-    }
-    
-    return { days, currentMonth, currentYear };
-  };
-
-  // Navigate calendar months
-  const navigateMonth = (direction: 'prev' | 'next') => {
-    setCalendarDate(prev => {
-      const newDate = new Date(prev);
-      if (direction === 'prev') {
-        newDate.setMonth(prev.getMonth() - 1);
-      } else {
-        newDate.setMonth(prev.getMonth() + 1);
-      }
-      return newDate;
-    });
-  };
-
-  // Navigate calendar years
-  const navigateYear = (direction: 'prev' | 'next') => {
-    setCalendarDate(prev => {
-      const newDate = new Date(prev);
-      if (direction === 'prev') {
-        newDate.setFullYear(prev.getFullYear() - 1);
-      } else {
-        newDate.setFullYear(prev.getFullYear() + 1);
-      }
-      return newDate;
-    });
-  };
-
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
-
-  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
-  const minutes = Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0'));
-
-  // Handle photo upload
+  // Photo upload
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file');
-        return;
-      }
-      
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        setError('Image must be smaller than 5MB');
-        return;
-      }
-      
-      setPhotoFile(file);
-      
-      // Create preview
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setPhotoPreview(e.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-      setError(null);
-    }
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { setError('Please select a valid image file'); return; }
+    if (file.size > 5 * 1024 * 1024) { setError('Image must be smaller than 5MB'); return; }
+    setPhotoFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => setPhotoPreview(e.target?.result as string);
+    reader.readAsDataURL(file);
+    setError(null);
   };
 
   const removePhoto = () => {
     setPhotoFile(null);
     setPhotoPreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-    
-    // Clear custom relation type if not "other"
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'relationType' && value !== 'other') {
-      setFormData(prev => ({
-        ...prev,
-        relationTypeCustom: ''
-      }));
+      setFormData(prev => ({ ...prev, relationTypeCustom: '' }));
     }
-  };
-
-  const handleDateClick = () => {
-    setShowDatePicker(!showDatePicker);
-    setShowTimePicker(false);
-  };
-
-  const handleTimeClick = () => {
-    setShowTimePicker(!showTimePicker);
-    setShowDatePicker(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccessMessage(null);
-
     try {
-      // Validation
-      if (!formData.fullName.trim()) {
-        throw new Error('Please enter their name in the stars');
-      }
-      
-      if (!formData.relationType) {
-        throw new Error('Please choose their connection to you');
-      }
-      
+      if (!formData.fullName.trim()) throw new Error('Please enter their name in the stars');
+      if (!formData.relationType) throw new Error('Please choose their connection to you');
       if (formData.relationType === 'other' && !formData.relationTypeCustom.trim()) {
         throw new Error('Please specify the custom connection type');
       }
-
-      // Create member via API
       await createMember({
         fullName: formData.fullName.trim(),
         nickname: formData.nickname.trim() || undefined,
@@ -329,35 +131,25 @@ export default function AddMemberPage() {
         relationType: formData.relationType,
         relationTypeCustom: formData.relationTypeCustom.trim() || undefined,
       }).unwrap();
-
       setSuccessMessage(`${formData.fullName} has been added to your luminaries!`);
-      
-      // Redirect to members list after a short delay
-      setTimeout(() => {
-        router.push('/orbit');
-      }, 1500);
-      
+      setTimeout(() => router.push('/orbit'), 1500);
     } catch (err: any) {
-      console.error('Error creating member:', err);
       setError(err.data?.error?.message || err.message || 'Failed to add to luminaries. Please try again.');
     }
   };
 
   return (
     <div className="min-h-screen bg-primary flex items-center justify-center px-4">
-      {/* Background decoration */}
       <div className="absolute top-8 right-8">
         <svg className="w-6 h-6 text-tertiary" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
         </svg>
       </div>
-      
+
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="text-xs uppercase tracking-wider text-tertiary mb-2">
-            NEW LUMINARY
-          </div>
+          <div className="text-xs uppercase tracking-wider text-tertiary mb-2">NEW LUMINARY</div>
           <h1 className="text-3xl font-serif text-primary mb-1 leading-tight">
             Who are we bringing into the light?
           </h1>
@@ -366,13 +158,10 @@ export default function AddMemberPage() {
           </p>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* Full Name */}
           <div className="space-y-1.5">
-            <label className="block text-[10px] uppercase tracking-widest text-secondary">
-              FULL NAME
-            </label>
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">FULL NAME</label>
             <input
               type="text"
               value={formData.fullName}
@@ -401,22 +190,13 @@ export default function AddMemberPage() {
             <label className="block text-[10px] uppercase tracking-widest text-secondary">
               PHOTO <span className="text-tertiary">(OPTIONAL)</span>
             </label>
-
             <div className="flex items-center space-x-4">
-              {/* Photo Preview */}
               <div className="flex-shrink-0">
                 {photoPreview ? (
                   <div className="relative">
-                    <img
-                      src={photoPreview}
-                      alt="Preview"
-                      className="w-14 h-14 rounded-full object-cover border-2 border-accent-primary shadow-md"
-                    />
-                    <button
-                      type="button"
-                      onClick={removePhoto}
-                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors"
-                    >
+                    <img src={photoPreview} alt="Preview" className="w-14 h-14 rounded-full object-cover border-2 border-accent-primary shadow-md" />
+                    <button type="button" onClick={removePhoto}
+                      className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-error rounded-full flex items-center justify-center text-white hover:bg-red-600 transition-colors">
                       <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -430,65 +210,42 @@ export default function AddMemberPage() {
                   </div>
                 )}
               </div>
-
-              {/* Upload Button */}
               <div className="flex-1">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handlePhotoChange}
-                  className="hidden"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="px-4 py-1.5 bg-surface hover:bg-secondary text-primary rounded-full text-xs font-medium transition-colors border border-primary"
-                >
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handlePhotoChange} className="hidden" />
+                <button type="button" onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-1.5 bg-surface hover:bg-secondary text-primary rounded-full text-xs font-medium transition-colors border border-primary">
                   {photoPreview ? 'Change Photo' : 'Upload Photo'}
                 </button>
-                <p className="text-xs text-tertiary mt-1">
-                  JPG, PNG or GIF • Max 5MB
-                </p>
+                <p className="text-xs text-tertiary mt-1">JPG, PNG or GIF • Max 5MB</p>
               </div>
             </div>
           </div>
 
           {/* Connection Type */}
           <div className="space-y-2">
-            <label className="block text-[10px] uppercase tracking-widest text-secondary">
-              CONNECTION
-            </label>
-
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">CONNECTION</label>
             <div className="flex flex-wrap gap-2">
               {relationTypes.map((type) => (
-                <button
-                  key={type.value}
-                  type="button"
+                <button key={type.value} type="button"
                   onClick={() => handleInputChange('relationType', type.value)}
                   className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                     formData.relationType === type.value
                       ? 'bg-accent-primary text-white shadow-md'
                       : 'bg-surface text-secondary hover:bg-secondary'
-                  }`}
-                >
+                  }`}>
                   {type.label}
                 </button>
               ))}
-
-              <button
-                type="button"
+              <button type="button"
                 onClick={() => handleInputChange('relationType', 'other')}
                 className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
                   formData.relationType === 'other'
                     ? 'bg-accent-primary text-white shadow-md'
                     : 'bg-surface text-secondary hover:bg-secondary'
-                }`}
-              >
+                }`}>
                 + Other
               </button>
             </div>
-
             {formData.relationType === 'other' && (
               <input
                 type="text"
@@ -500,202 +257,23 @@ export default function AddMemberPage() {
             )}
           </div>
 
-          {/* Birth Information */}
+          {/* Birth Date + Time */}
           <div className="grid grid-cols-2 gap-4">
-            {/* Custom Date Picker */}
-            <div className="space-y-1.5 relative" data-date-picker>
-              <label className="block text-[10px] uppercase tracking-widest text-secondary">
-                BIRTH DATE
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={formatDisplayDate()}
-                  onClick={handleDateClick}
-                  readOnly
-                  placeholder="dd/mm/yyyy"
-                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary outline-none focus:outline-none focus:ring-0 text-primary cursor-pointer placeholder:text-tertiary"
-                />
-                <div className="absolute right-0 top-2.5 text-tertiary">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
-                  </svg>
-                </div>
-              </div>
-              
-              {/* Custom Date Picker Dropdown */}
-              {showDatePicker && (
-                <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-50 p-3">
-                  {/* Month / Year row */}
-                  <div className="flex items-center justify-center gap-2 mb-2">
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => { setShowMonthDropdown(!showMonthDropdown); setShowYearDropdown(false); }}
-                        className="px-2.5 py-1 bg-transparent border border-primary rounded-md text-primary font-serif text-sm flex items-center gap-1 hover:border-accent-primary transition-colors"
-                      >
-                        {months[generateCalendarDays().currentMonth]}
-                        <svg className="w-3 h-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                      </button>
-                      {showMonthDropdown && (
-                        <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 w-32 max-h-44 overflow-y-auto">
-                          {months.map((month, index) => (
-                            <button key={month} type="button"
-                              onClick={() => { const d = new Date(calendarDate); d.setMonth(index); setCalendarDate(d); setShowMonthDropdown(false); }}
-                              className={`w-full text-left px-3 py-1.5 text-xs font-serif hover:bg-accent-primary hover:text-inverse transition-colors ${index === generateCalendarDays().currentMonth ? 'bg-accent-primary text-inverse' : 'text-primary'}`}
-                            >{month}</button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => { setShowYearDropdown(!showYearDropdown); setShowMonthDropdown(false); }}
-                        className="px-2.5 py-1 bg-transparent border border-primary rounded-md text-primary font-serif text-sm flex items-center gap-1 hover:border-accent-primary transition-colors"
-                      >
-                        {generateCalendarDays().currentYear}
-                        <svg className="w-3 h-3 text-tertiary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                      </button>
-                      {showYearDropdown && (
-                        <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 w-24 max-h-44 overflow-y-auto">
-                          {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
-                            <button key={year} type="button"
-                              onClick={() => { const d = new Date(calendarDate); d.setFullYear(year); setCalendarDate(d); setShowYearDropdown(false); }}
-                              className={`w-full text-left px-3 py-1.5 text-xs font-serif hover:bg-accent-primary hover:text-inverse transition-colors ${year === generateCalendarDays().currentYear ? 'bg-accent-primary text-inverse' : 'text-primary'}`}
-                            >{year}</button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Day labels */}
-                  <div className="grid grid-cols-7 mb-1">
-                    {['S','M','T','W','T','F','S'].map((d, i) => (
-                      <div key={i} className="text-center text-[10px] text-tertiary py-0.5">{d}</div>
-                    ))}
-                  </div>
-
-                  {/* Calendar days */}
-                  <div className="grid grid-cols-7 gap-0.5">
-                    {generateCalendarDays().days.map((day, index) => {
-                      const isToday = day === new Date().getDate() &&
-                        generateCalendarDays().currentMonth === new Date().getMonth() &&
-                        generateCalendarDays().currentYear === new Date().getFullYear();
-                      const isSelected = day && selectedDate.day === day.toString() &&
-                        selectedDate.month === (generateCalendarDays().currentMonth + 1).toString() &&
-                        selectedDate.year === generateCalendarDays().currentYear.toString();
-                      return (
-                        <button key={index} type="button" disabled={!day}
-                          onClick={() => day && handleDateSelect(day.toString(), (generateCalendarDays().currentMonth + 1).toString(), generateCalendarDays().currentYear.toString())}
-                          className={`aspect-square text-xs rounded-full transition-colors flex items-center justify-center
-                            ${!day ? 'invisible' : ''}
-                            ${isSelected ? 'bg-accent-primary text-inverse' : isToday ? 'border border-accent-primary text-accent-primary' : 'text-primary hover:bg-accent-primary hover:text-inverse'}`}
-                        >{day}</button>
-                      );
-                    })}
-                  </div>
-
-                  <div className="flex justify-start mt-2 pt-2 border-t border-primary">
-                    <button type="button" onClick={() => { setFormData(prev => ({ ...prev, dateOfBirth: '' })); setSelectedDate({ day: '', month: '', year: '' }); setShowDatePicker(false); }}
-                      className="text-xs text-tertiary hover:text-primary transition-colors font-serif">clear</button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Custom Time Picker */}
-            <div className="space-y-1.5 relative" data-time-picker>
-              <label className="block text-[10px] uppercase tracking-widest text-secondary">
-                BIRTH TIME
-              </label>
-              <div className="relative">
-                <input
-                  type="text"
-                  value={formatDisplayTime()}
-                  onClick={handleTimeClick}
-                  readOnly
-                  placeholder="--:-- --"
-                  tabIndex={-1}
-                  className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary outline-none focus:outline-none focus:ring-0 text-primary cursor-pointer placeholder:text-tertiary"
-                />
-                <div className="absolute right-0 top-2.5 text-tertiary">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M16.2,16.2L11,13V7H12.5V12.2L17,14.9L16.2,16.2Z"/>
-                  </svg>
-                </div>
-              </div>
-              
-              {/* Custom Time Picker Dropdown */}
-              {showTimePicker && (
-                <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-50 p-2.5">
-                  {/* Two vertical columns + AM/PM */}
-                  <div className="flex gap-2">
-                    {/* Hour column */}
-                    <div className="flex-1">
-                      <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-sans text-center">Hr</p>
-                      <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                        {hours.map(hour => (
-                          <button key={hour} type="button"
-                            onClick={() => setSelectedTime(prev => ({ ...prev, hour }))}
-                            className={`py-1 text-xs rounded font-serif transition-colors text-center
-                              ${selectedTime.hour === hour ? 'bg-accent-primary text-inverse' : 'text-primary hover:bg-accent-primary hover:text-inverse'}`}
-                          >{hour.padStart(2, '0')}</button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="w-px bg-primary self-stretch opacity-30" />
-
-                    {/* Minute column */}
-                    <div className="flex-1">
-                      <p className="text-[9px] uppercase tracking-widest text-tertiary mb-1 font-sans text-center">Min</p>
-                      <div className="flex flex-col gap-0.5 max-h-40 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-                        {minutes.map(minute => (
-                          <button key={minute} type="button"
-                            onClick={() => setSelectedTime(prev => ({ ...prev, minute }))}
-                            className={`py-1 text-xs rounded font-serif transition-colors text-center
-                              ${selectedTime.minute === minute ? 'bg-accent-primary text-inverse' : 'text-primary hover:bg-accent-primary hover:text-inverse'}`}
-                          >{minute}</button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Divider */}
-                    <div className="w-px bg-primary self-stretch opacity-30" />
-
-                    {/* AM/PM column */}
-                    <div className="flex flex-col justify-center gap-1.5 px-1">
-                      {['AM', 'PM'].map(period => (
-                        <button key={period} type="button"
-                          onClick={() => setSelectedTime(prev => ({ ...prev, period }))}
-                          className={`px-2 py-1.5 text-xs rounded font-sans tracking-widest uppercase transition-colors
-                            ${selectedTime.period === period ? 'bg-accent-primary text-inverse' : 'border border-primary text-secondary hover:border-accent-primary hover:text-primary'}`}
-                        >{period}</button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between pt-2 mt-2 border-t border-primary">
-                    <button type="button" onClick={() => setShowTimePicker(false)}
-                      className="text-xs text-tertiary hover:text-primary font-serif transition-colors">cancel</button>
-                    <button type="button"
-                      onClick={() => { if (selectedTime.hour && selectedTime.minute) handleTimeSelect(selectedTime.hour, selectedTime.minute, selectedTime.period); }}
-                      disabled={!selectedTime.hour || !selectedTime.minute}
-                      className="text-xs text-accent-primary disabled:text-tertiary font-serif transition-colors">set time</button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <DatePicker
+              label="BIRTH DATE"
+              value={formData.dateOfBirth}
+              onChange={(v) => setFormData(prev => ({ ...prev, dateOfBirth: v }))}
+            />
+            <TimePicker
+              label="BIRTH TIME"
+              value={formData.timeOfBirth}
+              onChange={(v) => setFormData(prev => ({ ...prev, timeOfBirth: v }))}
+            />
           </div>
 
           {/* Place of Birth */}
           <div className="space-y-1.5">
-            <label className="block text-[10px] uppercase tracking-widest text-secondary">
-              PLACE OF ARRIVAL
-            </label>
+            <label className="block text-[10px] uppercase tracking-widest text-secondary">PLACE OF ARRIVAL</label>
             <div className="relative" ref={placeInputRef}>
               <input
                 type="text"
@@ -704,18 +282,10 @@ export default function AddMemberPage() {
                 onFocus={() => { if (formData.placeOfBirth.length >= 2) setShowPlaceSuggestions(true); }}
                 onKeyDown={(e) => {
                   if (!showPlaceSuggestions || placeSuggestions.length === 0) return;
-                  if (e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    setActiveSuggestionIndex(i => Math.min(i + 1, placeSuggestions.length - 1));
-                  } else if (e.key === 'ArrowUp') {
-                    e.preventDefault();
-                    setActiveSuggestionIndex(i => Math.max(i - 1, -1));
-                  } else if (e.key === 'Enter' && activeSuggestionIndex >= 0) {
-                    e.preventDefault();
-                    selectPlace(placeSuggestions[activeSuggestionIndex]);
-                  } else if (e.key === 'Escape') {
-                    setShowPlaceSuggestions(false);
-                  }
+                  if (e.key === 'ArrowDown') { e.preventDefault(); setActiveSuggestionIndex(i => Math.min(i + 1, placeSuggestions.length - 1)); }
+                  else if (e.key === 'ArrowUp') { e.preventDefault(); setActiveSuggestionIndex(i => Math.max(i - 1, -1)); }
+                  else if (e.key === 'Enter' && activeSuggestionIndex >= 0) { e.preventDefault(); selectPlace(placeSuggestions[activeSuggestionIndex]); }
+                  else if (e.key === 'Escape') setShowPlaceSuggestions(false);
                 }}
                 placeholder="City, Country"
                 className="w-full px-0 py-2 bg-transparent border-0 border-b border-primary focus:border-accent-primary outline-none focus:outline-none focus:ring-0 text-primary placeholder:text-tertiary pr-7"
@@ -724,8 +294,6 @@ export default function AddMemberPage() {
                 aria-autocomplete="list"
                 aria-expanded={showPlaceSuggestions}
               />
-
-              {/* Icon: spinner when searching, pin otherwise */}
               <div className="absolute right-0 top-2.5 text-tertiary pointer-events-none">
                 {isSearching ? (
                   <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -738,19 +306,15 @@ export default function AddMemberPage() {
                 )}
               </div>
 
-              {/* Suggestions dropdown */}
               {showPlaceSuggestions && placeSuggestions.length > 0 && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 overflow-hidden">
                   {placeSuggestions.map((place, index) => (
-                    <button
-                      key={index}
-                      type="button"
+                    <button key={index} type="button"
                       onClick={() => selectPlace(place)}
                       onMouseEnter={() => setActiveSuggestionIndex(index)}
                       className={`w-full text-left px-3 py-2.5 transition-colors border-b border-primary last:border-b-0 focus:outline-none ${
                         activeSuggestionIndex === index ? 'bg-secondary' : 'hover:bg-secondary'
-                      }`}
-                    >
+                      }`}>
                       <div className="flex items-center gap-2.5">
                         <svg className="w-3.5 h-3.5 text-accent-primary flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                           <path d="M12,2C8.13,2 5,5.13 5,9C5,14.25 12,22 12,22C12,22 19,14.25 19,9C19,5.13 15.87,2 12,2M12,11.5C10.62,11.5 9.5,10.38 9.5,9C9.5,7.62 10.62,6.5 12,6.5C13.38,6.5 14.5,7.62 14.5,9C14.5,10.38 13.38,11.5 12,11.5Z"/>
@@ -772,26 +336,21 @@ export default function AddMemberPage() {
                 </div>
               )}
 
-              {/* No results */}
               {showPlaceSuggestions && !isSearching && placeSuggestions.length === 0 && formData.placeOfBirth.length >= 2 && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 px-4 py-4 text-center">
                   <p className="text-xs text-tertiary">No places found — try a city or town name</p>
                 </div>
               )}
             </div>
-            <p className="text-xs text-tertiary italic">
-              Where the cosmos & earthly realms first met
-            </p>
+            <p className="text-xs text-tertiary italic">Where the cosmos & earthly realms first met</p>
           </div>
 
-          {/* Success Message */}
+          {/* Success / Error */}
           {successMessage && (
             <div className="text-center p-4 bg-accent-primary bg-opacity-10 rounded-xl">
               <p className="text-accent-primary font-medium">{successMessage}</p>
             </div>
           )}
-
-          {/* Error Display */}
           {error && (
             <div className="text-center p-4 bg-red-50 rounded-xl">
               <p className="text-red-600 text-sm">{error}</p>
@@ -800,22 +359,15 @@ export default function AddMemberPage() {
 
           {/* Actions */}
           <div className="flex items-center justify-between pt-4">
-            <button
-              type="button"
-              onClick={() => router.back()}
-              className="text-secondary hover:text-primary transition-colors flex items-center space-x-2"
-            >
+            <button type="button" onClick={() => router.back()}
+              className="text-secondary hover:text-primary transition-colors flex items-center space-x-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
               <span>CANCEL</span>
             </button>
-            
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="px-8 py-3 bg-lumis-accent-primary hover:bg-lumis-accent-primary-hover text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl flex items-center space-x-2"
-            >
+            <Button type="submit" disabled={isSubmitting}
+              className="px-8 py-3 bg-lumis-accent-primary hover:bg-lumis-accent-primary-hover text-white rounded-full font-medium transition-all shadow-lg hover:shadow-xl flex items-center space-x-2">
               <span>{isSubmitting ? 'Adding to Luminaries...' : 'Add to Luminaries'}</span>
               <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
@@ -824,7 +376,6 @@ export default function AddMemberPage() {
           </div>
         </form>
 
-        {/* Footer */}
         <div className="text-center mt-6">
           <div className="flex items-center justify-center space-x-2">
             <span className="text-xs text-tertiary">LUMIS</span>
