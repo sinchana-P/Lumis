@@ -606,6 +606,84 @@ export class AuthService {
     const { user } = await this.supabaseService.getUserById(userId);
     return user?.date_of_birth ? true : false;
   }
+  async updateProfile(userId: string, updateData: any) {
+    const supabase = this.supabaseService.getAdminClient();
+
+    // Build update object with only provided fields
+    const updateFields: any = {};
+
+    // Coerce empty strings to null so DB nulls are set correctly
+    const val = (v: any) => (v === '' ? null : v);
+
+    if (updateData.first_name !== undefined) updateFields.first_name = val(updateData.first_name);
+    if (updateData.last_name !== undefined) updateFields.last_name = val(updateData.last_name);
+    if (updateData.full_name !== undefined) updateFields.full_name = val(updateData.full_name);
+    if (updateData.date_of_birth !== undefined) updateFields.date_of_birth = val(updateData.date_of_birth);
+    if (updateData.time_of_birth !== undefined) updateFields.time_of_birth = val(updateData.time_of_birth);
+    if (updateData.place_of_birth !== undefined) updateFields.place_of_birth = val(updateData.place_of_birth);
+    if (updateData.avatar_url !== undefined) updateFields.avatar_url = val(updateData.avatar_url);
+    if (updateData.analysis_depth_mode !== undefined) updateFields.analysis_depth_mode = updateData.analysis_depth_mode;
+
+    // Auto-sync full_name from first+last if not explicitly provided
+    if (!updateData.full_name && (updateData.first_name !== undefined || updateData.last_name !== undefined)) {
+      const first = updateFields.first_name ?? '';
+      const last = updateFields.last_name ?? '';
+      updateFields.full_name = `${first} ${last}`.trim() || null;
+    }
+
+    updateFields.updated_at = new Date().toISOString();
+
+    const { data: user, error } = await supabase
+      .from('users')
+      .update(updateFields)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating user profile:', error);
+      throw new Error('Failed to update profile');
+    }
+
+    return user;
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    // First verify current password by attempting to sign in
+    const { data: userData } = await this.supabaseService.getAdminClient()
+      .from('users')
+      .select('email')
+      .eq('id', userId)
+      .single();
+
+    if (!userData) {
+      throw new Error('User not found');
+    }
+
+    // Verify current password
+    const { error: signInError } = await this.supabaseService.getClient()
+      .auth.signInWithPassword({
+        email: userData.email,
+        password: currentPassword,
+      });
+
+    if (signInError) {
+      throw new Error('Current password is incorrect');
+    }
+
+    // Update password
+    const { error: updateError } = await this.supabaseService.getAdminClient()
+      .auth.admin.updateUserById(userId, {
+        password: newPassword,
+      });
+
+    if (updateError) {
+      console.error('Error updating password:', updateError);
+      throw new Error('Failed to update password');
+    }
+
+    return true;
+  }
 
   private generateRequestId(): string {
     return `req_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;

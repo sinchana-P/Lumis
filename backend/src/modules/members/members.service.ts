@@ -73,21 +73,54 @@ export class MembersService {
     return this.formatMember(data);
   }
 
-  async update(userId: string, memberId: string, updateMemberDto: UpdateMemberDto) {
+  async update(userId: string, memberId: string, updateMemberDto: UpdateMemberDto, photo?: Express.Multer.File) {
     const supabase = this.supabaseService.getAdminClient();
+
+    // Build update payload — only include defined fields (PATCH semantics)
+    const updatePayload: Record<string, any> = {};
+    if (updateMemberDto.fullName !== undefined)           updatePayload.full_name = updateMemberDto.fullName;
+    if (updateMemberDto.nickname !== undefined)           updatePayload.nickname = updateMemberDto.nickname || null;
+    if (updateMemberDto.dateOfBirth !== undefined)        updatePayload.date_of_birth = updateMemberDto.dateOfBirth || null;
+    if (updateMemberDto.timeOfBirth !== undefined)        updatePayload.time_of_birth = updateMemberDto.timeOfBirth || null;
+    if (updateMemberDto.placeOfBirth !== undefined)       updatePayload.place_of_birth = updateMemberDto.placeOfBirth || null;
+    if (updateMemberDto.relationType !== undefined)       updatePayload.relation_type = updateMemberDto.relationType;
+    if (updateMemberDto.relationTypeCustom !== undefined) updatePayload.relation_type_custom = updateMemberDto.relationTypeCustom || null;
+    if (updateMemberDto.notes !== undefined)              updatePayload.notes = updateMemberDto.notes || null;
+
+    // Handle photo upload
+    if (photo && photo.buffer && photo.buffer.length > 0) {
+      const ext = (photo.originalname.split('.').pop() ?? 'jpg').toLowerCase();
+      const storagePath = `members/${userId}/${memberId}.${ext}`;
+      const BUCKET = 'member-photos';
+
+      // Ensure bucket exists (creates it if missing)
+      const { data: buckets } = await supabase.storage.listBuckets();
+      const bucketExists = buckets?.some(b => b.name === BUCKET);
+      if (!bucketExists) {
+        await supabase.storage.createBucket(BUCKET, { public: true });
+      }
+
+      const { error: uploadError } = await supabase.storage
+        .from(BUCKET)
+        .upload(storagePath, photo.buffer, {
+          contentType: photo.mimetype,
+          upsert: true,
+        });
+
+      if (uploadError) {
+        console.error(`Photo upload failed: ${uploadError.message}`);
+        throw new Error(`Photo upload failed: ${uploadError.message}`);
+      }
+
+      updatePayload.photo_url = this.supabaseService.getPublicUrl(BUCKET, storagePath);
+    } else if ((updateMemberDto as any).photoUrl === '') {
+      // Explicit removal — frontend sends photoUrl: '' when user cleared the photo
+      updatePayload.photo_url = null;
+    }
 
     const { data, error } = await supabase
       .from('members')
-      .update({
-        full_name: updateMemberDto.fullName,
-        nickname: updateMemberDto.nickname,
-        date_of_birth: updateMemberDto.dateOfBirth,
-        time_of_birth: updateMemberDto.timeOfBirth,
-        place_of_birth: updateMemberDto.placeOfBirth,
-        relation_type: updateMemberDto.relationType,
-        relation_type_custom: updateMemberDto.relationTypeCustom,
-        notes: updateMemberDto.notes,
-      })
+      .update(updatePayload)
       .eq('user_id', userId)
       .eq('id', memberId)
       .select()

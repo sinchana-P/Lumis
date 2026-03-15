@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { Button } from '@/components/ui/Button';
 
 interface Tab {
@@ -12,16 +13,18 @@ interface MemberPageHeaderProps {
   tabs: Tab[];
   activeTab: string;
   onActionClick?: () => void;
+  onSecondaryAction?: () => void;
+  children?: React.ReactNode; // Allow custom action buttons
 }
 
-export function MemberPageHeader({ tabs, activeTab, onActionClick }: MemberPageHeaderProps) {
+export function MemberPageHeader({ tabs, activeTab, onActionClick, onSecondaryAction, children }: MemberPageHeaderProps) {
   const getActionButton = () => {
     switch (activeTab) {
       case 'overview':
         return (
           <>
             <Button onClick={onActionClick}>Quick Log</Button>
-            <Button variant="secondary">Edit Profile</Button>
+            <Button variant="secondary" onClick={onSecondaryAction}>Edit Luminary</Button>
           </>
         );
       case 'journal':
@@ -44,9 +47,7 @@ export function MemberPageHeader({ tabs, activeTab, onActionClick }: MemberPageH
   const currentTab = tabs.find(tab => tab.id === activeTab);
 
   return (
-    <header className="px-8 py-2 flex-shrink-0" style={{ 
-      boxShadow: '0 2px 4px -2px rgba(61, 57, 53, 0.06)'
-    }}>
+    <header className="px-8 py-2 flex-shrink-0 border-b" style={{ background: 'var(--bg-primary)', borderColor: 'var(--bg-tertiary)' }}>
       <div className="flex items-center justify-between">
         <div>
           <h2 className="font-serif text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
@@ -57,7 +58,7 @@ export function MemberPageHeader({ tabs, activeTab, onActionClick }: MemberPageH
           </p>
         </div>
         <div className="flex items-center gap-3">
-          {getActionButton()}
+          {children || getActionButton()}
         </div>
       </div>
     </header>

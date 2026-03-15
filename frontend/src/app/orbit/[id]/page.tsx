@@ -4,6 +4,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useGetMemberQuery } from '@/store/api/membersApi';
 import { MemberPageHeader } from '@/components/members/MemberPageHeader';
+import { EditMemberModal } from '@/components/members/EditMemberModal';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 // Tab Components
@@ -90,6 +91,7 @@ export default function MemberDetailPage() {
   const router = useRouter();
   const memberId = params.id as string;
   const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const [showEditModal, setShowEditModal] = useState(false);
   
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
@@ -280,9 +282,10 @@ export default function MemberDetailPage() {
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col h-full ml-12">
         {/* Reusable Header Component */}
-        <MemberPageHeader 
+        <MemberPageHeader
           tabs={tabs}
           activeTab={activeTab}
+          onSecondaryAction={() => setShowEditModal(true)}
           onActionClick={() => {
             // Handle tab-specific actions
             if (activeTab === 'journal') {
@@ -317,6 +320,15 @@ export default function MemberDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Edit Luminary Modal */}
+      {showEditModal && (
+        <EditMemberModal
+          member={member}
+          open={showEditModal}
+          onClose={() => setShowEditModal(false)}
+        />
+      )}
     </div>
   );
 }

@@ -14,7 +14,7 @@ export function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-primary border-b border-primary shadow-sm">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b shadow-sm" style={{ background: 'var(--bg-primary)', borderColor: 'var(--bg-tertiary)' }}>
       <div className="flex items-center justify-between px-12 py-3">
         {/* Logo */}
         <button 
@@ -35,7 +35,7 @@ export function Header() {
             onClick={() => router.push('/dashboard')}
             className={`font-mono text-sm uppercase tracking-widest transition-colors ${
               isActive('/dashboard')
-                ? 'text-primary border-b border-primary'
+                ? 'text-primary border-b border-accent-primary'
                 : 'text-tertiary hover:text-primary'
             }`}
           >
@@ -45,7 +45,7 @@ export function Header() {
             onClick={() => router.push('/orbit')}
             className={`font-mono text-sm uppercase tracking-widest transition-colors ${
               isActive('/orbit')
-                ? 'text-primary border-b border-primary'
+                ? 'text-primary border-b border-accent-primary'
                 : 'text-tertiary hover:text-primary'
             }`}
           >
@@ -55,7 +55,7 @@ export function Header() {
             onClick={() => router.push('/lumen')}
             className={`font-mono text-sm uppercase tracking-widest transition-colors ${
               isActive('/lumen')
-                ? 'text-primary border-b border-primary'
+                ? 'text-primary border-b border-accent-primary'
                 : 'text-tertiary hover:text-primary'
             }`}
           >
@@ -65,7 +65,7 @@ export function Header() {
             onClick={() => router.push('/profile')}
             className={`font-mono text-sm uppercase tracking-widest transition-colors ${
               isActive('/profile')
-                ? 'text-primary border-b border-primary'
+                ? 'text-primary border-b border-accent-primary'
                 : 'text-tertiary hover:text-primary'
             }`}
           >

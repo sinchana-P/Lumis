@@ -1,5 +1,6 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Patch, Delete, UseGuards, Query, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { MembersService } from './members.service';
 import { AuthGuard } from '../../common/guards/auth.guard';
 import { User } from '../../common/decorators/user.decorator';
@@ -56,16 +57,33 @@ export class MembersController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update member' })
-  async update(@User() user: any, @Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
-    const member = await this.membersService.update(user.id, id, updateMemberDto);
-    return {
-      success: true,
-      data: member,
-      meta: {
-        timestamp: new Date().toISOString(),
-        request_id: this.generateRequestId(),
-      },
-    };
+  @ApiConsumes('multipart/form-data', 'application/json')
+  @UseInterceptors(FileInterceptor('photo'))
+  async update(
+    @User() user: any,
+    @Param('id') id: string,
+    @Body() updateMemberDto: UpdateMemberDto,
+    @UploadedFile() photo?: Express.Multer.File,
+  ) {
+    try {
+      // Discard empty-buffer uploads (browser may send filename with no actual bytes)
+      const validPhoto = photo && photo.buffer && photo.buffer.length > 0 ? photo : undefined;
+      const member = await this.membersService.update(user.id, id, updateMemberDto, validPhoto);
+      return {
+        success: true,
+        data: member,
+        meta: {
+          timestamp: new Date().toISOString(),
+          request_id: this.generateRequestId(),
+        },
+      };
+    } catch (error: any) {
+      if (error?.status) throw error;
+      throw new HttpException(
+        { success: false, error: { code: 'UPDATE_FAILED', message: error?.message || 'Failed to update member' } },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Delete(':id')

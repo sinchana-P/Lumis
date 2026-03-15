@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
@@ -9,6 +9,8 @@ import {
   SignUpDto,
   SignInDto,
   RefreshTokenDto,
+  UpdateProfileDto,
+  ChangePasswordDto,
 } from './dto';
 
 @ApiTags('Authentication')
@@ -176,6 +178,46 @@ export class AuthController {
           },
           has_completed_onboarding: hasOnboarding,
         },
+        meta: {
+          timestamp: new Date().toISOString(),
+          request_id: this.generateRequestId(),
+        },
+      };
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  @Put('profile')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  async updateProfile(@User() user: any, @Body() dto: UpdateProfileDto): Promise<any> {
+    try {
+      const updatedUser = await this.authService.updateProfile(user.id, dto);
+      return {
+        success: true,
+        data: { user: updatedUser },
+        meta: {
+          timestamp: new Date().toISOString(),
+          request_id: this.generateRequestId(),
+        },
+      };
+    } catch (error) {
+      return this.handleError(error);
+    }
+  }
+
+  @Post('change-password')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Change user password' })
+  async changePassword(@User() user: any, @Body() dto: ChangePasswordDto): Promise<any> {
+    try {
+      await this.authService.changePassword(user.id, dto.current_password, dto.new_password);
+      return {
+        success: true,
+        data: { message: 'Password changed successfully' },
         meta: {
           timestamp: new Date().toISOString(),
           request_id: this.generateRequestId(),

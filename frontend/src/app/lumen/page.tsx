@@ -6,6 +6,7 @@ import { useSpeechToText, Waveform } from '@/components/ui/SpeechInput';
 import { MicrophoneButton, PauseButton } from '@/components/ui/AudioButtons';
 import { type AnalysisDepthMode, ANALYSIS_DEPTH_MODES } from '@/components/lumen/AnalysisDepthSelector';
 import { MemberContextSelector } from '@/components/lumen/MemberContextSelector';
+import { LumenHistory } from '@/components/lumen/LumenHistory';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -227,14 +228,22 @@ function MessageBubble({ msg }: { msg: Message }) {
           >
             {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </p>
-          {msg.analysisDepth && isLumen && (
-            <span
-              className="font-mono uppercase tracking-wider"
-              style={{ fontSize: 'clamp(11px, 0.85vw, 13px)', color: 'var(--text-tertiary)' }}
-            >
-              {ANALYSIS_DEPTH_MODES.find((m) => m.id === msg.analysisDepth)?.icon} {msg.analysisDepth}
-            </span>
-          )}
+          {msg.analysisDepth && isLumen && (() => {
+            const mode = ANALYSIS_DEPTH_MODES.find((m) => m.id === msg.analysisDepth);
+            return (
+              <div className="flex items-center gap-1.5">
+                <span style={{ color: 'var(--text-tertiary)' }}>
+                  {mode?.icon}
+                </span>
+                <span
+                  className="font-mono uppercase tracking-wider"
+                  style={{ fontSize: 'clamp(10px, 0.85vw, 10px)', color: 'var(--text-tertiary)' }}
+                >
+                  {mode?.label}
+                </span>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>
@@ -270,6 +279,8 @@ function TypingIndicator() {
 export default function LumenPage() {
   const [mode, setMode] = useState<LumenMode>('guided');
   const [analysisDepth, setAnalysisDepth] = useState<AnalysisDepthMode>('full-spectrum');
+  const [showHistory, setShowHistory] = useState(false);
+  const [activeConversationId, setActiveConversationId] = useState<string | undefined>(undefined);
   const [showMemberContext, setShowMemberContext] = useState(false);
   const [memberContexts, setMemberContexts] = useState<MemberContext[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -355,6 +366,14 @@ export default function LumenPage() {
     <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       <Header />
 
+      <LumenHistory
+        open={showHistory}
+        activeConversationId={activeConversationId}
+        onSelectConversation={(id) => setActiveConversationId(id)}
+        onNewChat={() => { setMessages([getMockWelcome(mode, analysisDepth)]); setActiveConversationId(undefined); }}
+        onClose={() => setShowHistory(false)}
+      />
+
       <style>{`
         @keyframes lumen-rise {
           from { opacity: 0; transform: translateY(6px); }
@@ -381,6 +400,32 @@ export default function LumenPage() {
             gap: 'clamp(12px, 2vw, 28px)',
           }}
         >
+          {/* History toggle button */}
+          <button
+            type="button"
+            onClick={() => setShowHistory((v) => !v)}
+            title="Conversation history"
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              padding: '4px 6px',
+              borderRadius: 6,
+              color: showHistory ? 'var(--accent-primary)' : 'var(--text-tertiary)',
+              display: 'flex',
+              alignItems: 'center',
+              flexShrink: 0,
+              transition: 'color 0.2s',
+            }}
+          >
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </button>
+
+          {/* Divider */}
+          <div style={{ width: 1, height: 16, background: 'var(--bg-tertiary)', flexShrink: 0 }} />
+
           {/* Modes — stretch full height, underline sits at bottom */}
           <div
             className="flex flex-shrink-0 overflow-x-auto"
@@ -590,10 +635,10 @@ export default function LumenPage() {
             )}
 
             {/* Input row */}
-            <div className="flex items-end gap-3">
+            <div className="flex items-center gap-3">
 
               {/* Add member button */}
-              <div className="flex-shrink-0 pb-0.5">
+              <div className="flex-shrink-0">
                 <button
                   onClick={() => setShowMemberContext(true)}
                   title="Add member to context"
@@ -613,7 +658,7 @@ export default function LumenPage() {
 
               {/* Unified input bar */}
               <div
-                className="flex-1 flex items-end gap-2 rounded-2xl px-4 py-3 transition-all duration-200"
+                className="flex-1 flex items-center gap-2 rounded-2xl px-4 py-3 transition-all duration-200"
                 style={{
                   background: 'var(--bg-primary)',
                   border: `1.5px solid ${isListening ? currentMode.color : 'var(--bg-tertiary)'}`,

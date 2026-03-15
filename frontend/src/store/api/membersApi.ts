@@ -25,6 +25,7 @@ export interface CreateMemberRequest {
   relationType: string;
   relationTypeCustom?: string;
   notes?: string;
+  photoUrl?: string; // empty string signals photo removal on update
 }
 
 export interface MembersResponse {
@@ -66,12 +67,18 @@ export const membersApi = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'Members', id }],
     }),
 
-    updateMember: builder.mutation<MemberResponse, { id: string; data: Partial<CreateMemberRequest> }>({
-      query: ({ id, data }) => ({
-        url: `/members/${id}`,
-        method: 'PATCH',
-        body: data,
-      }),
+    updateMember: builder.mutation<MemberResponse, { id: string; data: Partial<CreateMemberRequest>; photo?: File | null }>({
+      query: ({ id, data, photo }) => {
+        if (photo) {
+          const formData = new FormData();
+          formData.append('photo', photo);
+          Object.entries(data).forEach(([key, value]) => {
+            if (value !== undefined && value !== null) formData.append(key, String(value));
+          });
+          return { url: `/members/${id}`, method: 'PATCH', body: formData };
+        }
+        return { url: `/members/${id}`, method: 'PATCH', body: data };
+      },
       invalidatesTags: (result, error, { id }) => [{ type: 'Members', id }, 'Members'],
     }),
 
