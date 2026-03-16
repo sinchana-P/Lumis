@@ -119,7 +119,7 @@ function MoodSelect({ value, onChange, label }: { value: string; onChange: (v: s
               <button key={m} type="button" onClick={() => { onChange(m.toLowerCase()); setOpen(false); }}
                 className="w-full font-mono"
                 style={{
-                  fontSize: 11, padding: '7px 10px', textAlign: 'left', background: 'none', border: 'none',
+                  fontSize: 11, padding: '7px 10px', textAlign: 'left', border: 'none',
                   cursor: 'pointer', display: 'block', width: '100%',
                   color: value === m.toLowerCase() ? 'var(--accent-primary)' : 'var(--text-primary)',
                   background: value === m.toLowerCase() ? 'var(--bg-secondary)' : 'transparent',
