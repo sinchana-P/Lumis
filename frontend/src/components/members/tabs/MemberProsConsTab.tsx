@@ -10,6 +10,7 @@ import {
   type CreateTraitRequest,
 } from '@/store/api/traitsApi';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
+import { TabFooter } from '@/components/ui/TabFooter';
 
 interface Member {
   id: string;
@@ -276,42 +277,41 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
   const ratio = pros.length > 0 ? Math.round((pros.length / (pros.length + cons.length)) * 100) : 0;
 
   const TraitRow = ({ item, accentColor }: { item: Trait; accentColor: string }) => (
-    <div className="group flex items-start gap-3 py-3"
-      style={{ paddingLeft: 10, borderLeft: `2px solid ${accentColor}` }}>
+    <div className="group flex items-start gap-3"
+      style={{ paddingLeft: 12, paddingTop: 10, paddingBottom: 10, borderLeft: `2px solid ${accentColor}` }}>
       <div className="flex-1 min-w-0">
-        <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.5 }}>{item.description}</p>
-        <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 5 }}>
+        <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>{item.description}</p>
+        <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 7 }}>
           {item.emotionTag && (
-            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{item.emotionTag}</span>
+            <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', textTransform: 'capitalize' }}>{item.emotionTag}</span>
           )}
           {item.tags.filter(t => !t.startsWith('mood:')).map(tag => (
-            <span key={tag} className="font-mono uppercase tracking-widest"
-              style={{ fontSize: 9, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
+            <span key={tag} className="font-serif"
+              style={{ fontSize: 12, padding: '1px 8px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
               {tag}
             </span>
           ))}
           {item.intensity && (
-            <span className="font-mono" style={{ fontSize: 10, color: accentColor }}>{INTENSITY_LABELS[item.intensity]}</span>
+            <span className="font-serif" style={{ fontSize: 13, color: accentColor }}>{INTENSITY_LABELS[item.intensity]}</span>
           )}
-          <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+          <span className="font-mono" style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>
             {new Date(item.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
           </span>
         </div>
       </div>
       {/* Row actions — edit + delete */}
-      <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.35, transition: 'opacity 150ms' }}
+      <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.4, transition: 'opacity 150ms' }}
         onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-        onMouseLeave={e => (e.currentTarget.style.opacity = '0.35')}>
+        onMouseLeave={e => (e.currentTarget.style.opacity = '0.4')}>
         <button onClick={() => openEdit(item)} title="Edit"
           style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
-          <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
           </svg>
         </button>
         <button onClick={() => setDeletingTrait(item)} title="Remove"
           style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
-          {/* cute rounded bin */}
-          <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+          <svg width="17" height="17" viewBox="0 0 13 13" fill="none">
             <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
             <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
             <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
@@ -324,13 +324,13 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
 
   if (isLoading) return (
     <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading traits…</p>
+      <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading traits…</p>
     </div>
   );
 
   if (isError) return (
     <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Could not load traits. Please try again.</p>
+      <p className="font-serif italic" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Could not load traits. Please try again.</p>
     </div>
   );
 
@@ -360,85 +360,67 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
 
         {/* Strengths */}
         <div>
-          <div className="flex items-center justify-between" style={{ marginBottom: 16 }}>
+          <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" style={{ color: '#7FA87A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" style={{ color: '#7FA87A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
-              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-primary)' }}>What Draws You Closer</span>
-              <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>({pros.length})</span>
+              <span className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>What Draws You Closer</span>
+              <span className="font-serif" style={{ fontSize: 15, fontWeight: 400, color: 'var(--text-tertiary)' }}>({pros.length})</span>
             </div>
             <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
               onMouseEnter={e => (e.currentTarget.style.color = '#7FA87A')}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </button>
           </div>
           {pros.length === 0
-            ? <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+            ? <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>
                 No strengths captured yet.{' '}
                 <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
               </p>
-            : <div>{pros.map(p => <TraitRow key={p.id} item={p} accentColor="#7FA87A" />)}</div>
+            : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{pros.map(p => <TraitRow key={p.id} item={p} accentColor="#7FA87A" />)}</div>
           }
         </div>
 
         {/* Challenges */}
         <div>
-          <div className="flex items-center justify-between" style={{ marginBottom: 16 }}>
+          <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" style={{ color: '#C47A7A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" style={{ color: '#C47A7A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
               </svg>
-              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-primary)' }}>Growth Edges</span>
-              <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>({cons.length})</span>
+              <span className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>Growth Edges</span>
+              <span className="font-serif" style={{ fontSize: 15, fontWeight: 400, color: 'var(--text-tertiary)' }}>({cons.length})</span>
             </div>
             <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
               onMouseEnter={e => (e.currentTarget.style.color = '#C47A7A')}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
               </svg>
             </button>
           </div>
           {cons.length === 0
-            ? <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+            ? <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>
                 No challenges identified yet.{' '}
                 <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
               </p>
-            : <div>{cons.map(c => <TraitRow key={c.id} item={c} accentColor="#C47A7A" />)}</div>
+            : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{cons.map(c => <TraitRow key={c.id} item={c} accentColor="#C47A7A" />)}</div>
           }
         </div>
       </div>
 
-      {/* Dynamic balance */}
-      <div style={{ padding: '16px 20px', border: '1px solid var(--bg-tertiary)', borderRadius: 12 }}>
-        <div className="flex items-center gap-2" style={{ marginBottom: 14 }}>
-          <svg className="w-3.5 h-3.5" style={{ color: 'var(--accent-gold)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-          </svg>
-          <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Dynamic Balance</span>
-        </div>
-        <div className="grid grid-cols-3 gap-4" style={{ marginBottom: 14 }}>
-          {[
-            { val: pros.length, label: 'Strengths',          color: '#7FA87A' },
-            { val: cons.length, label: 'Growth Edges',       color: '#C47A7A' },
-            { val: `${ratio}%`, label: 'Appreciation Ratio', color: 'var(--accent-ai)' },
-          ].map(({ val, label, color }) => (
-            <div key={label} className="text-center">
-              <div className="font-serif font-light" style={{ fontSize: 26, color, marginBottom: 2 }}>{val}</div>
-              <div className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{label}</div>
-            </div>
-          ))}
-        </div>
-        <div style={{ paddingTop: 12, borderTop: '1px solid var(--bg-tertiary)' }}>
-          <p className="font-serif italic text-center" style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.6 }}>
-            "Every relationship contains both light and shadow. The goal is not perfection, but conscious appreciation of the full spectrum."
-          </p>
-        </div>
-      </div>
+      <TabFooter
+        stats={[
+          { val: pros.length, label: 'Strengths',          color: '#7FA87A' },
+          { val: cons.length, label: 'Growth Edges',       color: '#C47A7A' },
+          { val: `${ratio}%`, label: 'Appreciation Ratio', color: 'var(--accent-ai)' },
+        ]}
+        tagline="Every relationship contains both light and shadow. The goal is not perfection, but conscious appreciation of the full spectrum."
+      />
     </div>
   );
 }

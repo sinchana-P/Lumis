@@ -124,7 +124,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
             <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
               What Makes Them Feel Safe
             </p>
-            <p className="font-serif text-sm text-primary leading-relaxed">
+            <p className="font-serif text-base text-primary leading-relaxed">
               {data.emotionalNature.whatMakesThemSafe}
             </p>
           </div>
@@ -132,7 +132,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
             <p className="font-mono text-xs uppercase tracking-widest text-error">
               What Triggers Withdrawal
             </p>
-            <p className="font-serif text-sm text-primary leading-relaxed">
+            <p className="font-serif text-base text-primary leading-relaxed">
               {data.emotionalNature.whatTriggersWithdrawal}
             </p>
           </div>
@@ -141,7 +141,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
           <p className="font-mono text-xs uppercase tracking-widest text-accent-gold">
             Their Emotional Gift
           </p>
-          <p className="font-serif text-sm text-primary leading-relaxed">
+          <p className="font-serif text-base text-primary leading-relaxed">
             {data.emotionalNature.emotionalGift}
           </p>
         </div>
@@ -165,7 +165,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
         <p className="font-serif text-lg text-primary leading-relaxed">
           {data.whenThingsGoWrong.description}
         </p>
-        <p className="font-serif text-sm italic text-secondary leading-relaxed">
+        <p className="font-serif text-base italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
           {data.whenThingsGoWrong.howToRespond}
         </p>
       </div>
@@ -186,14 +186,14 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
             {data.emotionalAvailability.label}
           </span>
         </div>
-        <p className="font-serif text-sm text-primary leading-relaxed">
+        <p className="font-serif text-base text-primary leading-relaxed">
           {data.emotionalAvailability.description}
         </p>
         <div className="bg-secondary border border-primary/15 rounded-xl px-4 py-3 space-y-1.5">
           <p className="font-mono text-xs uppercase tracking-widest text-tertiary">
             For Your Interactions
           </p>
-          <p className="font-serif text-sm italic text-secondary leading-relaxed">
+          <p className="font-serif text-base italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
             {data.emotionalAvailability.forYourInteractions}
           </p>
         </div>
@@ -216,7 +216,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
               <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
                 What Lands Well
               </p>
-              <p className="font-serif text-sm text-primary leading-relaxed">
+              <p className="font-serif text-base text-primary leading-relaxed">
                 {data.relationshipDynamic.whatLandsWell}
               </p>
             </div>
@@ -227,7 +227,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
               <p className="font-mono text-xs uppercase tracking-widest text-accent-secondary">
                 Where Friction Lives
               </p>
-              <p className="font-serif text-sm text-primary leading-relaxed">
+              <p className="font-serif text-base text-primary leading-relaxed">
                 {data.relationshipDynamic.whereFrictionLives}
               </p>
             </div>
@@ -237,7 +237,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
           <p className="font-mono text-xs uppercase tracking-widest text-tertiary">
             The Adjustment — with {firstName}
           </p>
-          <p className="font-serif text-sm italic text-secondary leading-relaxed">
+          <p className="font-serif text-base italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
             {data.relationshipDynamic.theAdjustment}
           </p>
         </div>
@@ -256,7 +256,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
                 <TipIconBox icon={tip.icon} />
                 <div className="space-y-0.5">
                   <p className="font-serif text-base text-primary">{tip.title}</p>
-                  <p className="font-serif text-sm italic text-tertiary leading-relaxed">
+                  <p className="font-serif text-base italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
                     {tip.description}
                   </p>
                 </div>
@@ -269,7 +269,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
             <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
               Best Moment to Approach
             </p>
-            <p className="font-serif text-sm text-primary leading-relaxed">
+            <p className="font-serif text-base text-primary leading-relaxed">
               {data.howToMeetThemWell.bestMoment}
             </p>
           </div>
@@ -277,7 +277,7 @@ export function MemberAstrologyTab({ member }: MemberAstrologyTabProps) {
             <p className="font-mono text-xs uppercase tracking-widest text-error">
               Avoid When
             </p>
-            <p className="font-serif text-sm text-primary leading-relaxed">
+            <p className="font-serif text-base text-primary leading-relaxed">
               {data.howToMeetThemWell.avoidWhen}
             </p>
           </div>

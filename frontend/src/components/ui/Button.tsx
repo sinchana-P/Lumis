@@ -19,11 +19,16 @@ export function Button({
   onClick, 
   className = '' 
 }: ButtonProps) {
-  const baseStyles = "rounded-lg font-mono text-xs uppercase tracking-widest transition-colors";
-  
+  const baseStyles = "rounded-lg font-serif transition-colors";
+
   const sizeStyles = {
-    sm: "px-3 py-1.5",
-    md: "px-4 py-2"
+    sm: "px-3.5 py-1.5",
+    md: "px-5 py-2"
+  };
+
+  const textStyles = {
+    sm: { fontSize: 13, fontWeight: 400, letterSpacing: '0.01em' },
+    md: { fontSize: 14, fontWeight: 400, letterSpacing: '0.01em' },
   };
 
   const getVariantStyles = () => {
@@ -62,7 +67,7 @@ export function Button({
       type={type}
       disabled={disabled}
       className={`${baseStyles} ${sizeStyles[size]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-      style={getVariantStyles()}
+      style={{ ...getVariantStyles(), ...textStyles[size] }}
       onMouseEnter={disabled ? undefined : handleMouseEnter}
       onMouseLeave={disabled ? undefined : handleMouseLeave}
       onClick={disabled ? undefined : onClick}

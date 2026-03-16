@@ -16,12 +16,14 @@ import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import { DottedDivider } from '@/components/ui/DottedDivider';
 import { TwoColumnModal } from '@/components/ui/TwoColumnModal';
 import { SpeechTextarea } from '@/components/ui/SpeechTextarea';
+import { TabFooter } from '@/components/ui/TabFooter';
 
 interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberPatternsTabProps {
   member: Member;
   externalAddOpen?: boolean;
   onExternalAddClose?: () => void;
+  onCountChange?: (count: number) => void;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -259,7 +261,7 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
 // ── Main Tab ─────────────────────────────────────────────────────────────────
 
-export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose }: MemberPatternsTabProps) {
+export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose, onCountChange }: MemberPatternsTabProps) {
   const [modalOpen, setModalOpen]    = useState(false);
   const [editing, setEditing]        = useState<Pattern | null>(null);
   const [deletingPattern, setDeleting] = useState<Pattern | null>(null);
@@ -298,6 +300,8 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
   };
 
   const patterns = data?.data ?? [];
+
+  useEffect(() => { if (data) onCountChange?.(patterns.length); }, [data, patterns.length]);
 
   // Summary counts per category
   const counts = CATEGORIES.reduce((acc, c) => {
@@ -345,17 +349,6 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
         </div>
       ) : (
         <>
-          {/* ── Header row ── */}
-          <div className="flex items-center justify-between" style={{ marginBottom: 28 }}>
-            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-              {patterns.length} pattern{patterns.length !== 1 ? 's' : ''}
-            </span>
-            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
-              style={{ fontSize: 10, padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-              + Add
-            </button>
-          </div>
-
           {/* ── List ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {patterns.map((pattern, index) => {
@@ -365,84 +358,27 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
                 <div key={pattern.id}>
                   <div className="flex items-start gap-5">
                     {/* Dot */}
-                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 5 }} />
+                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 11 }} />
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 4, lineHeight: 1.4 }}>
-                            {pattern.title}
-                          </p>
-                          <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
-                            {pattern.category && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color }}>
-                                {CATEGORIES.find(c => c.value === pattern.category)?.label ?? pattern.category}
-                              </span>
-                            )}
-                            {pattern.frequency && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
-                                {pattern.frequency}
-                              </span>
-                            )}
-                            {pattern.impact && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: iColor }}>
-                                {pattern.impact}
-                              </span>
-                            )}
-                          </div>
-
-                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: pattern.triggers.length ? 12 : 0 }}>
-                            {pattern.description}
-                          </p>
-
-                          {pattern.triggers.length > 0 && (
-                            <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 10 }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color, marginBottom: 4 }}>Triggers</p>
-                              <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.55 }}>{pattern.triggers.join(', ')}</p>
-                            </div>
-                          )}
-
-                          {pattern.examples.length > 0 && (
-                            <div style={{ marginBottom: 10 }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-gold)', marginBottom: 6 }}>Examples</p>
-                              <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
-                                {pattern.examples
-                                  .flatMap(ex => ex.split('\n').map(s => s.trim()).filter(Boolean))
-                                  .map((ex, idx) => (
-                                    <li key={idx} className="font-serif" style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.55, marginBottom: 4 }}>
-                                      • {ex}
-                                    </li>
-                                  ))}
-                              </ul>
-                            </div>
-                          )}
-
-                          {pattern.tags.length > 0 && (
-                            <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 6 }}>
-                              {pattern.tags.map(tag => (
-                                <span key={tag} className="font-mono uppercase tracking-widest"
-                                  style={{ fontSize: 9, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Row actions */}
+                      {/* Title row — icons inline with title */}
+                      <div className="flex items-center justify-between gap-4" style={{ marginBottom: 5 }}>
+                        <p className="font-serif" style={{ fontSize: 20, color: 'var(--text-primary)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.4 }}>
+                          {pattern.title}
+                        </p>
                         <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.35, transition: 'opacity 150ms' }}
                           onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
                           onMouseLeave={e => (e.currentTarget.style.opacity = '0.35')}>
                           <button onClick={() => openEdit(pattern)} title="Edit"
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
                           <button onClick={() => setDeleting(pattern)} title="Remove"
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <svg width="17" height="17" viewBox="0 0 13 13" fill="none">
                               <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                               <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                               <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
@@ -451,6 +387,62 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
                           </button>
                         </div>
                       </div>
+
+                      {/* Metadata row */}
+                      <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
+                        {pattern.category && (
+                          <span className="font-serif" style={{ fontSize: 14, color, textTransform: 'capitalize' }}>
+                            {CATEGORIES.find(c => c.value === pattern.category)?.label ?? pattern.category}
+                          </span>
+                        )}
+                        {pattern.frequency && (
+                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', textTransform: 'capitalize' }}>
+                            {pattern.frequency}
+                          </span>
+                        )}
+                        {pattern.impact && (
+                          <span className="font-serif" style={{ fontSize: 14, color: iColor, textTransform: 'capitalize' }}>
+                            {pattern.impact}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.65, marginBottom: (pattern.triggers.length || pattern.examples.length) ? 10 : 0 }}>
+                        {pattern.description}
+                      </p>
+
+                      {pattern.triggers.length > 0 && (
+                        <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 6 }}>
+                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color, marginBottom: 4 }}>Triggers</p>
+                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>{pattern.triggers.join(', ')}</p>
+                        </div>
+                      )}
+
+                      {pattern.examples.length > 0 && (
+                        <div style={{ marginBottom: 10 }}>
+                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-gold)', marginBottom: 6 }}>Examples</p>
+                          <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+                            {pattern.examples
+                              .flatMap(ex => ex.split('\n').map(s => s.trim().replace(/,+$/, '')).filter(Boolean))
+                              .map((ex, idx) => (
+                                <li key={idx} className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.65, marginBottom: 2 }}>
+                                  • {ex}
+                                </li>
+                              ))}
+                          </ul>
+                        </div>
+                      )}
+
+                      {pattern.tags.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 6 }}>
+                          {pattern.tags.map(tag => (
+                            <span key={tag} className="font-serif"
+                              style={{ fontSize: 13, padding: '2px 9px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -463,17 +455,10 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose 
             })}
           </div>
 
-          {/* ── Summary strip ── */}
-          <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
-            <div className="grid grid-cols-6 gap-4">
-              {CATEGORIES.map(c => (
-                <div key={c.value} className="text-center">
-                  <div className="font-serif font-light" style={{ fontSize: 22, color: c.color, marginBottom: 2 }}>{counts[c.value]}</div>
-                  <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>{c.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TabFooter
+            stats={CATEGORIES.map(c => ({ val: counts[c.value], label: c.label, color: c.color }))}
+            tagline="Patterns are not flaws. They are the fingerprint of how someone moves through the world."
+          />
         </>
       )}
     </div>

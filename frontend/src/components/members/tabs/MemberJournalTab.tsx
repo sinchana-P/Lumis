@@ -19,6 +19,7 @@ interface MemberJournalTabProps {
   member: Member;
   externalAddOpen?: boolean;
   onExternalAddClose?: () => void;
+  onCountChange?: (count: number) => void;
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -234,7 +235,7 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
 
 // ── Main Tab ──────────────────────────────────────────────────────────────────
 
-export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }: MemberJournalTabProps) {
+export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, onCountChange }: MemberJournalTabProps) {
   const [modalOpen, setModalOpen]          = useState(false);
   const [editing, setEditing]              = useState<JournalEntry | null>(null);
   const [selectedId, setSelectedId]        = useState<string | null>(null);
@@ -261,6 +262,8 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
   useEffect(() => {
     if (entries.length && !selectedId) setSelectedId(entries[0].id);
   }, [entries.length]);
+
+  useEffect(() => { if (data) onCountChange?.(entries.length); }, [data, entries.length]);
 
   const openAdd  = () => { setEditing(null); setModalOpen(true); };
   const openEdit = (e: JournalEntry) => { setEditing(e); setModalOpen(true); };
@@ -350,7 +353,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
         </div>
       ) : (
         /* ── Book container with depth layers ── */
-        <div style={{ position: 'relative', maxWidth: 860 }}>
+        <div style={{ position: 'relative', maxWidth: 960 }}>
 
           {/* Shadow layer 3 — deepest */}
           <div style={{
@@ -374,7 +377,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
           {/* Book body */}
           <div style={{
             position: 'relative', borderRadius: 14, overflow: 'hidden',
-            height: 'min(68vh, 650px)',
+            height: 'min(72vh, 720px)',
             display: 'flex',
             border: '1px solid var(--bg-tertiary)',
             background: 'var(--bg-secondary)',
@@ -397,24 +400,24 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
 
             {/* Left panel — entry list */}
             <div style={{
-              width: 168, flexShrink: 0, display: 'flex', flexDirection: 'column',
+              width: 196, flexShrink: 0, display: 'flex', flexDirection: 'column',
               borderRight: '1px solid var(--bg-tertiary)',
               background: 'var(--bg-primary)',
             }}>
               {/* List header */}
-              <div style={{ padding: '14px 12px 10px', flexShrink: 0, borderBottom: '1px solid var(--bg-tertiary)' }}>
-                <p className="font-serif text-center" style={{ fontSize: 11, color: 'var(--text-primary)', marginBottom: 4 }}>
+              <div style={{ height: 78, flexShrink: 0, borderBottom: '1px solid var(--bg-tertiary)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 12px' }}>
+                <p className="font-serif text-center" style={{ fontSize: 17, color: 'var(--text-primary)', marginBottom: 3 }}>
                   Entries
                 </p>
-                <div style={{ width: 24, height: 1, background: 'var(--accent-secondary)', margin: '0 auto 8px' }} />
-                <p className="font-serif italic text-center" style={{ fontSize: 9, color: 'var(--text-tertiary)', lineHeight: 1.4, padding: '0 4px' }}>
+                <div style={{ width: 24, height: 1, background: 'var(--accent-secondary)', margin: '0 auto 4px' }} />
+                <p className="font-serif italic text-center" style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.35, padding: '0 4px' }}>
                   "The unexamined life is not worth living"
                 </p>
               </div>
 
               {/* Scrollable entries */}
               <div className="journal-list-scroll" style={{ flex: 1, overflowY: 'auto', padding: '8px 8px 6px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                   {entries.map(entry => (
                     <button
                       key={entry.id}
@@ -431,7 +434,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
                       onMouseLeave={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
-                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', flex: 1 }}>
+                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', flex: 1, opacity: 0.7 }}>
                           {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </p>
                         {entry.isPrivate && (
@@ -443,7 +446,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
                           </svg>
                         )}
                       </div>
-                      <p className="font-serif truncate" style={{ fontSize: 11, color: 'var(--text-primary)', lineHeight: 1.3 }}>
+                      <p className="font-serif truncate" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.35, fontWeight: 400 }}>
                         {entry.title || <span style={{ fontStyle: 'italic', color: 'var(--text-tertiary)' }}>Untitled</span>}
                       </p>
                       {entry.emotions.length > 0 && (
@@ -502,7 +505,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
                   </div>
 
                   {/* Vertical rule line */}
-                  <div className="absolute" style={{ left: 48, top: 0, bottom: 0, width: 1, background: 'var(--accent-secondary)', opacity: 0.12, pointerEvents: 'none' }} />
+                  <div className="absolute" style={{ left: 24, top: 0, bottom: 0, width: 1, background: 'var(--accent-secondary)', opacity: 0.12, pointerEvents: 'none' }} />
 
                   {/* Paper wrinkle corner */}
                   <div className={`absolute bottom-4 right-4 w-14 h-14 pointer-events-none ${isPageTurning ? 'animate-paper-wrinkle' : ''}`}>
@@ -520,14 +523,14 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
                     {selected ? (
                       <>
                         {/* ── Fixed header ── */}
-                        <div className="relative z-10" style={{ flexShrink: 0, padding: '20px 52px 0 56px', background: 'var(--bg-primary)' }}>
-                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                        <div className="relative z-10" style={{ flexShrink: 0, height: 78, padding: '0 40px 0 32px', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderBottom: '1px solid var(--bg-tertiary)' }}>
+                          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
                             <div>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 4 }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 5 }}>
                                 {new Date(selected.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                               </p>
                               {selected.title && (
-                                <h3 className="font-serif" style={{ fontSize: 19, color: 'var(--text-primary)', fontWeight: 400, lineHeight: 1.3 }}>
+                                <h3 className="font-serif" style={{ fontSize: 22, color: 'var(--text-primary)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.3 }}>
                                   {selected.title}
                                 </h3>
                               )}
@@ -538,13 +541,13 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
                               onMouseLeave={e => (e.currentTarget.style.opacity = '0.3')}>
                               <button onClick={() => openEdit(selected)} title="Edit"
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
-                                <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                 </svg>
                               </button>
                               <button onClick={() => setDeleting(selected)} title="Delete"
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
-                                <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                                <svg width="17" height="17" viewBox="0 0 13 13" fill="none">
                                   <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                                   <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                                   <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
@@ -553,21 +556,24 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
                               </button>
                             </div>
                           </div>
-                          <div style={{ width: '100%', height: 1, background: 'var(--accent-gold)', opacity: 0.5 }} />
                         </div>
 
                         {/* ── Scrollable content ── */}
-                        <div className="journal-page-scroll relative z-10" style={{ flex: 1, overflowY: 'auto', padding: '18px 52px 24px 56px' }}>
-                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-primary)', lineHeight: 1.9, whiteSpace: 'pre-wrap', marginBottom: 22 }}>
-                            {selected.content}
-                          </p>
+                        <div className="journal-page-scroll relative z-10" style={{ flex: 1, overflowY: 'auto', padding: '18px 40px 24px 32px' }}>
+                          <div style={{ marginBottom: 24 }}>
+                            {selected.content.split('\n').map((line, i) =>
+                              line.trim()
+                                ? <p key={i} className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.75, marginBottom: 6 }}>{line}</p>
+                                : <div key={i} style={{ height: 6 }} />
+                            )}
+                          </div>
 
                           {selected.emotions.length > 0 && (
-                            <div style={{ marginBottom: 14 }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 7 }}>Emotional State</p>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            <div style={{ marginBottom: 10 }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 5 }}>Emotional State</p>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                                 {selected.emotions.map(e => (
-                                  <span key={e} className="font-serif" style={{ fontSize: 11, padding: '2px 9px', borderRadius: 999, border: `1px solid ${emotionColor(e)}`, color: emotionColor(e) }}>{e}</span>
+                                  <span key={e} className="font-serif" style={{ fontSize: 12, padding: '1px 8px', borderRadius: 999, border: `1px solid ${emotionColor(e)}`, color: emotionColor(e) }}>{e}</span>
                                 ))}
                               </div>
                             </div>
@@ -575,11 +581,11 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose }
 
                           {selected.tags.length > 0 && (
                             <div>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 7 }}>Themes</p>
-                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 5 }}>Themes</p>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                                 {selected.tags.map(tag => (
-                                  <span key={tag} className="font-mono uppercase tracking-widest"
-                                    style={{ fontSize: 8, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--accent-gold)', color: 'var(--accent-gold)' }}>
+                                  <span key={tag} className="font-serif"
+                                    style={{ fontSize: 12, padding: '1px 8px', borderRadius: 999, border: '1px solid var(--accent-gold)', color: 'var(--accent-gold)' }}>
                                     {tag}
                                   </span>
                                 ))}

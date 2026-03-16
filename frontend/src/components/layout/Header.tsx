@@ -31,46 +31,32 @@ export function Header() {
         
         {/* Navigation */}
         <nav className="flex items-center gap-12">
-          <button 
-            onClick={() => router.push('/dashboard')}
-            className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-              isActive('/dashboard')
-                ? 'text-primary border-b border-accent-primary'
-                : 'text-tertiary hover:text-primary'
-            }`}
-          >
-            Dashboard
-          </button>
-          <button
-            onClick={() => router.push('/orbit')}
-            className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-              isActive('/orbit')
-                ? 'text-primary border-b border-accent-primary'
-                : 'text-tertiary hover:text-primary'
-            }`}
-          >
-            Orbit
-          </button>
-          <button
-            onClick={() => router.push('/lumen')}
-            className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-              isActive('/lumen')
-                ? 'text-primary border-b border-accent-primary'
-                : 'text-tertiary hover:text-primary'
-            }`}
-          >
-            Lumen
-          </button>
-          <button 
-            onClick={() => router.push('/profile')}
-            className={`font-mono text-sm uppercase tracking-widest transition-colors ${
-              isActive('/profile')
-                ? 'text-primary border-b border-accent-primary'
-                : 'text-tertiary hover:text-primary'
-            }`}
-          >
-            Profile
-          </button>
+          {[
+            { path: '/dashboard', label: 'Dashboard' },
+            { path: '/orbit',     label: 'Orbit'     },
+            { path: '/lumen',     label: 'Lumen'     },
+            { path: '/profile',   label: 'Profile'   },
+          ].map(({ path, label }) => (
+            <button
+              key={path}
+              onClick={() => router.push(path)}
+              className="transition-colors"
+              style={{
+                fontFamily: 'var(--font-rounded)',
+                fontSize: 12,
+                fontWeight: isActive(path) ? 700 : 600,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                color: isActive(path) ? 'var(--text-primary)' : 'var(--text-tertiary)',
+                borderBottom: isActive(path) ? '1px solid var(--accent-primary)' : '1px solid transparent',
+                paddingBottom: 2,
+              }}
+              onMouseEnter={(e) => { if (!isActive(path)) e.currentTarget.style.color = 'var(--text-primary)'; }}
+              onMouseLeave={(e) => { if (!isActive(path)) e.currentTarget.style.color = 'var(--text-tertiary)'; }}
+            >
+              {label}
+            </button>
+          ))}
         </nav>
 
         {/* Actions */}

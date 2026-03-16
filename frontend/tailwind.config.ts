@@ -76,9 +76,14 @@ const config: Config = {
         },
       },
       fontFamily: {
-        serif: ['Crimson Pro', 'Georgia', 'serif'],
-        sans: ['Crimson Pro', 'Georgia', 'serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        // Crimson Pro — all body text, labels, UI, journal, cards (backward compat)
+        serif:   ['var(--font-body)', 'Georgia', 'serif'],
+        sans:    ['var(--font-body)', 'Georgia', 'serif'],
+        body:    ['var(--font-body)', 'Georgia', 'serif'],
+        // Playfair Display — explicit opt-in for display headings only
+        display: ['var(--font-display)', 'Georgia', 'serif'],
+        // JetBrains Mono — dates, codes, counts
+        mono:    ['JetBrains Mono', 'monospace'],
       },
       fontSize: {
         // Base scale — unchanged, body text reads well at these sizes

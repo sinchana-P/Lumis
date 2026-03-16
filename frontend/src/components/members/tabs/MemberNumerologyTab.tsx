@@ -11,6 +11,7 @@ import {
 interface Member {
   id: string;
   fullName: string;
+  nickname?: string;
   dateOfBirth?: string;
   [key: string]: any;
 }
@@ -60,14 +61,14 @@ function Chevron({ open, accent }: { open: boolean; accent: string }) {
 
 // ─── Expanded insight card ────────────────────────────────────────────────────
 
-function InsightCard({ icon, title, body, accent }: { icon: React.ReactNode; title: string; body: string; accent: string }) {
+function InsightCard({ icon, title, body, accent }: { icon: React.ReactNode; title: React.ReactNode; body: string; accent: string }) {
   return (
     <div className="bg-secondary border border-primary/30 rounded-xl p-5 shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-4 h-4 ${accent}`}>{icon}</span>
-        <h4 className="font-mono text-xs uppercase tracking-widest text-primary font-medium">{title}</h4>
+        <h4 className="font-sans text-sm text-primary font-medium">{title}</h4>
       </div>
-      <p className="font-serif text-base leading-relaxed text-secondary italic">{body}</p>
+      <p className="font-serif text-base leading-relaxed italic" style={{ color: 'var(--text-tertiary)' }}>{body}</p>
     </div>
   );
 }
@@ -81,7 +82,7 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
   return (
     <div className="space-y-4">
       {/* Description only - no duplicate header */}
-      <p className="font-serif text-base leading-relaxed text-secondary font-light tracking-wide mb-4">
+      <p className="font-serif text-base leading-relaxed text-primary font-light mb-4">
         The permanent blueprint — calculated from name and date of birth
       </p>
 
@@ -114,12 +115,12 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-3 mb-1">
-                    <h3 className="font-serif text-lg font-medium text-primary leading-tight">{n.title}</h3>
+                    <h3 className="font-serif text-xl font-medium text-primary leading-tight" style={{ letterSpacing: '-0.01em' }}>{n.title}</h3>
                   </div>
                   <div className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mb-1 font-medium`}>
                     {n.traits.join(' · ')}
                   </div>
-                  <p className="font-serif text-sm text-secondary leading-snug font-light tracking-wide">{n.description}</p>
+                  <p className="font-serif text-base text-primary leading-snug">{n.description}</p>
                 </div>
 
                 <Chevron open={expanded} accent={theme.accent} />
@@ -162,19 +163,19 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
   return (
     <div className="space-y-4">
       {/* Description only - no duplicate header */}
-      <p className="font-serif text-base leading-relaxed text-secondary font-light tracking-wide mb-3">
+      <p className="font-serif text-base leading-relaxed text-primary font-light mb-3">
         The cyclical influences — energies that shift and evolve through time,
-        revealing the cosmic rhythm of {member.fullName}'s journey.
+        revealing the cosmic rhythm of {member.fullName}{member.nickname && <span className="ml-1 italic" style={{ color: 'var(--text-tertiary)' }}>&ldquo;{member.nickname}&rdquo;</span>}'s journey.
       </p>
 
       {/* Current year banner */}
       <div className="bg-accent-gold/12 border border-accent-gold/30 rounded-xl px-5 py-3 flex items-center gap-3 mb-2">
         <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse flex-shrink-0" />
         <div>
-          <span className="font-mono text-xs uppercase tracking-widest text-accent-gold font-medium mr-2">
+          <span className="font-mono text-xs uppercase tracking-widest font-medium mr-2" style={{ color: '#8B6A3E' }}>
             Current Year Energy: {currentYear}
           </span>
-          <span className="font-serif text-sm text-secondary font-light tracking-wide">
+          <span className="font-serif text-sm text-primary">
             {personalYear ? `${personalYear.title} — ${personalYear.influence}` : `Deep inner work and intentional growth.`}
           </span>
         </div>
@@ -210,7 +211,7 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-serif text-lg font-medium text-primary leading-tight">{n.title}</h3>
+                    <h3 className="font-serif text-xl font-medium text-primary leading-tight" style={{ letterSpacing: '-0.01em' }}>{n.title}</h3>
                     {n.period === 'Personal Year' && (
                       <span className="px-2 py-0.5 bg-accent-secondary/15 text-accent-secondary border border-accent-secondary/25 rounded-full font-serif text-xs uppercase tracking-wider font-medium">
                         Live
@@ -230,7 +231,7 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                   <div className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mb-1 font-medium`}>
                     {n.year ? `${n.year} • ${n.period}` : n.period}
                   </div>
-                  <p className="font-serif text-sm text-secondary leading-snug font-light tracking-wide">{n.description}</p>
+                  <p className="font-serif text-base text-primary leading-snug">{n.description}</p>
                 </div>
 
                 <Chevron open={expanded} accent={theme.accent} />
@@ -242,7 +243,7 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                   <p className="font-serif text-base leading-relaxed text-primary">{n.expandedDescription}</p>
                   <InsightCard
                     accent={theme.accent}
-                    title={`Guidance for ${member.fullName}`}
+                    title={<>Guidance for {member.fullName}{member.nickname && <span className="ml-1 italic" style={{ color: 'var(--text-tertiary)' }}>&ldquo;{member.nickname}&rdquo;</span>}</>}
                     body={n.guidanceText}
                     icon={
                       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
@@ -282,7 +283,7 @@ function CompatibilityContent({ compatibility, member }: {
   return (
     <div className="space-y-4">
       {/* Description only - no duplicate header */}
-      <p className="font-serif text-base leading-relaxed text-secondary font-light tracking-wide mb-3">
+      <p className="font-serif text-base leading-relaxed text-primary font-light mb-3">
         How your numerological blueprint meets theirs — both sides examined
       </p>
 
@@ -295,7 +296,7 @@ function CompatibilityContent({ compatibility, member }: {
           <span className="font-mono text-xs uppercase tracking-widest text-tertiary mt-1">Overall</span>
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-serif text-base font-light tracking-wide text-secondary mb-2">{getCompatibilityDescription(compatibility.overallScore)}</p>
+          <p className="font-serif text-base text-primary leading-snug mb-2">{getCompatibilityDescription(compatibility.overallScore)}</p>
           <div className="h-[2px] w-full rounded-full mb-1" style={{ background: 'linear-gradient(to right, #9CAF9E, #C9A58F)' }} />
           <div className="flex justify-between font-mono text-xs uppercase tracking-widest text-tertiary">
             <span>You — LP {compatibility.lifePath.yourNumber}</span>
@@ -331,7 +332,7 @@ function CompatibilityContent({ compatibility, member }: {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-serif text-lg font-medium text-primary leading-tight mb-0.5">{card.title}</h3>
+                  <h3 className="font-serif text-xl font-medium text-primary leading-tight mb-0.5" style={{ letterSpacing: '-0.01em' }}>{card.title}</h3>
                   <div className="flex items-center gap-3">
                     <div className={`flex-1 h-1.5 ${theme.progressBg} rounded-full overflow-hidden`}>
                       <div className={`h-full ${theme.number.replace('text-', 'bg-')} transition-all duration-700`} style={{ width: `${card.score}%` }} />

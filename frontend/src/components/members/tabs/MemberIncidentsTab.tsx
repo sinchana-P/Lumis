@@ -15,6 +15,7 @@ import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import { DottedDivider } from '@/components/ui/DottedDivider';
 import { TwoColumnModal } from '@/components/ui/TwoColumnModal';
 import { SpeechTextarea } from '@/components/ui/SpeechTextarea';
+import { TabFooter } from '@/components/ui/TabFooter';
 
 interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberIncidentsTabProps {
@@ -22,6 +23,7 @@ interface MemberIncidentsTabProps {
   /** Set to true by the parent page's header button to open the add modal */
   externalAddOpen?: boolean;
   onExternalAddClose?: () => void;
+  onCountChange?: (count: number) => void;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -244,7 +246,7 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
 // ── Main Tab ─────────────────────────────────────────────────────────────────
 
-export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose }: MemberIncidentsTabProps) {
+export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose, onCountChange }: MemberIncidentsTabProps) {
   const [modalOpen, setModalOpen]       = useState(false);
   const [editing, setEditing]           = useState<Incident | null>(null);
   const [deletingIncident, setDeleting] = useState<Incident | null>(null);
@@ -284,6 +286,10 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
 
   const incidents = data?.data ?? [];
 
+  useEffect(() => {
+    if (data) onCountChange?.(incidents.length);
+  }, [data, incidents.length]);
+
   // Summary counts
   const counts = CATEGORIES.reduce((acc, c) => {
     acc[c.value] = incidents.filter(i => i.category === c.value).length;
@@ -292,13 +298,13 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
 
   if (isLoading) return (
     <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
+      <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
     </div>
   );
 
   if (isError) return (
     <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Could not load incidents. Please try again.</p>
+      <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Could not load incidents. Please try again.</p>
     </div>
   );
 
@@ -319,104 +325,45 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
       {incidents.length === 0 ? (
         /* ── Empty state ── */
         <div style={{ paddingTop: 40, textAlign: 'center' }}>
-          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>Your story begins here</p>
-          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
+          <p className="font-serif" style={{ fontSize: 17, color: 'var(--text-primary)', marginBottom: 6, fontWeight: 400, letterSpacing: '-0.01em' }}>Your story begins here</p>
+          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 24 }}>
             Start chronicling the moments that shaped your connection with {member.fullName}.
           </p>
-          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
-            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+          <button onClick={openAdd} style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
             Chronicle a Moment
           </button>
         </div>
       ) : (
         <>
-          {/* ── Header row ── */}
-          <div className="flex items-center justify-between" style={{ marginBottom: 28 }}>
-            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-              {incidents.length} moment{incidents.length !== 1 ? 's' : ''}
-            </span>
-            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
-              style={{ fontSize: 10, padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-              + Add
-            </button>
-          </div>
-
           {/* ── Timeline ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {incidents.map((incident, index) => {
               const color = categoryColor(incident.category);
               return (
                 <div key={incident.id}>
-                  <div className="flex items-start gap-5">
-                    {/* Dot */}
-                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 5 }} />
+                  <div className="flex items-start gap-4">
+                    {/* Dot — aligned to title baseline */}
+                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: color, marginTop: 11 }} />
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 4, lineHeight: 1.4 }}>
-                            {incident.title}
-                          </p>
-                          <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
-                            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
-                              {new Date(incident.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </span>
-                            {incident.category && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color }}>
-                                {incident.category}
-                              </span>
-                            )}
-                            {incident.severity && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
-                                {incident.severity}
-                              </span>
-                            )}
-                          </div>
-
-                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: incident.outcome ? 12 : 0 }}>
-                            {incident.description}
-                          </p>
-
-                          {incident.outcome && (
-                            <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 10 }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color, marginBottom: 4 }}>Resolution</p>
-                              <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.55 }}>{incident.outcome}</p>
-                            </div>
-                          )}
-
-                          {incident.emotions.length > 0 && (
-                            <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: incident.tags?.length ? 6 : 0 }}>
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Emotions:</span>
-                              <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{incident.emotions.join(', ')}</span>
-                            </div>
-                          )}
-
-                          {incident.tags?.length > 0 && (
-                            <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 4 }}>
-                              {incident.tags.map(tag => (
-                                <span key={tag} className="font-mono uppercase tracking-widest"
-                                  style={{ fontSize: 9, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Row actions */}
-                        <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.35, transition: 'opacity 150ms' }}
+                      {/* Title row — icons inline with title */}
+                      <div className="flex items-center justify-between gap-4" style={{ marginBottom: 5 }}>
+                        <p className="font-serif" style={{ fontSize: 20, color: 'var(--text-primary)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.4 }}>
+                          {incident.title}
+                        </p>
+                        <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.4, transition: 'opacity 150ms' }}
                           onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                          onMouseLeave={e => (e.currentTarget.style.opacity = '0.35')}>
+                          onMouseLeave={e => (e.currentTarget.style.opacity = '0.4')}>
                           <button onClick={() => openEdit(incident)} title="Edit"
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
                           <button onClick={() => setDeleting(incident)} title="Remove"
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <svg width="17" height="17" viewBox="0 0 13 13" fill="none">
                               <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                               <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                               <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
@@ -425,6 +372,52 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
                           </button>
                         </div>
                       </div>
+
+                      {/* Metadata row */}
+                      <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
+                        <span className="font-mono" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+                          {new Date(incident.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </span>
+                        {incident.category && (
+                          <span className="font-serif" style={{ fontSize: 14, color, textTransform: 'capitalize' }}>
+                            {incident.category}
+                          </span>
+                        )}
+                        {incident.severity && (
+                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+                            {incident.severity}
+                          </span>
+                        )}
+                      </div>
+
+                      <p className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.65, marginBottom: incident.outcome ? 14 : 0 }}>
+                        {incident.description}
+                      </p>
+
+                      {incident.outcome && (
+                        <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 12 }}>
+                          <p className="font-serif" style={{ fontSize: 13, color, marginBottom: 4, fontStyle: 'italic' }}>Resolution</p>
+                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>{incident.outcome}</p>
+                        </div>
+                      )}
+
+                      {incident.emotions.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: incident.tags?.length ? 6 : 0 }}>
+                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Felt:</span>
+                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>{incident.emotions.join(', ')}</span>
+                        </div>
+                      )}
+
+                      {incident.tags?.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 4 }}>
+                          {incident.tags.map(tag => (
+                            <span key={tag} className="font-serif"
+                              style={{ fontSize: 13, padding: '2px 9px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -437,17 +430,10 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
             })}
           </div>
 
-          {/* ── Summary strip ── */}
-          <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
-            <div className="grid grid-cols-5 gap-4">
-              {CATEGORIES.map(c => (
-                <div key={c.value} className="text-center">
-                  <div className="font-serif font-light" style={{ fontSize: 22, color: c.color, marginBottom: 2 }}>{counts[c.value]}</div>
-                  <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>{c.label}</div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <TabFooter
+            stats={CATEGORIES.map(c => ({ val: counts[c.value], label: c.label, color: c.color }))}
+            tagline="Every moment — difficult or beautiful — is a thread in the story of this relationship."
+          />
         </>
       )}
     </div>

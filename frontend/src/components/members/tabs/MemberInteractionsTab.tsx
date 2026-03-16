@@ -15,12 +15,14 @@ import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import { DottedDivider } from '@/components/ui/DottedDivider';
 import { TwoColumnModal } from '@/components/ui/TwoColumnModal';
 import { SpeechTextarea } from '@/components/ui/SpeechTextarea';
+import { TabFooter } from '@/components/ui/TabFooter';
 
 interface Member { id: string; fullName: string; [key: string]: any }
 interface MemberInteractionsTabProps {
   member: Member;
   externalAddOpen?: boolean;
   onExternalAddClose?: () => void;
+  onCountChange?: (count: number) => void;
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -352,7 +354,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
 // ── Main Tab ─────────────────────────────────────────────────────────────────
 
-export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddClose }: MemberInteractionsTabProps) {
+export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddClose, onCountChange }: MemberInteractionsTabProps) {
   const [modalOpen, setModalOpen]        = useState(false);
   const [editing, setEditing]            = useState<Interaction | null>(null);
   const [deletingItem, setDeletingItem]  = useState<Interaction | null>(null);
@@ -390,6 +392,8 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
   };
 
   const interactions = data?.data ?? [];
+
+  useEffect(() => { if (data) onCountChange?.(interactions.length); }, [data, interactions.length]);
 
   // Summary stats
   const avgEnergy = interactions.length
@@ -437,17 +441,6 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
         </div>
       ) : (
         <>
-          {/* ── Header row ── */}
-          <div className="flex items-center justify-between" style={{ marginBottom: 28 }}>
-            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-              {interactions.length} interaction{interactions.length !== 1 ? 's' : ''}
-            </span>
-            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
-              style={{ fontSize: 10, padding: '6px 14px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-              + Add
-            </button>
-          </div>
-
           {/* ── List ── */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {interactions.map((interaction, index) => {
@@ -456,97 +449,30 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
               const eCol = energyColor(interaction.energyLevel);
               return (
                 <div key={interaction.id}>
-                  <div className="flex items-start gap-5">
+                  <div className="flex items-start gap-4">
                     {/* Dot */}
-                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: tCol, marginTop: 5 }} />
+                    <div style={{ flexShrink: 0, width: 10, height: 10, borderRadius: '50%', background: tCol, marginTop: 11 }} />
 
                     {/* Content */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          {/* Title + meta */}
-                          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', fontWeight: 400, marginBottom: 4, lineHeight: 1.4 }}>
-                            {interaction.title}
-                            {interaction.duration && <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginLeft: 8 }}>• {interaction.duration}</span>}
-                          </p>
-                          <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
-                            <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
-                              {new Date(interaction.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </span>
-                            {interaction.type && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: tCol }}>
-                                {TYPES.find(t => t.value === interaction.type)?.label ?? interaction.type}
-                              </span>
-                            )}
-                            {interaction.quality && (
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: qCol }}>
-                                {interaction.quality}
-                              </span>
-                            )}
-                            {interaction.energyLevel != null && (
-                              <span className="font-mono" style={{ fontSize: 10, color: eCol }}>
-                                {interaction.energyLevel}/10
-                              </span>
-                            )}
-                          </div>
-
-                          {/* Description */}
-                          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: (interaction.moodBefore || interaction.moodAfter) ? 12 : 0 }}>
-                            {interaction.description}
-                          </p>
-
-                          {/* Mood before/after */}
-                          {(interaction.moodBefore || interaction.moodAfter) && (
-                            <div className="grid grid-cols-2 gap-4" style={{ marginBottom: 10 }}>
-                              {interaction.moodBefore && (
-                                <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--accent-secondary)' }}>
-                                  <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-secondary)', marginBottom: 3 }}>Mood Before</p>
-                                  <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{interaction.moodBefore}</p>
-                                </div>
-                              )}
-                              {interaction.moodAfter && (
-                                <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--accent-ai)' }}>
-                                  <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 3 }}>Mood After</p>
-                                  <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{interaction.moodAfter}</p>
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {/* Topics */}
-                          {interaction.topics.length > 0 && (
-                            <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: interaction.tags.length ? 6 : 0 }}>
-                              <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Topics:</span>
-                              <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>{interaction.topics.join(', ')}</span>
-                            </div>
-                          )}
-
-                          {/* Tags */}
-                          {interaction.tags.length > 0 && (
-                            <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 4 }}>
-                              {interaction.tags.map(tag => (
-                                <span key={tag} className="font-mono uppercase tracking-widest"
-                                  style={{ fontSize: 9, padding: '2px 7px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
-                                  {tag}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Row actions */}
-                        <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.35, transition: 'opacity 150ms' }}
+                      {/* Title row — icons inline */}
+                      <div className="flex items-center justify-between gap-4" style={{ marginBottom: 5 }}>
+                        <p className="font-serif" style={{ fontSize: 20, color: 'var(--text-primary)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.4 }}>
+                          {interaction.title}
+                          {interaction.duration && <span className="font-mono" style={{ fontSize: 13, color: 'var(--text-tertiary)', marginLeft: 10 }}>· {interaction.duration}</span>}
+                        </p>
+                        <div className="flex items-center gap-1 flex-shrink-0" style={{ opacity: 0.4, transition: 'opacity 150ms' }}
                           onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
-                          onMouseLeave={e => (e.currentTarget.style.opacity = '0.35')}>
+                          onMouseLeave={e => (e.currentTarget.style.opacity = '0.4')}>
                           <button onClick={() => openEdit(interaction)} title="Edit"
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', padding: '2px 4px' }}>
-                            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            <svg width="17" height="17" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                             </svg>
                           </button>
                           <button onClick={() => setDeletingItem(interaction)} title="Remove"
                             style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C47A7A', padding: '2px 4px', display: 'flex', alignItems: 'center' }}>
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <svg width="17" height="17" viewBox="0 0 13 13" fill="none">
                               <path d="M2 3.5h9" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                               <path d="M4.5 3.5V2.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" />
                               <path d="M3 3.5l.6 6a1 1 0 0 0 1 .9h3.8a1 1 0 0 0 1-.9l.6-6" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" strokeLinejoin="round" />
@@ -555,6 +481,71 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
                           </button>
                         </div>
                       </div>
+
+                      {/* Metadata row */}
+                      <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
+                        <span className="font-mono" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+                          {new Date(interaction.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </span>
+                        {interaction.type && (
+                          <span className="font-serif" style={{ fontSize: 14, color: tCol, textTransform: 'capitalize' }}>
+                            {TYPES.find(t => t.value === interaction.type)?.label ?? interaction.type}
+                          </span>
+                        )}
+                        {interaction.quality && (
+                          <span className="font-serif" style={{ fontSize: 14, color: qCol, textTransform: 'capitalize' }}>
+                            {interaction.quality}
+                          </span>
+                        )}
+                        {interaction.energyLevel != null && (
+                          <span className="font-mono" style={{ fontSize: 13, color: eCol }}>
+                            {interaction.energyLevel}/10
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Description */}
+                      <p className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.65, marginBottom: (interaction.moodBefore || interaction.moodAfter || interaction.topics.length) ? 14 : 0 }}>
+                        {interaction.description}
+                      </p>
+
+                      {/* Mood before/after */}
+                      {(interaction.moodBefore || interaction.moodAfter) && (
+                        <div className="grid grid-cols-2 gap-4" style={{ marginBottom: 12 }}>
+                          {interaction.moodBefore && (
+                            <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--accent-secondary)' }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-secondary)', marginBottom: 3 }}>Mood Before</p>
+                              <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', textTransform: 'capitalize' }}>{interaction.moodBefore}</p>
+                            </div>
+                          )}
+                          {interaction.moodAfter && (
+                            <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--accent-ai)' }}>
+                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 3 }}>Mood After</p>
+                              <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', textTransform: 'capitalize' }}>{interaction.moodAfter}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Topics */}
+                      {interaction.topics.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap" style={{ marginBottom: interaction.tags.length ? 6 : 0 }}>
+                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Topics:</span>
+                          <span className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)' }}>{interaction.topics.join(', ')}</span>
+                        </div>
+                      )}
+
+                      {/* Tags */}
+                      {interaction.tags.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap" style={{ marginTop: 4 }}>
+                          {interaction.tags.map(tag => (
+                            <span key={tag} className="font-serif"
+                              style={{ fontSize: 13, padding: '2px 9px', borderRadius: 999, border: '1px solid var(--bg-tertiary)', color: 'var(--text-tertiary)' }}>
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -566,27 +557,15 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
             })}
           </div>
 
-          {/* ── Summary strip ── */}
-          <div style={{ marginTop: 32, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
-            <div className="grid grid-cols-4 gap-4">
-              <div className="text-center">
-                <div className="font-serif font-light" style={{ fontSize: 22, color: 'var(--text-primary)', marginBottom: 2 }}>{interactions.length}</div>
-                <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>Total</div>
-              </div>
-              <div className="text-center">
-                <div className="font-serif font-light" style={{ fontSize: 22, color: '#7FA87A', marginBottom: 2 }}>{positiveCount}</div>
-                <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>Positive</div>
-              </div>
-              <div className="text-center">
-                <div className="font-serif font-light" style={{ fontSize: 22, color: 'var(--accent-primary)', marginBottom: 2 }}>{inPersonCount}</div>
-                <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>In Person</div>
-              </div>
-              <div className="text-center">
-                <div className="font-serif font-light" style={{ fontSize: 22, color: energyColor(Number(avgEnergy)), marginBottom: 2 }}>{avgEnergy}</div>
-                <div className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>Avg Energy</div>
-              </div>
-            </div>
-          </div>
+          <TabFooter
+            stats={[
+              { val: interactions.length, label: 'Total',      color: 'var(--text-primary)' },
+              { val: positiveCount,        label: 'Positive',   color: '#7FA87A' },
+              { val: inPersonCount,        label: 'In Person',  color: 'var(--accent-primary)' },
+              { val: avgEnergy,            label: 'Avg Energy', color: energyColor(Number(avgEnergy)) },
+            ]}
+            tagline="How often you show up for someone quietly defines the depth of what you share."
+          />
         </>
       )}
     </div>

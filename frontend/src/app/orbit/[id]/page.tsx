@@ -93,6 +93,10 @@ export default function MemberDetailPage() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [showEditModal, setShowEditModal] = useState(false);
   const [incidentsAddOpen, setIncidentsAddOpen] = useState(false);
+  const [incidentsCount, setIncidentsCount]       = useState<number | undefined>(undefined);
+  const [patternsCount, setPatternsCount]         = useState<number | undefined>(undefined);
+  const [interactionsCount, setInteractionsCount] = useState<number | undefined>(undefined);
+  const [journalCount, setJournalCount]           = useState<number | undefined>(undefined);
   const [patternsAddOpen, setPatternsAddOpen]         = useState(false);
   const [interactionsAddOpen, setInteractionsAddOpen] = useState(false);
   const [journalAddOpen, setJournalAddOpen]           = useState(false);
@@ -160,13 +164,13 @@ export default function MemberDetailPage() {
       case 'traits':
         return <MemberProsConsTab member={member} />;
       case 'incidents':
-        return <MemberIncidentsTab member={member} externalAddOpen={incidentsAddOpen} onExternalAddClose={() => setIncidentsAddOpen(false)} />;
+        return <MemberIncidentsTab member={member} externalAddOpen={incidentsAddOpen} onExternalAddClose={() => setIncidentsAddOpen(false)} onCountChange={setIncidentsCount} />;
       case 'patterns':
-        return <MemberPatternsTab member={member} externalAddOpen={patternsAddOpen} onExternalAddClose={() => setPatternsAddOpen(false)} />;
+        return <MemberPatternsTab member={member} externalAddOpen={patternsAddOpen} onExternalAddClose={() => setPatternsAddOpen(false)} onCountChange={setPatternsCount} />;
       case 'interactions':
-        return <MemberInteractionsTab member={member} externalAddOpen={interactionsAddOpen} onExternalAddClose={() => setInteractionsAddOpen(false)} />;
+        return <MemberInteractionsTab member={member} externalAddOpen={interactionsAddOpen} onExternalAddClose={() => setInteractionsAddOpen(false)} onCountChange={setInteractionsCount} />;
       case 'journal':
-        return <MemberJournalTab member={member} externalAddOpen={journalAddOpen} onExternalAddClose={() => setJournalAddOpen(false)} />;
+        return <MemberJournalTab member={member} externalAddOpen={journalAddOpen} onExternalAddClose={() => setJournalAddOpen(false)} onCountChange={setJournalCount} />;
       case 'numerology':
         return <MemberNumerologyTab member={member} />;
       case 'astrology':
@@ -178,19 +182,16 @@ export default function MemberDetailPage() {
     }
   };
 
-  // Calculate relationship health (mock calculation)
-  const relationshipHealth = 92;
-
   return (
     <div className="h-screen flex overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Ultra Narrow Sidebar */}
       <aside className="w-48 flex flex-col h-full">
-        {/* Back Navigation - Compact */}
-        <div className="pl-12 pr-4 py-6 flex-shrink-0">
+        {/* Back Navigation */}
+        <div className="pl-12 pr-4 py-5 flex-shrink-0">
           <button
             onClick={() => router.push('/orbit')}
-            className="flex items-center gap-2 font-mono text-xs uppercase tracking-widest transition-colors"
-            style={{ color: 'var(--text-tertiary)' }}
+            className="flex items-center gap-2 transition-colors"
+            style={{ color: 'var(--text-tertiary)', fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-tertiary)')}
           >
@@ -203,79 +204,59 @@ export default function MemberDetailPage() {
 
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto flex flex-col justify-between">
-          {/* Member Profile - Compact */}
-          <div className="pl-12 pr-4 pt-6">
+          {/* Member Profile */}
+          <div className="pl-12 pr-4 pt-4">
             <div className="text-center">
-              {/* Smaller Profile Image */}
-              <div className="w-14 h-14 mx-auto mb-2 rounded-full overflow-hidden" style={{ border: '1px solid var(--border-tertiary)' }}>
+              <div className="w-14 h-14 mx-auto mb-3 rounded-full overflow-hidden" style={{ border: '1px solid var(--bg-tertiary)' }}>
                 {member.photoUrl ? (
-                  <img
-                    src={member.photoUrl}
-                    alt={member.fullName}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={member.photoUrl} alt={member.fullName} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-sm font-serif" style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverse)' }}>
+                  <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: 'var(--accent-primary)', color: 'var(--text-inverse)', fontFamily: 'var(--font-sans)', fontSize: 18, fontWeight: 600 }}>
                     {member.fullName.charAt(0).toUpperCase()}
                   </div>
                 )}
               </div>
-              
-              {/* Member Name - Compact */}
-              <h1 className="font-serif text-sm font-medium mb-1" style={{ color: 'var(--text-primary)' }}>
+              {/* Member name — Playfair, legible */}
+              <h1 style={{ fontFamily: "'Nunito', sans-serif", fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.3, marginBottom: 4 }}>
                 {member.fullName}
               </h1>
-              <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-secondary)' }}>
+              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 500, color: 'var(--text-tertiary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                 {member.relationTypeCustom || member.relationType}
               </p>
             </div>
           </div>
 
-          {/* Minimal Navigation - Centered */}
+          {/* Navigation — Inter, navigation labels */}
           <nav className="pl-14 pr-0 flex-1 flex items-center">
-            <div className="space-y-3 w-full">
+            <div className="space-y-1 w-full">
               {tabs.map((tab) => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className="w-full text-left transition-all flex items-center gap-2"
-                  style={{ 
-                    color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)'
-                  }}
-                  onMouseEnter={(e) => {
-                    if (activeTab !== tab.id) {
-                      e.currentTarget.style.color = 'var(--text-primary)';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (activeTab !== tab.id) {
-                      e.currentTarget.style.color = 'var(--text-tertiary)';
-                    }
-                  }}
+                  className="w-full text-left transition-all flex items-center gap-2.5"
+                  style={{ color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)', padding: '4px 0' }}
+                  onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}
                 >
-                  {/* Active Badge */}
-                  <div 
-                    className="w-1.5 h-1.5 rounded-full transition-all flex-shrink-0"
-                    style={{ 
-                      backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent'
-                    }}
-                  ></div>
-                  
-                  <div className="font-mono text-xs uppercase tracking-widest font-medium">
+                  <div
+                    className="rounded-full transition-all flex-shrink-0"
+                    style={{ width: 5, height: 5, backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent', border: activeTab === tab.id ? 'none' : '1px solid var(--bg-tertiary)' }}
+                  />
+                  <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: activeTab === tab.id ? 600 : 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     {tab.label}
-                  </div>
+                  </span>
                 </button>
               ))}
             </div>
           </nav>
 
-          {/* Bottom Quote - At Very Bottom */}
+          {/* Bottom Quote */}
           <div className="pl-8 pr-6 pb-6">
             <div className="text-center">
-              <p className="font-serif text-xs italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
+              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontStyle: 'italic', fontWeight: 500, color: 'var(--text-tertiary)', lineHeight: 1.55 }}>
                 "The resonance of stillness is the loudest frequency."
               </p>
-              <p className="font-mono text-xs uppercase tracking-widest mt-2" style={{ color: 'var(--text-tertiary)', opacity: '0.6' }}>
+              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, color: 'var(--text-tertiary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6, opacity: 0.6 }}>
                 Internal Resonance
               </p>
             </div>
@@ -289,6 +270,13 @@ export default function MemberDetailPage() {
         <MemberPageHeader
           tabs={tabs}
           activeTab={activeTab}
+          tabCount={
+            activeTab === 'incidents'    ? incidentsCount :
+            activeTab === 'patterns'     ? patternsCount :
+            activeTab === 'interactions' ? interactionsCount :
+            activeTab === 'journal'      ? journalCount :
+            undefined
+          }
           onSecondaryAction={() => setShowEditModal(true)}
           onActionClick={() => {
             // Handle tab-specific actions

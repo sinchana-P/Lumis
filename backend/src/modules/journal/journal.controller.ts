@@ -1,20 +1,25 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { JournalService } from './journal.service';
 import { CreateJournalEntryDto } from './dto/create-journal-entry.dto';
 import { AuthGuard } from '../../common/guards/auth.guard';
 
+@ApiTags('Journal')
 @Controller('members/:memberId/journal')
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 export class JournalController {
   constructor(private readonly journalService: JournalService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get all journal entries for a member' })
   async findAll(@Request() req: any, @Param('memberId') memberId: string) {
     const data = await this.journalService.findAll(req.user.id, memberId);
     return { success: true, data };
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create a new journal entry' })
   async create(
     @Request() req: any,
     @Param('memberId') memberId: string,
@@ -25,6 +30,7 @@ export class JournalController {
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update a journal entry' })
   async update(
     @Request() req: any,
     @Param('memberId') memberId: string,
@@ -36,6 +42,7 @@ export class JournalController {
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete a journal entry' })
   async remove(@Request() req: any, @Param('id') id: string) {
     await this.journalService.remove(req.user.id, id);
     return { success: true };

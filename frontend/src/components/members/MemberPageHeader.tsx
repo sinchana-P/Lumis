@@ -12,12 +12,13 @@ interface Tab {
 interface MemberPageHeaderProps {
   tabs: Tab[];
   activeTab: string;
+  tabCount?: number;
   onActionClick?: () => void;
   onSecondaryAction?: () => void;
   children?: React.ReactNode; // Allow custom action buttons
 }
 
-export function MemberPageHeader({ tabs, activeTab, onActionClick, onSecondaryAction, children }: MemberPageHeaderProps) {
+export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onSecondaryAction, children }: MemberPageHeaderProps) {
   const getActionButton = () => {
     switch (activeTab) {
       case 'overview':
@@ -51,13 +52,23 @@ export function MemberPageHeader({ tabs, activeTab, onActionClick, onSecondaryAc
   const currentTab = tabs.find(tab => tab.id === activeTab);
 
   return (
-    <header className="px-8 py-2 flex-shrink-0 border-b" style={{ background: 'var(--bg-primary)', borderColor: 'var(--bg-tertiary)' }}>
+    <header
+      className="px-8 flex-shrink-0 border-b"
+      style={{ background: 'var(--bg-primary)', borderColor: 'var(--bg-tertiary)', paddingTop: 14, paddingBottom: 14 }}
+    >
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-serif text-lg font-medium" style={{ color: 'var(--text-primary)' }}>
+          {/* Crimson Pro — soft page title */}
+          <h2 className="font-serif" style={{ fontSize: 26, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3, marginBottom: 2 }}>
             {currentTab?.label}
+            {tabCount !== undefined && (
+              <span style={{ fontSize: 18, color: 'var(--text-tertiary)', fontWeight: 300, marginLeft: 8, verticalAlign: 'baseline' }}>
+                ({tabCount})
+              </span>
+            )}
           </h2>
-          <p className="font-serif text-xs" style={{ color: 'var(--text-secondary)' }}>
+          {/* Crimson Pro — soft description */}
+          <p className="font-serif" style={{ fontSize: 14, fontWeight: 400, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
             {currentTab?.description}
           </p>
         </div>
