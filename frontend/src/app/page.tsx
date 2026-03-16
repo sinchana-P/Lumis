@@ -158,7 +158,7 @@ function SectionMark({ num, label }: { num: string; label: string }) {
     <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:20 }}>
       <span style={{ fontFamily:CG, fontSize:11, color:C.accentSoft, letterSpacing:'3px' }}>{num}</span>
       <span style={{ width:28, height:1, background:C.border, display:'inline-block' }}/>
-      <span style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'3px', color:C.textMuted, textTransform:'uppercase' as const }}>{label}</span>
+      <span style={{ fontFamily:DMM, fontSize:11, letterSpacing:'2.5px', color:C.textMuted, textTransform:'uppercase' as const }}>{label}</span>
     </div>
   );
 }
@@ -341,11 +341,11 @@ export default function LumisLanding() {
             ].map(({ label, id }) => (
               <button key={id} className="lumis-nav-link"
                 onClick={() => document.getElementById(id)?.scrollIntoView({ behavior:'smooth' })}
-                style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color:C.textMuted, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}>
+                style={{ fontFamily:DMM, fontSize:12, letterSpacing:'1.5px', color:C.textMuted, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}>
                 {label}
               </button>
             ))}
-            <button onClick={() => router.push('/signup')} className="lumis-cta-secondary" style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color:C.accent, background:'transparent', border:`1px solid ${C.accent}55`, borderRadius:1, padding:'8px 20px', cursor:'pointer', textTransform:'uppercase', transition:'all 0.2s' }}>
+            <button onClick={() => router.push('/signup')} className="lumis-cta-secondary" style={{ fontFamily:DMM, fontSize:13, letterSpacing:'1.5px', color:C.accent, background:'transparent', border:`1px solid ${C.accent}55`, borderRadius:1, padding:'9px 22px', cursor:'pointer', textTransform:'uppercase', transition:'all 0.2s' }}>
               Start Journey
             </button>
           </div>
@@ -373,7 +373,7 @@ export default function LumisLanding() {
 
           {/* Content */}
           <div style={{ position:'relative', zIndex:1, textAlign:'center', maxWidth:920 }}>
-            <div style={{ fontFamily:DMM, fontSize:8, letterSpacing:'4px', color:C.textMuted, textTransform:'uppercase', marginBottom:30, display:'flex', alignItems:'center', justifyContent:'center', gap:16, animation:'fadeUp 1s ease 0.1s both' }}>
+            <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'3px', color:C.textMuted, textTransform:'uppercase', marginBottom:30, display:'flex', alignItems:'center', justifyContent:'center', gap:16, animation:'fadeUp 1s ease 0.1s both' }}>
               <span style={{ width:20, height:1, background:C.accentSoft, display:'inline-block', opacity:0.6 }}/>
               Private Relationship Intelligence
               <span style={{ width:20, height:1, background:C.accentSoft, display:'inline-block', opacity:0.6 }}/>
@@ -390,13 +390,13 @@ export default function LumisLanding() {
             </p>
 
             <div style={{ display:'flex', gap:14, justifyContent:'center', alignItems:'center', flexWrap:'wrap', animation:'fadeUp 1s ease 0.7s both' }}>
-              <button onClick={() => router.push('/signup')} className="lumis-cta-primary" style={{ whiteSpace:'nowrap', padding:'13px 32px', background:C.accent, color:'#F9F5EF', fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, border:'none', cursor:'pointer', transition:'background 0.25s' }}>
+              <button onClick={() => router.push('/signup')} className="lumis-cta-primary" style={{ whiteSpace:'nowrap', padding:'13px 32px', background:C.accent, color:'#F9F5EF', fontFamily:DMM, fontSize:13, letterSpacing:'2px', textTransform:'uppercase', borderRadius:1, border:'none', cursor:'pointer', transition:'background 0.25s' }}>
                 Enter the Clarity
               </button>
               <button
                 onClick={() => document.getElementById('sanctuary')?.scrollIntoView({ behavior:'smooth' })}
                 className="lumis-cta-secondary"
-                style={{ whiteSpace:'nowrap', padding:'13px 32px', background:'transparent', color:C.accent, border:`1px solid ${C.accent}50`, fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, cursor:'pointer', transition:'all 0.25s' }}>
+                style={{ whiteSpace:'nowrap', padding:'13px 32px', background:'transparent', color:C.accent, border:`1px solid ${C.accent}50`, fontFamily:DMM, fontSize:13, letterSpacing:'2px', textTransform:'uppercase', borderRadius:1, cursor:'pointer', transition:'all 0.25s' }}>
                 Hear the Voice
               </button>
             </div>
@@ -404,7 +404,7 @@ export default function LumisLanding() {
 
           {/* Scroll nudge */}
           <div style={{ position:'absolute', bottom:34, left:'50%', transform:'translateX(-50%)', display:'flex', flexDirection:'column', alignItems:'center', gap:7, animation:'fadeIn 1s ease 1.4s both' }}>
-            <span style={{ fontFamily:DMM, fontSize:7, letterSpacing:'2.5px', color:C.textFaint, textTransform:'uppercase' }}>Scroll</span>
+            <span style={{ fontFamily:DMM, fontSize:10, letterSpacing:'2px', color:C.textFaint, textTransform:'uppercase' }}>Scroll</span>
             <div style={{ width:1, height:36, background:`linear-gradient(${C.border}, transparent)` }}/>
           </div>
         </section>
@@ -437,7 +437,7 @@ export default function LumisLanding() {
                 </p>
                 <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                   <div style={{ width:24, height:1, background:C.accentSoft, opacity:0.5 }}/>
-                  <span style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2px', color:C.textMuted, textTransform:'uppercase' }}>Founding Principle · Lumis</span>
+                  <span style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1.5px', color:C.textMuted, textTransform:'uppercase' }}>Founding Principle · Lumis</span>
                 </div>
               </div>
 
@@ -445,7 +445,7 @@ export default function LumisLanding() {
                 {[['4','Intelligence Layers'],['9','Core Numbers Mapped'],['∞','Patterns Observed']].map(([n,l]) => (
                   <div key={l} style={{ background:C.bg, padding:'18px 16px', textAlign:'center' }}>
                     <div style={{ fontFamily:CG, fontSize:32, fontWeight:300, color:C.accentSoft, lineHeight:1 }}>{n}</div>
-                    <div style={{ fontFamily:DMM, fontSize:7, letterSpacing:'1.5px', color:C.textMuted, textTransform:'uppercase', marginTop:5 }}>{l}</div>
+                    <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1px', color:C.textMuted, textTransform:'uppercase', marginTop:5 }}>{l}</div>
                   </div>
                 ))}
               </div>
@@ -469,7 +469,7 @@ export default function LumisLanding() {
 
             {/* Voice selector */}
             <Reveal delay={0.1}>
-              <div style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2.5px', color:C.textMuted, textTransform:'uppercase', marginBottom:14, textAlign:'center' }}>Select Voice Persona</div>
+              <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'2px', color:C.textMuted, textTransform:'uppercase', marginBottom:14, textAlign:'center' }}>Select Voice Persona</div>
               <div style={{ display:'flex', gap:10, justifyContent:'center', marginBottom:38 }}>
                 {VOICE_PERSONAS.map(v => (
                   <button key={v.id} className="lumis-voice" onClick={() => setActiveVoice(v.id)} style={{
@@ -477,8 +477,8 @@ export default function LumisLanding() {
                     border:`1px solid ${activeVoice===v.id ? C.accent : C.border}`,
                     borderRadius:1, cursor:'pointer', transition:'all 0.3s', minWidth:190, textAlign:'left',
                   }}>
-                    <div style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color: activeVoice===v.id ? '#F9F5EF' : C.textDim, textTransform:'uppercase', marginBottom:5 }}>{v.name}</div>
-                    <div style={{ fontFamily:LOR, fontStyle:'italic', fontSize:11, color: activeVoice===v.id ? 'rgba(249,245,239,0.65)' : C.textFaint }}>{v.note}</div>
+                    <div style={{ fontFamily:DMM, fontSize:12, letterSpacing:'1.5px', color: activeVoice===v.id ? '#F9F5EF' : C.textDim, textTransform:'uppercase', marginBottom:5 }}>{v.name}</div>
+                    <div style={{ fontFamily:LOR, fontStyle:'italic', fontSize:13, color: activeVoice===v.id ? 'rgba(249,245,239,0.65)' : C.textFaint }}>{v.note}</div>
                   </button>
                 ))}
               </div>
@@ -486,7 +486,7 @@ export default function LumisLanding() {
 
             {/* Topic tags */}
             <Reveal delay={0.2}>
-              <div style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2.5px', color:C.textMuted, textTransform:'uppercase', marginBottom:14, textAlign:'center' }}>Select a Topic</div>
+              <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'2px', color:C.textMuted, textTransform:'uppercase', marginBottom:14, textAlign:'center' }}>Select a Topic</div>
               <div style={{ display:'flex', flexWrap:'wrap', gap:8, justifyContent:'center', marginBottom:40 }}>
                 {AUDIO_TRACKS.map(track => (
                   <button key={track.id} className="lumis-tag" onClick={() => handleTrackSelect(track)} style={{
@@ -494,7 +494,7 @@ export default function LumisLanding() {
                     background: activeTrack?.id===track.id ? C.accentGlow : 'transparent',
                     border:`1px solid ${activeTrack?.id===track.id ? `${C.accent}60` : C.border}`,
                     color: activeTrack?.id===track.id ? C.accent : C.textMuted,
-                    fontFamily:DMM, fontSize:8, letterSpacing:'1.5px',
+                    fontFamily:DMM, fontSize:12, letterSpacing:'1px',
                     textTransform:'uppercase', cursor:'pointer', transition:'all 0.22s',
                   }}>
                     {track.tag}
@@ -528,24 +528,24 @@ export default function LumisLanding() {
 
                       {/* Track info */}
                       <div style={{ flex:1 }}>
-                        <div style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2px', color:C.accentSoft, textTransform:'uppercase', marginBottom:5 }}>{activeTrack.category}</div>
+                        <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1.5px', color:C.accentSoft, textTransform:'uppercase', marginBottom:5 }}>{activeTrack.category}</div>
                         <div style={{ fontFamily:CG, fontSize:22, fontWeight:400, color:C.text, marginBottom:3 }}>{activeTrack.title}</div>
-                        <div style={{ fontFamily:LOR, fontStyle:'italic', fontSize:11.5, color:C.textMuted, marginBottom:12 }}>{activeTrack.subtitle}</div>
+                        <div style={{ fontFamily:LOR, fontStyle:'italic', fontSize:13, color:C.textMuted, marginBottom:12 }}>{activeTrack.subtitle}</div>
                         <Waveform playing={playing} color={C.accent} />
                       </div>
 
                       {/* Meta */}
                       <div style={{ textAlign:'right', flexShrink:0, paddingTop:2 }}>
                         <div style={{ fontFamily:DMM, fontSize:11, color:C.textDim }}>{activeTrack.dur}</div>
-                        <div style={{ fontFamily:DMM, fontSize:7, letterSpacing:'1px', color:C.textFaint, marginTop:3, textTransform:'uppercase' }}>{activeTrack.freq}hz solfeggio</div>
+                        <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'0.5px', color:C.textFaint, marginTop:3, textTransform:'uppercase' }}>{activeTrack.freq}hz solfeggio</div>
                         <div style={{ marginTop:10, display:'flex', gap:6, justifyContent:'flex-end' }}>
                           {playing ? (
                             <div style={{ display:'flex', alignItems:'center', gap:5 }}>
                               <div style={{ width:5, height:5, borderRadius:'50%', background:C.accent, animation:'dotPulse 1.1s ease-in-out infinite' }}/>
-                              <span style={{ fontFamily:DMM, fontSize:7, color:C.accent, letterSpacing:'1.5px', textTransform:'uppercase' }}>Live</span>
+                              <span style={{ fontFamily:DMM, fontSize:11, color:C.accent, letterSpacing:'1px', textTransform:'uppercase' }}>Live</span>
                             </div>
                           ) : (
-                            <span style={{ fontFamily:DMM, fontSize:7, color:C.textFaint, letterSpacing:'1px', textTransform:'uppercase' }}>Paused</span>
+                            <span style={{ fontFamily:DMM, fontSize:11, color:C.textFaint, letterSpacing:'1px', textTransform:'uppercase' }}>Paused</span>
                           )}
                         </div>
                       </div>
@@ -562,11 +562,11 @@ export default function LumisLanding() {
 
                   {/* Transcript */}
                   <div style={{ padding:'22px 30px 26px' }}>
-                    <div style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2.5px', color:C.accentSoft, textTransform:'uppercase', marginBottom:12 }}>Transcript Preview</div>
+                    <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'2px', color:C.accentSoft, textTransform:'uppercase', marginBottom:12 }}>Transcript Preview</div>
                     <p style={{ fontFamily:LOR, fontStyle:'italic', fontSize:13.5, color:C.textDim, lineHeight:1.88 }}>{activeTrack.preview}</p>
                     <div style={{ marginTop:16, display:'flex', alignItems:'center', gap:10 }}>
                       {[activeTrack.category, VOICE_PERSONAS.find(v=>v.id===activeVoice)?.name, `${activeTrack.freq}Hz`].map(tag => (
-                        <span key={tag} style={{ padding:'4px 12px', borderRadius:20, background:C.surface, border:`1px solid ${C.borderSoft}`, fontFamily:DMM, fontSize:7, color:C.textFaint, letterSpacing:'1.5px', textTransform:'uppercase' }}>{tag}</span>
+                        <span key={tag} style={{ padding:'4px 12px', borderRadius:20, background:C.surface, border:`1px solid ${C.borderSoft}`, fontFamily:DMM, fontSize:11, color:C.textFaint, letterSpacing:'1px', textTransform:'uppercase' }}>{tag}</span>
                       ))}
                     </div>
                   </div>
@@ -599,11 +599,11 @@ export default function LumisLanding() {
               <Reveal key={p.num} delay={i * 0.1}>
                 <div className="lumis-pillar" style={{ background:C.bg, padding:'36px 26px 32px', minHeight:280, position:'relative', overflow:'hidden', transition:'background 0.3s' }}>
                   <div style={{ position:'absolute', bottom:12, right:16, fontFamily:CG, fontSize:64, fontWeight:300, color:`${C.border}80`, lineHeight:1, pointerEvents:'none', userSelect:'none' }}>{p.num}</div>
-                  <div style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2px', color:C.textMuted, textTransform:'uppercase', marginBottom:18 }}>{p.tag}</div>
+                  <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1.5px', color:C.textMuted, textTransform:'uppercase', marginBottom:18 }}>{p.tag}</div>
                   <div style={{ fontSize:18, marginBottom:10, color:C.accentSoft }}>{p.icon}</div>
                   <div style={{ fontFamily:CG, fontSize:22, fontWeight:400, color:C.text, marginBottom:4 }}>{p.name}</div>
-                  <div style={{ fontFamily:LOR, fontStyle:'italic', fontSize:10.5, color:C.textFaint, marginBottom:14 }}>{p.latin}</div>
-                  <p style={{ fontFamily:LOR, fontSize:12, color:C.textDim, lineHeight:1.78 }}>{p.desc}</p>
+                  <div style={{ fontFamily:LOR, fontStyle:'italic', fontSize:13, color:C.textFaint, marginBottom:14 }}>{p.latin}</div>
+                  <p style={{ fontFamily:LOR, fontSize:14, color:C.textDim, lineHeight:1.78 }}>{p.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -628,7 +628,7 @@ export default function LumisLanding() {
                     <div style={{ fontFamily:CG, fontSize:80, fontWeight:300, lineHeight:1, marginBottom:6, color:`${C.borderSoft}` }}>
                       <span style={{ position:'relative', zIndex:1, color:`${a.accent}28` }}>{a.num}</span>
                     </div>
-                    <div style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'2px', color:C.textMuted, textTransform:'uppercase', marginBottom:12 }}>{a.trait}</div>
+                    <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1.5px', color:C.textMuted, textTransform:'uppercase', marginBottom:12 }}>{a.trait}</div>
                     <h3 style={{ fontFamily:CG, fontSize:28, fontWeight:400, color:C.text, marginBottom:14, lineHeight:1.2 }}>{a.name}</h3>
                     <p style={{ fontFamily:LOR, fontSize:13, color:C.textDim, lineHeight:1.82 }}>{a.desc}</p>
                   </div>
@@ -655,8 +655,8 @@ export default function LumisLanding() {
                   <div style={{ width:56, height:56, borderRadius:'50%', background:C.bg, border:`1px solid ${C.border}`, display:'flex', alignItems:'center', justifyContent:'center', marginBottom:20, flexShrink:0, transition:'border-color 0.3s' }}>
                     <span className="step-num" style={{ fontFamily:CG, fontStyle:'italic', fontSize:18, fontWeight:300, color:C.textMuted, transition:'color 0.3s' }}>{s.n}</span>
                   </div>
-                  <div style={{ fontFamily:DMM, fontSize:8.5, letterSpacing:'1.5px', color:C.accentSoft, textTransform:'uppercase', marginBottom:10 }}>{s.label}</div>
-                  <p style={{ fontFamily:LOR, fontSize:12.5, color:C.textDim, lineHeight:1.82 }}>{s.body}</p>
+                  <div style={{ fontFamily:DMM, fontSize:12, letterSpacing:'1px', color:C.accentSoft, textTransform:'uppercase', marginBottom:10 }}>{s.label}</div>
+                  <p style={{ fontFamily:LOR, fontSize:14, color:C.textDim, lineHeight:1.82 }}>{s.body}</p>
                 </div>
               </Reveal>
             ))}
@@ -678,8 +678,8 @@ export default function LumisLanding() {
                 {DIFFS.map((d, i) => (
                   <Reveal key={d.label} delay={i * 0.1}>
                     <div className="lumis-diff" style={{ padding:'24px 22px', borderTop:`1px solid ${C.border}`, borderRadius:1, transition:'background 0.25s' }}>
-                      <div style={{ fontFamily:DMM, fontSize:8, letterSpacing:'2px', color:C.accentSoft, textTransform:'uppercase', marginBottom:10 }}>{d.label}</div>
-                      <p style={{ fontFamily:LOR, fontSize:13, color:C.textDim, lineHeight:1.82 }}>{d.body}</p>
+                      <div style={{ fontFamily:DMM, fontSize:12, letterSpacing:'1.5px', color:C.accentSoft, textTransform:'uppercase', marginBottom:10 }}>{d.label}</div>
+                      <p style={{ fontFamily:LOR, fontSize:14, color:C.textDim, lineHeight:1.82 }}>{d.body}</p>
                     </div>
                   </Reveal>
                 ))}
@@ -710,8 +710,8 @@ export default function LumisLanding() {
                   <div style={{ display:'flex', alignItems:'center', gap:12 }}>
                     <div style={{ width:20, height:1, background:C.accentSoft, opacity:0.5 }}/>
                     <div>
-                      <div style={{ fontFamily:DMM, fontSize:8, letterSpacing:'1.5px', color:C.textDim, textTransform:'uppercase' }}>{t.name}</div>
-                      <div style={{ fontFamily:DMM, fontSize:7, letterSpacing:'1px', color:C.textFaint, textTransform:'uppercase', marginTop:2 }}>{t.role}</div>
+                      <div style={{ fontFamily:DMM, fontSize:12, letterSpacing:'1px', color:C.textDim, textTransform:'uppercase' }}>{t.name}</div>
+                      <div style={{ fontFamily:DMM, fontSize:11, letterSpacing:'0.5px', color:C.textFaint, textTransform:'uppercase', marginTop:2 }}>{t.role}</div>
                     </div>
                   </div>
                 </div>
@@ -726,7 +726,7 @@ export default function LumisLanding() {
             <Reveal>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, marginBottom:22 }}>
                 <div style={{ flex:1, maxWidth:60, height:1, background:C.border }}/>
-                <span style={{ fontFamily:CG, fontStyle:'italic', fontSize:11, color:C.textFaint, letterSpacing:'2px' }}>The Threshold</span>
+                <span style={{ fontFamily:CG, fontStyle:'italic', fontSize:14, color:C.textFaint, letterSpacing:'2px' }}>The Threshold</span>
                 <div style={{ flex:1, maxWidth:60, height:1, background:C.border }}/>
               </div>
 
@@ -739,10 +739,10 @@ export default function LumisLanding() {
               </p>
 
               <div style={{ display:'flex', gap:12, justifyContent:'center', alignItems:'center', marginBottom:28 }}>
-                <button onClick={() => router.push('/signup')} className="lumis-cta-primary" style={{ padding:'15px 38px', background:C.accent, color:'#F9F5EF', fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', borderRadius:1, border:'none', cursor:'pointer', transition:'background 0.25s', boxShadow:`0 4px 28px ${C.accentGlow}` }}>
+                <button onClick={() => router.push('/signup')} className="lumis-cta-primary" style={{ padding:'15px 38px', background:C.accent, color:'#F9F5EF', fontFamily:DMM, fontSize:13, letterSpacing:'2px', textTransform:'uppercase', borderRadius:1, border:'none', cursor:'pointer', transition:'background 0.25s', boxShadow:`0 4px 28px ${C.accentGlow}` }}>
                   Begin Your Map
                 </button>
-                <button onClick={() => router.push('/login')} style={{ padding:'15px 24px', background:'transparent', color:C.textMuted, fontFamily:DMM, fontSize:8, letterSpacing:'2.5px', textTransform:'uppercase', border:'none', cursor:'pointer', transition:'color 0.2s' }}
+                <button onClick={() => router.push('/login')} style={{ padding:'15px 24px', background:'transparent', color:C.textMuted, fontFamily:DMM, fontSize:13, letterSpacing:'2px', textTransform:'uppercase', border:'none', cursor:'pointer', transition:'color 0.2s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = C.textDim)}
                   onMouseLeave={e => (e.currentTarget.style.color = C.textMuted)}>
                   I already have an account →
@@ -751,7 +751,7 @@ export default function LumisLanding() {
 
               <HrDeco />
 
-              <p style={{ fontFamily:DMM, fontSize:7, letterSpacing:'2px', color:C.textFaint, textTransform:'uppercase', marginTop:22 }}>
+              <p style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1.5px', color:C.textFaint, textTransform:'uppercase', marginTop:22 }}>
                 Entirely Private · No Public Profiles · No Social Graph
               </p>
             </Reveal>
@@ -770,14 +770,14 @@ export default function LumisLanding() {
                 { label:'Support', href:'mailto:hello@lumis.app' },
               ].map(({ label, href }) => (
                 <button key={label} onClick={() => href.startsWith('mailto') ? window.location.href = href : router.push(href)}
-                  style={{ fontFamily:DMM, fontSize:7.5, letterSpacing:'1.5px', color:C.textFaint, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}
+                  style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1px', color:C.textFaint, background:'none', border:'none', cursor:'pointer', textTransform:'uppercase', transition:'color 0.2s' }}
                   onMouseEnter={e => (e.currentTarget.style.color = C.textMuted)}
                   onMouseLeave={e => (e.currentTarget.style.color = C.textFaint)}>
                   {label}
                 </button>
               ))}
             </div>
-            <span style={{ fontFamily:DMM, fontSize:7, letterSpacing:'1.5px', color:C.textFaint, textTransform:'uppercase' }}>
+            <span style={{ fontFamily:DMM, fontSize:11, letterSpacing:'1px', color:C.textFaint, textTransform:'uppercase' }}>
               Private Relationship Intelligence · {new Date().getFullYear()}
             </span>
           </div>
