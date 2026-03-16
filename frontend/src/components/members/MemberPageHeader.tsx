@@ -55,6 +55,7 @@ export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onS
     <header
       className="px-8 flex-shrink-0 border-b"
       style={{ background: 'var(--bg-primary)', borderColor: 'var(--bg-tertiary)', paddingTop: 14, paddingBottom: 14 }}
+      data-tour="member-header"
     >
       <div className="flex items-center justify-between">
         <div>
@@ -72,7 +73,7 @@ export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onS
             {currentTab?.description}
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" data-tour="member-actions">
           {children || getActionButton()}
         </div>
       </div>

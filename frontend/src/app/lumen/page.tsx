@@ -386,7 +386,7 @@ export default function LumenPage() {
         .depth-icon-wrapper:hover .depth-tooltip { opacity: 1 !important; }
       `}</style>
 
-      <main className="flex flex-col" style={{ height: '100vh', paddingTop: 56 }}>
+      <main className="flex flex-col" style={{ height: '100vh', paddingTop: 56 }} data-tour="lumen-interface">
 
         {/* ── Single control strip — one row only ──────────────── */}
         <div
@@ -430,6 +430,7 @@ export default function LumenPage() {
           <div
             className="flex flex-shrink-0 overflow-x-auto"
             style={{ scrollbarWidth: 'none', gap: 'clamp(14px, 2vw, 28px)', height: '100%', alignItems: 'center' }}
+            data-tour="lumen-modes"
           >
             {MODES.map((m) => (
               <button
@@ -479,7 +480,7 @@ export default function LumenPage() {
           </span>
 
           {/* Right: depth icons + active label + divider + model */}
-          <div className="flex items-center flex-shrink-0 gap-3">
+          <div className="flex items-center flex-shrink-0 gap-3" data-tour="lumen-depth">
             {ANALYSIS_DEPTH_MODES.map((d) => {
               const isActive = analysisDepth === d.id;
               return (
@@ -642,6 +643,7 @@ export default function LumenPage() {
                 <button
                   onClick={() => setShowMemberContext(true)}
                   title="Add member to context"
+                  data-tour="lumen-context-btn"
                   className="flex items-center justify-center rounded-full transition-all duration-200"
                   style={{
                     width: 36, height: 36,
@@ -663,6 +665,7 @@ export default function LumenPage() {
                   background: 'var(--bg-primary)',
                   border: `1.5px solid ${isListening ? currentMode.color : 'var(--bg-tertiary)'}`,
                 }}
+                data-tour="lumen-input"
               >
                 {/* Text / waveform area */}
                 <div className="flex-1 relative" style={{ minHeight: 28 }}>

@@ -32,6 +32,7 @@ export function BottomNav() {
 
   return (
     <div
+      data-tour="bottom-nav"
       style={{
         position: 'fixed',
         bottom: 28,
@@ -45,11 +46,17 @@ export function BottomNav() {
     >
       {PAGES.map((page, i) => {
         const isActive = i === activeIndex;
+        const tourAttr = page.path === '/orbit' ? 'nav-orbit' : 
+                        page.path === '/lumen' ? 'nav-lumen' : 
+                        page.path === '/dashboard' ? 'nav-dashboard' : 
+                        page.path === '/profile' ? 'nav-profile' : '';
+        
         return (
           <button
             key={page.path}
             title={page.label}
             onClick={() => navigate(i)}
+            data-tour={tourAttr}
             style={{
               width:  isActive ? 10 : 5,
               height: isActive ? 10 : 5,

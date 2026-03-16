@@ -354,7 +354,7 @@ export default function ProfilePage() {
             <div>
 
               {/* Theme */}
-              <div style={{ marginBottom: 28 }}>
+              <div data-tour="profile-theme" style={{ marginBottom: 28 }}>
                 <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 16 }}>Theme</p>
                 <ThemeSelector />
               </div>

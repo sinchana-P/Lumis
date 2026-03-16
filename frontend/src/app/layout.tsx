@@ -5,6 +5,8 @@ import { Crimson_Pro, Playfair_Display, Nunito } from 'next/font/google';
 import { ReduxProvider } from '@/store/Provider';
 import { AuthInitializer } from '@/components/auth/AuthInitializer';
 import { ThemeProvider } from '@/contexts/ThemeContext';
+import { TourProvider } from '@/contexts/TourContext';
+import { TourEngine } from '@/components/tour';
 import { BottomNav } from '@/components/layout/BottomNav';
 import './globals.css';
 
@@ -49,10 +51,13 @@ export default function RootLayout({
       <body className={`${crimsonPro.variable} ${playfairDisplay.variable} ${nunito.variable} font-sans antialiased`}>
         <ThemeProvider>
           <ReduxProvider>
-            <AuthInitializer>
-              {children}
-              <BottomNav />
-            </AuthInitializer>
+            <TourProvider>
+              <AuthInitializer>
+                {children}
+                <BottomNav />
+                <TourEngine />
+              </AuthInitializer>
+            </TourProvider>
           </ReduxProvider>
         </ThemeProvider>
       </body>

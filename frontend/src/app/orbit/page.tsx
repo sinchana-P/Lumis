@@ -348,9 +348,10 @@ export default function MembersPage() {
               )}
             </div>
 
-            <MinimalButton 
+            <MinimalButton
               onClick={() => router.push('/orbit/add')}
               variant="primary"
+              data-tour="orbit-add-btn"
             >
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -386,7 +387,7 @@ export default function MembersPage() {
             </div>
           </div>
         ) : viewMode === 'orbit' ? (
-          <div className="relative">
+          <div className="relative" data-tour="orbit-canvas">
             <LuminaryControls
               onReset={resetMemberPositions}
               onZoomIn={handleZoomIn}
@@ -444,6 +445,8 @@ export default function MembersPage() {
                         top: `${position.y}%`,
                         transition: isDragging ? 'none' : 'all 0.2s ease'
                       }}
+                      data-member-name={member.fullName}
+                      data-member-id={member.id}
                       onMouseDown={(e) => handleMouseDown(e, member.id)}
                       onContextMenu={(e) => handleContextMenu(e, member)}
                       onClick={(e) => {

@@ -32,15 +32,16 @@ export function Header() {
         {/* Navigation */}
         <nav className="flex items-center gap-12">
           {[
-            { path: '/dashboard', label: 'Dashboard' },
-            { path: '/orbit',     label: 'Orbit'     },
-            { path: '/lumen',     label: 'Lumen'     },
-            { path: '/profile',   label: 'Profile'   },
-          ].map(({ path, label }) => (
+            { path: '/dashboard', label: 'Dashboard', tourAttr: 'nav-dashboard' },
+            { path: '/orbit',     label: 'Orbit',     tourAttr: 'nav-orbit' },
+            { path: '/lumen',     label: 'Lumen',     tourAttr: 'nav-lumen' },
+            { path: '/profile',   label: 'Profile',   tourAttr: 'nav-profile' },
+          ].map(({ path, label, tourAttr }) => (
             <button
               key={path}
               onClick={() => router.push(path)}
               className="transition-colors"
+              data-tour={tourAttr}
               style={{
                 fontFamily: 'var(--font-rounded)',
                 fontSize: 12,

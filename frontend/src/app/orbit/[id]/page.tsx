@@ -205,7 +205,7 @@ export default function MemberDetailPage() {
         {/* Scrollable Content Area */}
         <div className="flex-1 overflow-y-auto flex flex-col justify-between">
           {/* Member Profile */}
-          <div className="pl-12 pr-4 pt-4">
+          <div className="pl-12 pr-4 pt-4" data-tour="member-info">
             <div className="text-center">
               <div className="w-14 h-14 mx-auto mb-3 rounded-full overflow-hidden" style={{ border: '1px solid var(--bg-tertiary)' }}>
                 {member.photoUrl ? (
@@ -227,7 +227,7 @@ export default function MemberDetailPage() {
           </div>
 
           {/* Navigation — Inter, navigation labels */}
-          <nav className="pl-14 pr-0 flex-1 flex items-center">
+          <nav className="pl-14 pr-0 flex-1 flex items-center" data-tour="member-tabs">
             <div className="space-y-1 w-full">
               {tabs.map((tab) => (
                 <button
@@ -237,6 +237,7 @@ export default function MemberDetailPage() {
                   style={{ color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)', padding: '4px 0' }}
                   onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-primary)'; }}
                   onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}
+                  data-tour={`tab-${tab.id}`}
                 >
                   <div
                     className="rounded-full transition-all flex-shrink-0"
@@ -310,7 +311,7 @@ export default function MemberDetailPage() {
         />
 
         {/* Scrollable Tab Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto" data-tour="tab-content">
           <div className="p-8">
             {renderTabContent()}
           </div>
