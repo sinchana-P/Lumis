@@ -7,6 +7,7 @@ import { selectUser, selectIsAuthenticated } from '@/store/slices/authSlice';
 import { useGetMembersQuery } from '@/store/api/membersApi';
 import { Header } from '@/components/layout/Header';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
+import { TourButton } from '@/components/tour';
 
 export const dynamic = 'force-dynamic';
 
@@ -129,11 +130,11 @@ export default function DashboardPage() {
     <div className="min-h-screen" style={{ background: 'var(--bg-primary)' }}>
       <Header />
 
-      <main className="w-full px-8 lg:px-16 pt-20 pb-16">
+      <main className="w-full px-8 lg:px-16 pt-20 pb-16" data-tour="dashboard-main">
         <div style={{ maxWidth: 1200, margin: '0 auto' }}>
 
           {/* ── Greeting + Stats ── */}
-          <div className="flex items-end justify-between"
+          <div className="flex items-end justify-between" data-tour="dashboard-header"
             style={{ paddingTop: 32, paddingBottom: 22, borderBottom: '1px solid var(--bg-tertiary)' }}>
 
             {/* Left — greeting */}
@@ -188,7 +189,7 @@ export default function DashboardPage() {
             <div className="lg:col-span-2">
 
               {/* Emotional Weather */}
-              <section>
+              <section data-tour="emotional-weather">
                 <Label>Emotional Weather</Label>
                 <div style={{
                   padding: '20px 22px',
@@ -264,7 +265,7 @@ export default function DashboardPage() {
               <Divider />
 
               {/* Quick Actions */}
-              <section>
+              <section data-tour="quick-actions">
                 <Label>Quick Actions</Label>
                 <div className="flex flex-wrap gap-2">
                   {[
@@ -452,6 +453,11 @@ export default function DashboardPage() {
 
             </div>
           </div>
+        </div>
+
+        {/* Tour Button - Fixed bottom left */}
+        <div className="fixed bottom-6 left-6 z-30">
+          <TourButton variant="compact" />
         </div>
       </main>
     </div>

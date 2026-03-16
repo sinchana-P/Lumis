@@ -303,3 +303,136 @@ input:focus, textarea:focus, select:focus, button:focus {
 .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 99px; }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: var(--text-tertiary); }
 .scrollbar-thin::-webkit-scrollbar-corner { background: transparent; }
+
+/* ── Tour Styles ── */
+.lumis-tour [data-tour-elem="mask"] {
+  z-index: 9998 !important;
+}
+
+.lumis-tour [data-tour-elem="popover"] {
+  z-index: 9999 !important;
+}
+
+/* Ensure tour elements are visible */
+[data-tour-elem] {
+  pointer-events: auto !important;
+}
+
+/* Tour popover custom styles */
+[data-tour-elem="popover"] {
+  font-family: 'Crimson Pro', Georgia, serif !important;
+}
+
+[data-tour-elem="badge"] {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* ── Tour Spotlight Styles ── */
+/* Enhanced spotlight effect for guided tours */
+
+/* Joyride overlay customization */
+.__floater__open {
+  z-index: 10001 !important;
+}
+
+/* Enhanced spotlight with better focus */
+.__floater__body {
+  position: relative;
+  z-index: 10002 !important;
+}
+
+/* Clean spotlight hole with lighter dimming */
+.react-joyride__spotlight {
+  background-color: transparent !important;
+  border: 2px solid rgba(255, 255, 255, 0.6) !important;
+  border-radius: 8px !important;
+  box-shadow: 
+    0 0 0 9999px rgba(0, 0, 0, 0.5),
+    0 0 0 4px rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Tooltip positioning and viewport constraints - more compact */
+.react-joyride__tooltip {
+  max-width: min(320px, 85vw) !important;
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+  position: relative !important;
+  z-index: 10003 !important;
+}
+
+/* Ensure tooltip stays within viewport */
+.__floater__arrow {
+  z-index: 10003 !important;
+}
+
+/* Clean overlay with lighter dimming */
+.react-joyride__overlay {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  z-index: 10000 !important;
+}
+
+/* Beacon pulse animation */
+.react-joyride__beacon {
+  animation: beacon-pulse 1.5s ease-in-out infinite !important;
+}
+
+@keyframes beacon-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Button hover effects */
+.react-joyride__tooltip button:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Progress indicator styling */
+.react-joyride__tooltip .react-joyride__progress {
+  background-color: var(--bg-tertiary, #E0D8CC) !important;
+  border-radius: 4px !important;
+  height: 4px !important;
+  margin-bottom: 16px !important;
+}
+
+.react-joyride__tooltip .react-joyride__progress-bar {
+  background-color: var(--accent-primary, #9CAF9E) !important;
+  border-radius: 4px !important;
+  height: 100% !important;
+  transition: width 0.3s ease !important;
+}
+
+/* Mobile responsiveness - more compact */
+@media (max-width: 768px) {
+  .react-joyride__tooltip {
+    max-width: 90vw !important;
+    margin: 8px !important;
+  }
+  
+  .react-joyride__spotlight {
+    border-radius: 6px !important;
+  }
+}
+
+/* Ensure tour elements are above everything */
+.react-joyride__overlay,
+.react-joyride__spotlight,
+.__floater,
+.__floater__open {
+  z-index: 10000 !important;
+}
+
+.__floater__body,
+.react-joyride__tooltip {
+  z-index: 10001 !important;
+}
