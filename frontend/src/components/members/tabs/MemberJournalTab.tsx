@@ -434,7 +434,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
                       onMouseLeave={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
-                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: selectedId === entry.id ? 'var(--accent-primary)' : 'var(--text-secondary)', flex: 1 }}>
+                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: selectedId === entry.id ? 'var(--accent-primary)' : 'var(--text-primary)', flex: 1 }}>
                           {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </p>
                         {entry.isPrivate && (
@@ -446,7 +446,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
                           </svg>
                         )}
                       </div>
-                      <p className="font-serif truncate" style={{ fontSize: 15, color: selectedId === entry.id ? 'var(--text-primary)' : 'var(--text-secondary)', lineHeight: 1.35, fontWeight: selectedId === entry.id ? 600 : 400 }}>
+                      <p className="font-serif truncate" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.35, fontWeight: selectedId === entry.id ? 500 : 400 }}>
                         {entry.title || <span style={{ fontStyle: 'italic', color: 'var(--text-tertiary)' }}>Untitled</span>}
                       </p>
                       {entry.emotions.length > 0 && (

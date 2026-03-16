@@ -5,10 +5,11 @@ const DEMO_MARKER = '__lumis_demo__';
 
 const DEMO_MEMBER = {
   full_name: 'System Node',
-  nickname: 'Node',
+  nickname: 'Luma',
   relation_type: 'friend',
   date_of_birth: '1994-06-07',
   place_of_birth: 'San Francisco, CA',
+  photo_url: 'https://gfpetuqnyjxyrlxwzjes.supabase.co/storage/v1/object/public/member-photos/members/fd6c70d6-f405-48e4-8362-5105bdc4f886/fec345bb-36d3-491d-b211-992d575c0b4e.gif',
   notes: DEMO_MARKER,
 };
 
@@ -265,6 +266,11 @@ export class SeedService {
       .maybeSingle();
 
     if (existing) {
+      // Keep nickname + photo up to date even if member already exists
+      await supabase
+        .from('members')
+        .update({ nickname: DEMO_MEMBER.nickname, photo_url: DEMO_MEMBER.photo_url })
+        .eq('id', existing.id);
       return { created: false, memberId: existing.id };
     }
 

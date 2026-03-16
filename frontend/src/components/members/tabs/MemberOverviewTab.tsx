@@ -57,13 +57,13 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
   const d = mockData;
 
   return (
-    <div className="flex flex-col gap-9 max-w-3xl">
+    <div className="flex flex-col gap-6 max-w-3xl">
 
       {/* ── Identity ─────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-x-16 gap-y-4">
+      <div className="grid grid-cols-2 gap-x-12 gap-y-3">
         <div>
           <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Relationship</p>
-          <p className="font-serif text-sm capitalize" style={{ color: 'var(--text-primary)' }}>
+          <p className="font-serif text-base capitalize" style={{ color: 'var(--text-primary)' }}>
             {member.relationTypeCustom || member.relationType}
             {member.nickname && (
               <span className="ml-2 italic" style={{ color: 'var(--text-tertiary)' }}>
@@ -75,7 +75,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
         {member.dateOfBirth && (
           <div>
             <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Date of Birth</p>
-            <p className="font-serif text-sm" style={{ color: 'var(--text-primary)' }}>
+            <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>
               {new Date(member.dateOfBirth).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               {member.timeOfBirth && (
                 <span className="font-mono text-xs ml-2" style={{ color: 'var(--text-tertiary)' }}>{member.timeOfBirth}</span>
@@ -86,7 +86,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
         {member.placeOfBirth && (
           <div>
             <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Origin</p>
-            <p className="font-serif text-sm" style={{ color: 'var(--text-primary)' }}>{member.placeOfBirth}</p>
+            <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{member.placeOfBirth}</p>
           </div>
         )}
       </div>
@@ -95,8 +95,8 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
 
       {/* ── Activity Pulse ───────────────────────────────── */}
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-5" style={{ color: 'var(--text-tertiary)' }}>Activity Pulse</p>
-        <div className="flex items-end gap-10">
+        <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Activity Pulse</p>
+        <div className="flex items-end gap-8">
           {[
             { value: d.activityPulse.daysSinceLast,         label: 'days since last' },
             { value: d.activityPulse.interactionsThisMonth, label: 'this month' },
@@ -104,13 +104,13 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
             { value: d.activityPulse.totalInteractions,     label: 'total interactions' },
             { value: d.activityPulse.journalEntries,        label: 'journal entries' },
           ].map(({ value, label }, i, arr) => (
-            <div key={label} className="flex items-end gap-10">
+            <div key={label} className="flex items-end gap-8">
               <div>
-                <span className="font-serif font-light" style={{ fontSize: 36, lineHeight: 1, color: 'var(--text-primary)' }}>{value}</span>
-                <p className="font-mono text-xs uppercase tracking-widest mt-1.5" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
+                <span className="font-serif" style={{ fontSize: 32, lineHeight: 1, color: 'var(--text-primary)' }}>{value}</span>
+                <p className="font-mono text-xs uppercase tracking-widest mt-1" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
               </div>
               {i < arr.length - 1 && (
-                <span className="font-serif text-xl pb-2" style={{ color: 'var(--bg-tertiary)' }}>&middot;</span>
+                <span className="font-serif text-lg pb-1.5" style={{ color: 'var(--bg-tertiary)' }}>&middot;</span>
               )}
             </div>
           ))}
@@ -129,7 +129,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
           >
             {d.lastJournalEntry.date}
           </span>
-          <p className="font-serif text-sm leading-relaxed italic" style={{ color: 'var(--text-secondary)' }}>
+          <p className="font-serif text-base leading-relaxed italic" style={{ color: 'var(--text-primary)' }}>
             {d.lastJournalEntry.snippet}
           </p>
         </div>
@@ -139,7 +139,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
 
       {/* ── How You Tend to Feel Around Them ─────────────── */}
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>How You Tend to Feel Around Them</p>
+        <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-tertiary)' }}>How You Tend to Feel Around Them</p>
         <div className="flex flex-wrap gap-2">
           {d.topEmotions.map((e) => <Pill key={e} label={e} />)}
         </div>
@@ -149,20 +149,20 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
 
       {/* ── Connection Health ─────────────────────────────── */}
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-5" style={{ color: 'var(--text-tertiary)' }}>Connection Health</p>
-        <div className="flex flex-col gap-4">
+        <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Connection Health</p>
+        <div className="flex flex-col gap-3">
           {[
             { label: 'Relationship Health', value: `${d.health.score}%`, fill: d.health.score,     status: d.health.label,      color: 'var(--accent-primary)' },
             { label: 'Communication Flow',  value: `${d.health.comm}`,   fill: d.health.comm * 10, status: d.health.commLabel,  color: 'var(--accent-secondary)' },
             { label: 'Growth Potential',    value: 'High',               fill: d.health.growth,    status: d.health.growthLabel, color: 'var(--accent-ai)' },
           ].map(({ label, value, fill, status, color }) => (
-            <div key={label} className="flex items-center gap-5">
-              <p className="font-mono text-xs uppercase tracking-widest flex-shrink-0 w-36" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
+            <div key={label} className="flex items-center gap-4">
+              <p className="font-mono text-xs uppercase tracking-widest flex-shrink-0 w-32" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
               <div className="flex-1 h-px relative" style={{ background: 'var(--bg-tertiary)' }}>
                 <div className="absolute left-0 top-0 h-px" style={{ width: `${fill}%`, background: color }} />
               </div>
-              <span className="font-serif text-sm font-light w-10 text-right flex-shrink-0" style={{ color }}>{value}</span>
-              <span className="font-mono text-xs uppercase tracking-widest w-20 flex-shrink-0" style={{ color, opacity: 0.6 }}>{status}</span>
+              <span className="font-serif text-base w-10 text-right flex-shrink-0" style={{ color }}>{value}</span>
+              <span className="font-mono text-xs uppercase tracking-widest w-20 flex-shrink-0" style={{ color, opacity: 0.7 }}>{status}</span>
             </div>
           ))}
         </div>
@@ -179,7 +179,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
             >
               &ldquo;
             </span>
-            <p className="font-serif text-sm leading-relaxed italic" style={{ color: 'var(--text-secondary)' }}>{member.notes}</p>
+            <p className="font-serif text-base leading-relaxed italic" style={{ color: 'var(--text-primary)' }}>{member.notes}</p>
           </div>
         </>
       )}
