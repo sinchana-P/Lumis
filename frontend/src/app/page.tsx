@@ -726,7 +726,7 @@ export default function LumisLanding() {
             <Reveal>
               <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, marginBottom:22 }}>
                 <div style={{ flex:1, maxWidth:60, height:1, background:C.border }}/>
-                <span style={{ fontFamily:CG, fontStyle:'italic', fontSize:14, color:C.textFaint, letterSpacing:'2px' }}>The Threshold</span>
+                <span style={{ fontFamily:CG, fontStyle:'italic', fontSize:16, color:C.textFaint, letterSpacing:'2px' }}>The Threshold</span>
                 <div style={{ flex:1, maxWidth:60, height:1, background:C.border }}/>
               </div>
 

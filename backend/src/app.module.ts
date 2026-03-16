@@ -9,6 +9,7 @@ import { IncidentsModule } from './modules/incidents/incidents.module';
 import { PatternsModule } from './modules/patterns/patterns.module';
 import { InteractionsModule } from './modules/interactions/interactions.module';
 import { JournalModule } from './modules/journal/journal.module';
+import { SeedModule } from './modules/seed/seed.module';
 import { SupabaseModule } from './common/modules/supabase.module';
 import configuration from './config/configuration';
 
@@ -27,6 +28,7 @@ import configuration from './config/configuration';
     PatternsModule,
     InteractionsModule,
     JournalModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],

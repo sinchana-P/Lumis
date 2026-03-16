@@ -1,11 +1,11 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
 import { MobileNav } from './MobileNav';
 import { useAppSelector } from '@/store/hooks';
-import { cn } from '@/lib/utils';
+import { useSeedDemoLuminaryMutation } from '@/store/api/seedApi';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -13,6 +13,16 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   const journalMode = useAppSelector((state) => state.ui.journalMode);
+  const user = useAppSelector((state) => state.auth.user);
+  const [seedDemoLuminary] = useSeedDemoLuminaryMutation();
+
+  // Ensure System Node demo luminary exists for every authenticated user
+  useEffect(() => {
+    if (user?.id) {
+      seedDemoLuminary().catch(() => {});
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   if (journalMode) {
     // Journal mode: minimal UI, just content

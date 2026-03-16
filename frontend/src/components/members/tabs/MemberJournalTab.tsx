@@ -427,14 +427,14 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
                       style={{
                         padding: '7px 8px', borderRadius: 7, border: '1px solid',
                         borderColor: selectedId === entry.id ? 'var(--accent-primary)' : 'transparent',
-                        background: selectedId === entry.id ? 'var(--accent-primary-light)' : 'transparent',
+                        background: selectedId === entry.id ? 'var(--bg-secondary)' : 'transparent',
                         cursor: 'pointer', transition: 'all 180ms',
                       }}
                       onMouseEnter={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'var(--bg-secondary)'; }}
                       onMouseLeave={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
-                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-secondary)', flex: 1 }}>
+                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: selectedId === entry.id ? 'var(--accent-primary)' : 'var(--text-secondary)', flex: 1 }}>
                           {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </p>
                         {entry.isPrivate && (
@@ -446,7 +446,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
                           </svg>
                         )}
                       </div>
-                      <p className="font-serif truncate" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.35, fontWeight: selectedId === entry.id ? 500 : 400 }}>
+                      <p className="font-serif truncate" style={{ fontSize: 15, color: selectedId === entry.id ? 'var(--text-primary)' : 'var(--text-secondary)', lineHeight: 1.35, fontWeight: selectedId === entry.id ? 600 : 400 }}>
                         {entry.title || <span style={{ fontStyle: 'italic', color: 'var(--text-tertiary)' }}>Untitled</span>}
                       </p>
                       {entry.emotions.length > 0 && (

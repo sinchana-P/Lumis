@@ -123,10 +123,10 @@ export const authApi = baseApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          
+
           // Store tokens in localStorage
           storeTokens(data.data.tokens);
-          
+
           // Update auth state with user data
           dispatch(setUser(data.data.user));
         } catch (error) {
@@ -152,10 +152,10 @@ export const authApi = baseApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          
+
           // Store tokens in localStorage
           storeTokens(data.data.tokens);
-          
+
           // Update auth state with user data
           dispatch(setUser(data.data.user));
         } catch (error) {
@@ -242,7 +242,7 @@ export const authApi = baseApi.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          
+
           // Update auth state with validated user data
           dispatch(setUser(data.data.user));
         } catch (error) {

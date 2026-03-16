@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useGetMembersQuery, useCreateMemberMutation } from '@/store/api/membersApi';
+import { useSeedDemoLuminaryMutation } from '@/store/api/seedApi';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import { useZoom } from '@/hooks/useZoom';
 import { MinimalButton } from '@/components/ui/MinimalButton';
@@ -18,6 +19,12 @@ export default function MembersPage() {
   const router = useRouter();
   const { data: membersResponse, isLoading, error } = useGetMembersQuery();
   const [createMember] = useCreateMemberMutation();
+  const [seedDemoLuminary] = useSeedDemoLuminaryMutation();
+
+  useEffect(() => {
+    seedDemoLuminary().catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [energyFilter, setEnergyFilter] = useState<'all' | 'nourishing' | 'draining'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'name' | 'health' | 'type' | 'date'>('name');
