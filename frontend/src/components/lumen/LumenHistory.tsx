@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useLumenListConversationsQuery, useLumenDeleteConversationMutation, type ConversationRecord } from '@/store/api/lumenApi';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -13,8 +14,7 @@ export interface ConversationSummary {
   startedAt: Date;
   lastMessageAt: Date;
   messageCount: number;
-  snippet: string; // first user message preview
-  memberNames?: string[];
+  snippet: string;
 }
 
 // ─── Mode meta ───────────────────────────────────────────────────────────────
@@ -33,102 +33,31 @@ const DEPTH_ICONS: Record<string, string> = {
   'full-spectrum': '✨',
 };
 
-// ─── Mock history data ────────────────────────────────────────────────────────
+// ─── Transform DB record → ConversationSummary ───────────────────────────────
 
-function daysAgo(n: number) {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d;
+function toSummary(record: ConversationRecord): ConversationSummary {
+  const messages = record.messages ?? [];
+  const firstUserMsg = messages.find((m) => m.role === 'user');
+  const snippet = firstUserMsg?.content?.slice(0, 120) ?? '—';
+  const rawDepth = (firstUserMsg as any)?.depth as string | undefined;
+  const depthMap: Record<string, ConversationSummary['analysisDepth']> = {
+    FULL_SPECTRUM: 'full-spectrum',
+    COSMIC: 'cosmic',
+    BEHAVIORAL: 'behavioral',
+  };
+  const analysisDepth = depthMap[rawDepth ?? ''] ?? 'full-spectrum';
+  const modeRaw = (record.mode ?? 'guided').toLowerCase() as LumenMode;
+
+  return {
+    id: record.id,
+    mode: modeRaw,
+    analysisDepth,
+    startedAt: new Date(record.created_at),
+    lastMessageAt: new Date(record.updated_at),
+    messageCount: messages.length,
+    snippet,
+  };
 }
-
-const MOCK_CONVERSATIONS: ConversationSummary[] = [
-  {
-    id: 'c1',
-    mode: 'guided',
-    analysisDepth: 'full-spectrum',
-    startedAt: daysAgo(0),
-    lastMessageAt: daysAgo(0),
-    messageCount: 14,
-    snippet: "I've been feeling disconnected from Zara lately and I can't figure out why...",
-    memberNames: ['Zara'],
-  },
-  {
-    id: 'c2',
-    mode: 'vent',
-    analysisDepth: 'behavioral',
-    startedAt: daysAgo(0),
-    lastMessageAt: daysAgo(0),
-    messageCount: 6,
-    snippet: "Work was just a lot today. My manager dismissed everything I brought up in the meeting.",
-  },
-  {
-    id: 'c3',
-    mode: 'analysis',
-    analysisDepth: 'full-spectrum',
-    startedAt: daysAgo(1),
-    lastMessageAt: daysAgo(1),
-    messageCount: 22,
-    snippet: "Can you break down what's happening between me and Rohan? Something shifted last month.",
-    memberNames: ['Rohan'],
-  },
-  {
-    id: 'c4',
-    mode: 'advice',
-    analysisDepth: 'full-spectrum',
-    startedAt: daysAgo(1),
-    lastMessageAt: daysAgo(1),
-    messageCount: 18,
-    snippet: "I want to have a hard conversation with Mom about boundaries but I don't know how to start.",
-    memberNames: ['Mom'],
-  },
-  {
-    id: 'c5',
-    mode: 'timing',
-    analysisDepth: 'cosmic',
-    startedAt: daysAgo(3),
-    lastMessageAt: daysAgo(3),
-    messageCount: 10,
-    snippet: "Is now a good time to reach out to Arjun after the silence? Feels like something is shifting.",
-    memberNames: ['Arjun'],
-  },
-  {
-    id: 'c6',
-    mode: 'guided',
-    analysisDepth: 'behavioral',
-    startedAt: daysAgo(5),
-    lastMessageAt: daysAgo(5),
-    messageCount: 30,
-    snippet: "I keep attracting the same kind of emotionally unavailable people. Why do I do this?",
-  },
-  {
-    id: 'c7',
-    mode: 'analysis',
-    analysisDepth: 'cosmic',
-    startedAt: daysAgo(8),
-    lastMessageAt: daysAgo(8),
-    messageCount: 16,
-    snippet: "Explain my relationship with conflict — I either freeze or explode, nothing in between.",
-  },
-  {
-    id: 'c8',
-    mode: 'vent',
-    analysisDepth: 'full-spectrum',
-    startedAt: daysAgo(12),
-    lastMessageAt: daysAgo(12),
-    messageCount: 8,
-    snippet: "Just needed somewhere to put this. I found out Zara talked about me to mutual friends.",
-    memberNames: ['Zara'],
-  },
-  {
-    id: 'c9',
-    mode: 'advice',
-    analysisDepth: 'behavioral',
-    startedAt: daysAgo(20),
-    lastMessageAt: daysAgo(20),
-    messageCount: 24,
-    snippet: "I want to stop people-pleasing at work. What practical steps can I actually take?",
-  },
-];
 
 // ─── Grouping ────────────────────────────────────────────────────────────────
 
@@ -149,21 +78,25 @@ const GROUP_ORDER = ['Today', 'Yesterday', 'This Week', 'This Month', 'Earlier']
 interface Props {
   open: boolean;
   activeConversationId?: string;
-  onSelectConversation: (id: string) => void;
+  onSelectConversation: (id: string, messages: ConversationRecord['messages']) => void;
   onNewChat: () => void;
   onClose: () => void;
 }
 
 export function LumenHistory({ open, activeConversationId, onSelectConversation, onNewChat, onClose }: Props) {
   const [search, setSearch] = useState('');
+  const { data: response, isLoading } = useLumenListConversationsQuery(undefined, { skip: !open });
+  const [deleteConversation] = useLumenDeleteConversationMutation();
+
+  const records = response?.data ?? [];
+  const summaries = records.map(toSummary);
 
   const filtered = search.trim()
-    ? MOCK_CONVERSATIONS.filter((c) =>
+    ? summaries.filter((c) =>
         c.snippet.toLowerCase().includes(search.toLowerCase()) ||
-        c.mode.includes(search.toLowerCase()) ||
-        c.memberNames?.some((n) => n.toLowerCase().includes(search.toLowerCase()))
+        c.mode.includes(search.toLowerCase())
       )
-    : MOCK_CONVERSATIONS;
+    : summaries;
 
   // Group by date
   const grouped: Record<string, ConversationSummary[]> = {};
@@ -172,6 +105,17 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
     if (!grouped[grp]) grouped[grp] = [];
     grouped[grp].push(conv);
   }
+
+  const handleSelect = (id: string) => {
+    const record = records.find((r) => r.id === id);
+    onSelectConversation(id, record?.messages ?? []);
+    onClose();
+  };
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    await deleteConversation(id);
+  };
 
   return (
     <>
@@ -193,7 +137,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
           borderRight: '1px solid var(--bg-tertiary)',
           transform: open ? 'translateX(0)' : 'translateX(-100%)',
           transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)',
-          paddingTop: 56, // below header
+          paddingTop: 56,
         }}
       >
         {/* Single top bar: search + new chat + close */}
@@ -201,7 +145,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
           className="flex items-center gap-2 flex-shrink-0"
           style={{ padding: '8px 10px', borderBottom: '1px solid var(--bg-tertiary)' }}
         >
-          {/* Search — fills remaining space */}
+          {/* Search */}
           <div
             className="flex items-center gap-2 rounded-lg px-3 py-1.5 flex-1"
             style={{ background: 'var(--bg-tertiary)' }}
@@ -215,13 +159,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="bg-transparent outline-none w-full focus:outline-none"
-              style={{
-                fontSize: 12,
-                color: 'var(--text-primary)',
-                fontFamily: 'var(--font-serif)',
-                border: 'none',
-                boxShadow: 'none',
-              }}
+              style={{ fontSize: 12, color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', border: 'none', boxShadow: 'none' }}
             />
             {search && (
               <button
@@ -235,7 +173,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
             )}
           </div>
 
-          {/* New chat icon button */}
+          {/* New chat */}
           <button
             onClick={() => { onNewChat(); onClose(); }}
             title="New chat"
@@ -271,13 +209,17 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
 
         {/* Conversation list */}
         <div className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none' }}>
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="flex items-center justify-center py-12" style={{ opacity: 0.4 }}>
+              <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>Loading...</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 px-6 text-center" style={{ opacity: 0.5 }}>
               <svg width="28" height="28" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-tertiary)', marginBottom: 10 }}>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
               <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
-                No conversations found
+                {search ? 'No conversations found' : 'No conversations yet'}
               </p>
             </div>
           ) : (
@@ -288,23 +230,20 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
                   className="px-4 pt-4 pb-1"
                   style={{ position: 'sticky', top: 0, background: 'var(--bg-secondary)', zIndex: 1 }}
                 >
-                  <span
-                    className="font-mono uppercase tracking-widest"
-                    style={{ fontSize: 10, color: 'var(--text-tertiary)' }}
-                  >
+                  <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
                     {group}
                   </span>
                 </div>
 
                 {/* Items */}
                 {grouped[group].map((conv) => {
-                  const meta = MODE_META[conv.mode];
+                  const meta = MODE_META[conv.mode] ?? MODE_META.guided;
                   const isActive = conv.id === activeConversationId;
                   return (
                     <button
                       key={conv.id}
-                      onClick={() => { onSelectConversation(conv.id); onClose(); }}
-                      className="w-full text-left transition-colors duration-150"
+                      onClick={() => handleSelect(conv.id)}
+                      className="w-full text-left transition-colors duration-150 group"
                       style={{
                         display: 'block',
                         padding: '10px 16px',
@@ -312,6 +251,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
                         border: 'none',
                         borderLeft: isActive ? `2px solid ${meta.color}` : '2px solid transparent',
                         cursor: 'pointer',
+                        position: 'relative',
                       }}
                       onMouseEnter={(e) => {
                         if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = 'var(--surface)';
@@ -322,27 +262,32 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
                     >
                       {/* Mode + depth + time row */}
                       <div className="flex items-center gap-2 mb-1.5">
-                        {/* Mode dot */}
-                        <span
-                          className="flex-shrink-0 rounded-full"
-                          style={{ width: 6, height: 6, background: meta.color }}
-                        />
-                        <span
-                          className="font-mono uppercase tracking-widest flex-shrink-0"
-                          style={{ fontSize: 10, color: meta.color }}
-                        >
+                        <span className="flex-shrink-0 rounded-full" style={{ width: 6, height: 6, background: meta.color }} />
+                        <span className="font-mono uppercase tracking-widest flex-shrink-0" style={{ fontSize: 10, color: meta.color }}>
                           {meta.label}
                         </span>
-                        <span style={{ fontSize: 10, flexShrink: 0 }}>
-                          {DEPTH_ICONS[conv.analysisDepth]}
-                        </span>
+                        <span style={{ fontSize: 10, flexShrink: 0 }}>{DEPTH_ICONS[conv.analysisDepth]}</span>
                         <span className="flex-1" />
-                        <span
-                          className="font-mono flex-shrink-0"
-                          style={{ fontSize: 10, color: 'var(--text-tertiary)' }}
-                        >
+                        <span className="font-mono flex-shrink-0" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
                           {conv.lastMessageAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </span>
+                        {/* Delete button — shows on hover */}
+                        <button
+                          onClick={(e) => handleDelete(e, conv.id)}
+                          title="Delete"
+                          style={{
+                            background: 'none', border: 'none', cursor: 'pointer', padding: '0 2px',
+                            color: 'var(--text-tertiary)', opacity: 0, pointerEvents: 'none',
+                            transition: 'opacity 0.15s',
+                          }}
+                          className="delete-btn"
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--accent-primary)'; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-tertiary)'; }}
+                        >
+                          <svg width="9" height="9" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
                       </div>
 
                       {/* Snippet */}
@@ -362,31 +307,13 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
                         {conv.snippet}
                       </p>
 
-                      {/* Members + message count */}
-                      {(conv.memberNames?.length || conv.messageCount) && (
-                        <div className="flex items-center gap-2 mt-1.5">
-                          {conv.memberNames?.length ? (
-                            <div className="flex items-center gap-1">
-                              <svg width="9" height="9" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ color: 'var(--text-tertiary)' }}>
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                              </svg>
-                              <span
-                                className="font-serif"
-                                style={{ fontSize: 10, color: 'var(--text-tertiary)' }}
-                              >
-                                {conv.memberNames.join(', ')}
-                              </span>
-                            </div>
-                          ) : null}
-                          <span className="flex-1" />
-                          <span
-                            className="font-mono"
-                            style={{ fontSize: 10, color: 'var(--text-tertiary)' }}
-                          >
-                            {conv.messageCount} msgs
-                          </span>
-                        </div>
-                      )}
+                      {/* Message count */}
+                      <div className="flex items-center mt-1.5">
+                        <span className="flex-1" />
+                        <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                          {conv.messageCount} msgs
+                        </span>
+                      </div>
                     </button>
                   );
                 })}
@@ -395,6 +322,16 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
           )}
         </div>
       </aside>
+
+      <style>{`
+        button:hover .delete-btn,
+        button:hover > .delete-btn {
+          opacity: 1 !important;
+          pointer-events: auto !important;
+        }
+        /* Show delete btn when parent button is hovered */
+        button:hover .delete-btn { opacity: 1 !important; pointer-events: auto !important; }
+      `}</style>
     </>
   );
 }

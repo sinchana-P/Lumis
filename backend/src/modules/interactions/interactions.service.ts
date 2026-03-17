@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
+import { VectorMemoryService } from '../lumen/vector-memory.service';
 import { CreateInteractionDto, UpdateInteractionDto, InteractionsQueryDto } from './dto';
 
 @Injectable()
 export class InteractionsService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private vectorMemory: VectorMemoryService,
+  ) {}
 
   async create(userId: string, memberId: string, dto: CreateInteractionDto) {
     const supabase = this.supabaseService.getAdminClient();
@@ -31,7 +35,13 @@ export class InteractionsService {
       .single();
 
     if (error) throw new Error(`Failed to create interaction: ${error.message}`);
-    return this.format(data);
+    const formatted = this.format(data);
+    this.vectorMemory.storeInteraction(
+      { id: formatted.id, memberId: formatted.memberId, feeling: formatted.quality ?? 'neutral',
+        note: formatted.description, duration: formatted.duration, date: formatted.date },
+      userId,
+    ).catch(() => {/* non-fatal */});
+    return formatted;
   }
 
   async findAll(userId: string, memberId: string, query: InteractionsQueryDto) {

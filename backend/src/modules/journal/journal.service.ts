@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
+import { VectorMemoryService } from '../lumen/vector-memory.service';
 import { CreateJournalEntryDto } from './dto/create-journal-entry.dto';
 
 @Injectable()
 export class JournalService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private vectorMemory: VectorMemoryService,
+  ) {}
 
   async findAll(userId: string, memberId: string) {
     const supabase = this.supabaseService.getAdminClient();
@@ -42,6 +46,10 @@ export class JournalService {
       .single();
 
     if (error) throw new Error(error.message);
+    this.vectorMemory.storeJournalEntry(
+      { id: data.id, memberId, text: data.content, date: data.date },
+      userId,
+    ).catch(() => {/* non-fatal */});
     return data;
   }
 
@@ -67,6 +75,10 @@ export class JournalService {
       .single();
 
     if (error) throw new Error(error.message);
+    this.vectorMemory.storeJournalEntry(
+      { id: data.id, memberId, text: data.content, date: data.date },
+      userId,
+    ).catch(() => {/* non-fatal */});
     return data;
   }
 

@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
+import { VectorMemoryService } from '../lumen/vector-memory.service';
 import { CreateIncidentDto, UpdateIncidentDto, IncidentsQueryDto } from './dto';
 
 @Injectable()
 export class IncidentsService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private vectorMemory: VectorMemoryService,
+  ) {}
 
   async create(userId: string, memberId: string, dto: CreateIncidentDto) {
     const supabase = this.supabaseService.getAdminClient();
@@ -28,7 +32,14 @@ export class IncidentsService {
       .single();
 
     if (error) throw new Error(`Failed to create incident: ${error.message}`);
-    return this.format(data);
+    const formatted = this.format(data);
+    this.vectorMemory.storeIncident(
+      { id: formatted.id, memberId: formatted.memberId, title: formatted.title, description: formatted.description,
+        emotions: formatted.emotions, type: formatted.category ?? 'general', intensity: formatted.severity ?? 'moderate',
+        resolution: formatted.outcome, date: formatted.date },
+      userId,
+    ).catch(() => {/* non-fatal */});
+    return formatted;
   }
 
   async findAll(userId: string, memberId: string, query: IncidentsQueryDto) {
@@ -91,7 +102,14 @@ export class IncidentsService {
       .single();
 
     if (error || !data) throw new NotFoundException('Incident not found');
-    return this.format(data);
+    const formatted = this.format(data);
+    this.vectorMemory.storeIncident(
+      { id: formatted.id, memberId: formatted.memberId, title: formatted.title, description: formatted.description,
+        emotions: formatted.emotions, type: formatted.category ?? 'general', intensity: formatted.severity ?? 'moderate',
+        resolution: formatted.outcome, date: formatted.date },
+      userId,
+    ).catch(() => {/* non-fatal */});
+    return formatted;
   }
 
   async remove(userId: string, memberId: string, incidentId: string) {

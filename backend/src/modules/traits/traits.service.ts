@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
+import { VectorMemoryService } from '../lumen/vector-memory.service';
 import { CreateTraitDto, UpdateTraitDto, TraitsQueryDto, TagSearchQueryDto } from './dto';
 
 @Injectable()
 export class TraitsService {
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(
+    private supabaseService: SupabaseService,
+    private vectorMemory: VectorMemoryService,
+  ) {}
 
   async create(userId: string, dto: CreateTraitDto) {
     const supabase = this.supabaseService.getAdminClient();
@@ -32,7 +36,17 @@ export class TraitsService {
       throw new Error(`Failed to create trait: ${error.message}`);
     }
 
-    return this.format(data);
+    const formatted = this.format(data);
+    // Fire-and-forget: embed this trait for semantic memory
+    if (formatted.memberId) {
+      this.vectorMemory.storeTrait(
+        { id: formatted.id, category: formatted.category, description: formatted.description, intensity: formatted.intensity },
+        formatted.memberId,
+        userId,
+      ).catch(() => {/* non-fatal */});
+    }
+
+    return formatted;
   }
 
   async findAll(userId: string, query: TraitsQueryDto) {
@@ -115,7 +129,16 @@ export class TraitsService {
       throw new NotFoundException('Trait not found');
     }
 
-    return this.format(data);
+    const formatted = this.format(data);
+    if (formatted.memberId) {
+      this.vectorMemory.storeTrait(
+        { id: formatted.id, category: formatted.category, description: formatted.description, intensity: formatted.intensity },
+        formatted.memberId,
+        userId,
+      ).catch(() => {/* non-fatal */});
+    }
+
+    return formatted;
   }
 
   async remove(userId: string, traitId: string) {

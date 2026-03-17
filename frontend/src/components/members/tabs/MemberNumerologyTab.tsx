@@ -1,18 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import {
-  getNumerologyDataForMember,
-  type CoreNumberData,
-  type TimingNumberData,
-  type CompatibilityData,
-} from '@/data/mockNumerologyData';
+  useGetMemberNumerologyQuery,
+  useCalculateNumerologyMutation,
+  type NumerologyProfile,
+} from '@/store/api/numerologyApi';
 
 interface Member {
   id: string;
   fullName: string;
   nickname?: string;
   dateOfBirth?: string;
+  relationType?: string;
   [key: string]: any;
 }
 
@@ -22,7 +23,341 @@ interface MemberNumerologyTabProps {
 
 type TabId = 'core' | 'timing' | 'compatibility';
 
-const CIRCLED = ['①', '②', '③', '④', '⑤', '⑥'];
+// ─── Display types (local) ────────────────────────────────────────────────────
+
+interface CoreNumberData {
+  id: string;
+  number: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  traits: string[];
+  expandedDescription: string;
+  wisdomInsight: string;
+  expanded?: boolean;
+}
+
+interface TimingNumberData {
+  id: string;
+  number: number;
+  title: string;
+  period: string;
+  year?: number;
+  description: string;
+  expandedDescription: string;
+  guidanceText: string;
+  influence: string;
+  expanded?: boolean;
+}
+
+interface CompatibilityCardData {
+  id: string;
+  title: string;
+  yourNumber: number;
+  theirNumber: number;
+  score: number;
+  expandedContent: string;
+  lumisAssessment: string;
+}
+
+interface CompatibilityData {
+  overallScore: number;
+  lifePath: CompatibilityCardData;
+  soulUrge: CompatibilityCardData;
+  compatibilityScore: CompatibilityCardData;
+}
+
+// ─── Lookup tables ─────────────────────────────────────────────────────────────
+
+const LIFE_PATH_META: Record<number, { title: string; traits: string[] }> = {
+  1:  { title: 'The Pioneer',      traits: ['Leadership', 'Originality', 'Independence'] },
+  2:  { title: 'The Peacemaker',   traits: ['Partnership', 'Sensitivity', 'Diplomacy'] },
+  3:  { title: 'The Expressive',   traits: ['Creativity', 'Communication', 'Joy'] },
+  4:  { title: 'The Builder',      traits: ['Structure', 'Discipline', 'Reliability'] },
+  5:  { title: 'The Free Spirit',  traits: ['Freedom', 'Change', 'Adventure'] },
+  6:  { title: 'The Nurturer',     traits: ['Love', 'Responsibility', 'Harmony'] },
+  7:  { title: 'The Seeker',       traits: ['Wisdom', 'Intuition', 'Analysis'] },
+  8:  { title: 'The Powerhouse',   traits: ['Authority', 'Abundance', 'Mastery'] },
+  9:  { title: 'The Humanitarian', traits: ['Compassion', 'Wisdom', 'Service'] },
+  11: { title: 'The Illuminator',  traits: ['Intuition', 'Inspiration', 'Spiritual Vision'] },
+  22: { title: 'The Master Builder', traits: ['Vision', 'Leadership', 'Manifestation'] },
+  33: { title: 'The Teacher',      traits: ['Compassion', 'Teaching', 'Healing'] },
+};
+
+const EXPR_META: Record<number, { title: string; traits: string[] }> = {
+  1:  { title: 'The Leader',      traits: ['Drive', 'Originality', 'Ambition'] },
+  2:  { title: 'The Diplomat',    traits: ['Cooperation', 'Balance', 'Intuition'] },
+  3:  { title: 'The Communicator', traits: ['Expression', 'Creativity', 'Optimism'] },
+  4:  { title: 'The Organiser',   traits: ['Precision', 'Order', 'Dedication'] },
+  5:  { title: 'The Adventurer',  traits: ['Versatility', 'Change', 'Wit'] },
+  6:  { title: 'The Caretaker',   traits: ['Care', 'Beauty', 'Balance'] },
+  7:  { title: 'The Analyst',     traits: ['Depth', 'Research', 'Perfection'] },
+  8:  { title: 'The Executive',   traits: ['Ambition', 'Power', 'Efficiency'] },
+  9:  { title: 'The Idealist',    traits: ['Generosity', 'Art', 'Completion'] },
+  11: { title: 'The Visionary',   traits: ['Inspiration', 'Intuition', 'Leadership'] },
+  22: { title: 'The Architect',   traits: ['Vision', 'Practicality', 'Legacy'] },
+};
+
+// Extract first sentence from a long text as the short description
+function firstSentence(text: string, fallback = ''): string {
+  if (!text) return fallback;
+  const match = text.match(/^[^.!?]+[.!?]/);
+  return match ? match[0].trim() : text.slice(0, 120) + '…';
+}
+
+// ─── Calculation helpers ──────────────────────────────────────────────────────
+
+const PYTH: Record<string, number> = {
+  A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
+  J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
+  S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8,
+};
+const VOWELS_SET = new Set(['A','E','I','O','U']);
+
+function reduceStep(n: number): string {
+  if (n <= 9 || n === 11 || n === 22 || n === 33) return String(n);
+  const next = String(n).split('').reduce((a, d) => a + Number(d), 0);
+  return `${n} → ${reduceStep(next)}`;
+}
+
+function formatDobDisplay(dob: string): string {
+  const [y, m, d] = dob.split('-');
+  return `${d}-${m}-${y}`;
+}
+
+function lifePathCalcStr(dob: string): string {
+  const [y, m, d] = dob.split('-');
+  const digits = `${d}${m}${y}`.split('').map(Number);
+  const sum = digits.reduce((a, v) => a + v, 0);
+  return `${digits.join(' + ')} = ${reduceStep(sum)}`;
+}
+
+function nameCalcStr(name: string, type: 'all' | 'vowels' | 'consonants'): string {
+  const letters = name.toUpperCase().replace(/[^A-Z]/g, '').split('');
+  const filtered = letters.filter(l =>
+    type === 'all' ? true : type === 'vowels' ? VOWELS_SET.has(l) : !VOWELS_SET.has(l)
+  );
+  if (!filtered.length) return '—';
+  const values = filtered.map(l => PYTH[l] ?? 0);
+  const sum = values.reduce((a, v) => a + v, 0);
+  const pairs = filtered.map((l, i) => `${l}=${values[i]}`);
+  const shown = pairs.length > 8 ? [...pairs.slice(0, 7), '…'] : pairs;
+  return `${shown.join(' + ')} = ${reduceStep(sum)}`;
+}
+
+function birthdayCalcStr(dob: string): string {
+  const day = parseInt(dob.slice(8, 10));
+  if (day <= 9 || day === 11 || day === 22) return String(day);
+  const digits = String(day).split('').map(Number);
+  const sum = digits.reduce((a, d) => a + d, 0);
+  return `${digits.join(' + ')} = ${reduceStep(sum)}`;
+}
+
+// ─── Number info lookup ───────────────────────────────────────────────────────
+
+interface NumberInfoDef {
+  label: string;
+  description: string;
+  formula: string;
+  inputLabel: (member: Member) => string;
+  calcStr: (member: Member, profile: NumerologyProfile) => string;
+}
+
+const NUMBER_INFO: Record<string, NumberInfoDef> = {
+  lifePath: {
+    label: 'Life Path',
+    description: 'Your core life path and direction. Reflects the overarching purpose, innate tendencies, and soul theme of this lifetime.',
+    formula: 'Sum all digits of the birth date, reduce to a single digit (or master number 11 / 22 / 33)',
+    inputLabel: (m) => m.dateOfBirth ? `Birth date (${formatDobDisplay(m.dateOfBirth)})` : 'Birth date',
+    calcStr: (m) => m.dateOfBirth ? lifePathCalcStr(m.dateOfBirth) : '—',
+  },
+  expression: {
+    label: 'Expression',
+    description: 'How you naturally show up in the world — your talents, abilities, and the gifts you came here to develop.',
+    formula: 'Pythagorean values of all letters in the full birth name',
+    inputLabel: (m) => `Full name (${m.fullName})`,
+    calcStr: (m) => nameCalcStr(m.fullName, 'all'),
+  },
+  soulUrge: {
+    label: 'Soul Urge',
+    description: 'The deepest longing of the heart. What is truly craved beneath the surface — the core inner motivation.',
+    formula: 'Pythagorean values of vowels only in the full birth name',
+    inputLabel: (m) => `Vowels in ${m.fullName}`,
+    calcStr: (m) => nameCalcStr(m.fullName, 'vowels'),
+  },
+  personality: {
+    label: 'Personality',
+    description: 'The impression left on others — the outer self the world encounters before it knows you deeply.',
+    formula: 'Pythagorean values of consonants only in the full birth name',
+    inputLabel: (m) => `Consonants in ${m.fullName}`,
+    calcStr: (m) => nameCalcStr(m.fullName, 'consonants'),
+  },
+  birthday: {
+    label: 'Birthday Gift',
+    description: 'An innate talent you were born with — a natural gift available throughout this entire lifetime.',
+    formula: 'The day of birth, reduced to a single digit (or master number 11 / 22)',
+    inputLabel: (m) => m.dateOfBirth ? `Birth date (${formatDobDisplay(m.dateOfBirth)})` : 'Birth date',
+    calcStr: (m) => m.dateOfBirth ? birthdayCalcStr(m.dateOfBirth) : '—',
+  },
+  maturity: {
+    label: 'Maturity',
+    description: 'Who you are becoming — grows in influence after age 35, revealing the truest self and ultimate potential.',
+    formula: 'Life Path + Expression, reduced to a single digit',
+    inputLabel: () => 'Life Path + Expression',
+    calcStr: (_m, p) => {
+      const sum = p.coreNumbers.lifePath + p.coreNumbers.expression;
+      return `${p.coreNumbers.lifePath} + ${p.coreNumbers.expression} = ${reduceStep(sum)}`;
+    },
+  },
+};
+
+// ─── Transform API data to display format ─────────────────────────────────────
+
+function transformToDisplayData(
+  profile: NumerologyProfile,
+  member: Member,
+): { coreNumbers: CoreNumberData[]; timingNumbers: TimingNumberData[]; compatibility: CompatibilityData | null } {
+  const { coreNumbers, timingNumbers, insights } = profile;
+  const currentYear = new Date().getFullYear();
+
+  const lpMeta = LIFE_PATH_META[coreNumbers.lifePath] ?? { title: 'The Pathfinder', traits: ['Depth', 'Purpose', 'Growth'] };
+  const exprMeta = EXPR_META[coreNumbers.expression] ?? { title: 'The Expressive', traits: ['Communication', 'Clarity', 'Presence'] };
+
+  const core: CoreNumberData[] = [
+    {
+      id: 'lifePath',
+      number: coreNumbers.lifePath,
+      title: lpMeta.title,
+      subtitle: 'Life Path',
+      description: firstSentence(insights.lifePathMeaning, `Life Path ${coreNumbers.lifePath} — the core of who they are.`),
+      traits: lpMeta.traits,
+      expandedDescription: insights.lifePathMeaning,
+      wisdomInsight: insights.theirNumberInYourLife?.lifePath ?? '',
+    },
+    {
+      id: 'expression',
+      number: coreNumbers.expression,
+      title: exprMeta.title,
+      subtitle: 'Expression',
+      description: firstSentence(insights.expressionMeaning, `Expression ${coreNumbers.expression} — how they show up in the world.`),
+      traits: exprMeta.traits,
+      expandedDescription: insights.expressionMeaning,
+      wisdomInsight: insights.theirNumberInYourLife?.expression ?? '',
+    },
+    {
+      id: 'soulUrge',
+      number: coreNumbers.soulUrge,
+      title: 'Soul Urge',
+      subtitle: 'Soul Urge',
+      description: firstSentence(insights.soulUrgeMeaning, `Soul Urge ${coreNumbers.soulUrge} — what they crave most deeply.`),
+      traits: ['Desire', 'Inner Drive', 'Core Need'],
+      expandedDescription: insights.soulUrgeMeaning,
+      wisdomInsight: insights.theirNumberInYourLife?.soulUrge ?? '',
+    },
+    {
+      id: 'personality',
+      number: coreNumbers.personality,
+      title: 'Personality',
+      subtitle: 'Personality',
+      description: firstSentence(insights.personalityMeaning, `Personality ${coreNumbers.personality} — how others first perceive them.`),
+      traits: ['First Impression', 'Outer Self', 'Projection'],
+      expandedDescription: insights.personalityMeaning,
+      wisdomInsight: insights.theirNumberInYourLife?.personality ?? '',
+    },
+    {
+      id: 'birthday',
+      number: coreNumbers.birthday,
+      title: 'Birthday Gift',
+      subtitle: 'Birthday',
+      description: firstSentence(insights.birthdayMeaning, `Birthday ${coreNumbers.birthday} — an innate talent they were born with.`),
+      traits: ['Natural Gift', 'Born Skill', 'Innate Talent'],
+      expandedDescription: insights.birthdayMeaning,
+      wisdomInsight: insights.theirNumberInYourLife?.birthday ?? '',
+    },
+    {
+      id: 'maturity',
+      number: coreNumbers.maturity,
+      title: 'Maturity Number',
+      subtitle: 'Maturity',
+      description: firstSentence(insights.maturityMeaning, `Maturity ${coreNumbers.maturity} — who they're becoming later in life.`),
+      traits: ['Later Life', 'True Calling', 'Fulfillment'],
+      expandedDescription: insights.maturityMeaning,
+      wisdomInsight: insights.theirNumberInYourLife?.maturity ?? '',
+    },
+  ];
+
+  const timing: TimingNumberData[] = [
+    {
+      id: 'personalYear',
+      number: timingNumbers.personalYear,
+      title: `Personal Year ${timingNumbers.personalYear}`,
+      period: 'Personal Year',
+      year: currentYear,
+      description: firstSentence(insights.personalYearMeaning, `A year shaped by the energy of ${timingNumbers.personalYear}.`),
+      expandedDescription: insights.personalYearMeaning,
+      influence: firstSentence(insights.personalYearMeaning, ''),
+      guidanceText: insights.theirNumberInYourLife?.personalYear ?? insights.personalYearMeaning,
+    },
+    {
+      id: 'personalMonth',
+      number: timingNumbers.personalMonth,
+      title: `Personal Month ${timingNumbers.personalMonth}`,
+      period: 'Personal Month',
+      description: firstSentence(insights.personalMonthMeaning, `This month carries the energy of ${timingNumbers.personalMonth}.`),
+      expandedDescription: insights.personalMonthMeaning,
+      influence: firstSentence(insights.personalMonthMeaning, ''),
+      guidanceText: insights.theirNumberInYourLife?.personalMonth ?? insights.personalMonthMeaning,
+    },
+    {
+      id: 'lifeCycle',
+      number: timingNumbers.lifeCycle,
+      title: `Life Cycle ${timingNumbers.lifeCycle}`,
+      period: 'Life Cycles',
+      description: `Currently in Life Cycle ${timingNumbers.lifeCycle} — the overarching phase shaping this season of life.`,
+      expandedDescription: `Life Cycle ${timingNumbers.lifeCycle} governs the broad arc of this phase. The personal year and month cycles play out within this larger container.`,
+      influence: `Current phase energy: ${timingNumbers.lifeCycle}`,
+      guidanceText: insights.theirNumberInYourLife?.lifeCycle ?? `Life Cycle ${timingNumbers.lifeCycle} shapes this entire chapter of ${member.fullName}'s life.`,
+    },
+  ];
+
+  if (!profile.compatibility) {
+    return { coreNumbers: core, timingNumbers: timing, compatibility: null };
+  }
+
+  const c = profile.compatibility;
+  const compatibility: CompatibilityData = {
+    overallScore: c.overallScore,
+    lifePath: {
+      id: 'lp-compat',
+      title: 'Life Path Compatibility',
+      yourNumber: 0, // user's LP not available here; placeholder
+      theirNumber: coreNumbers.lifePath,
+      score: c.lifePathScore,
+      expandedContent: c.dimensionTexts?.lifePath ?? '',
+      lumisAssessment: c.overallSummary,
+    },
+    soulUrge: {
+      id: 'su-compat',
+      title: 'Soul Urge Compatibility',
+      yourNumber: 0,
+      theirNumber: coreNumbers.soulUrge,
+      score: c.soulUrgeScore,
+      expandedContent: c.dimensionTexts?.soulUrge ?? '',
+      lumisAssessment: c.dimensionTexts?.soulUrge ?? c.overallSummary,
+    },
+    compatibilityScore: {
+      id: 'expr-compat',
+      title: 'Expression Compatibility',
+      yourNumber: 0,
+      theirNumber: coreNumbers.expression,
+      score: c.expressionScore,
+      expandedContent: c.dimensionTexts?.expression ?? '',
+      lumisAssessment: c.dimensionTexts?.expression ?? c.overallSummary,
+    },
+  };
+
+  return { coreNumbers: core, timingNumbers: timing, compatibility };
+}
 
 // ─── Theme helpers ────────────────────────────────────────────────────────────
 
@@ -48,6 +383,84 @@ function getCompatibilityTheme(score: number) {
   return               { bg: 'bg-tertiary/5',            border: 'border-l-tertiary/30',          number: 'text-tertiary',         accent: 'text-tertiary/70',         label: 'Complex',       progressBg: 'bg-[#E0D8CC]' };
 }
 
+// ─── Info Tooltip ─────────────────────────────────────────────────────────────
+
+function InfoTooltip({ id, member, profile, accent }: {
+  id: string;
+  member: Member;
+  profile: NumerologyProfile;
+  accent: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const info = NUMBER_INFO[id];
+  if (!info) return null;
+
+  const handleEnter = () => {
+    if (btnRef.current) {
+      const r = btnRef.current.getBoundingClientRect();
+      const W = 288;
+      const left = Math.max(8, r.right - W);
+      setPos({ top: r.top - 8, left });
+    }
+    setOpen(true);
+  };
+
+  const tooltip = open && typeof document !== 'undefined' && createPortal(
+    <div
+      style={{ position: 'fixed', top: pos.top, left: pos.left, transform: 'translateY(-100%) translateY(-4px)', zIndex: 9999 }}
+      className="w-[260px] bg-secondary border border-primary/40 rounded-lg shadow-lg pointer-events-none"
+    >
+      <div className="px-3 pt-2.5 pb-2 border-b border-primary/60">
+        <p className="font-mono text-[9px] uppercase tracking-widest font-semibold" style={{ color: 'var(--text-tertiary)' }}>
+          {info.label}
+        </p>
+      </div>
+      <div className="px-3 py-2 space-y-1.5">
+        <p className="font-serif text-xs leading-snug text-primary">{info.description}</p>
+        <div className="border-t border-primary/60 pt-1.5 space-y-0.5">
+          <p className="font-mono text-[8px] uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Formula</p>
+          <p className="font-serif text-[11px] leading-snug italic" style={{ color: 'var(--text-tertiary)' }}>{info.formula}</p>
+        </div>
+        <div className="border-t border-primary/60 pt-1.5 space-y-0.5">
+          <p className="font-mono text-[8px] uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+            {info.inputLabel(member)}
+          </p>
+          {(() => {
+            const str = info.calcStr(member, profile);
+            const lastArrow = str.lastIndexOf('→');
+            if (lastArrow === -1) return <p className="font-mono text-xs leading-snug text-primary">{str}</p>;
+            const before = str.slice(0, lastArrow + 1);
+            const final = str.slice(lastArrow + 1).trim();
+            return (
+              <p className="font-mono text-xs leading-snug text-primary">
+                {before} <span className="font-bold">{final}</span>
+              </p>
+            );
+          })()}
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+
+  return (
+    <div className="inline-flex items-center" onMouseLeave={() => setOpen(false)}>
+      <button
+        ref={btnRef}
+        onMouseEnter={handleEnter}
+        className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center flex-shrink-0 transition-opacity outline-none focus:outline-none ${accent} border-current opacity-35 hover:opacity-75`}
+        onClick={(e) => e.stopPropagation()}
+        aria-label={`How ${info.label} is calculated`}
+      >
+        <span className="font-mono text-[8px] font-bold leading-none select-none">i</span>
+      </button>
+      {tooltip}
+    </div>
+  );
+}
+
 // ─── Expand/Collapse chevron ──────────────────────────────────────────────────
 
 function Chevron({ open, accent }: { open: boolean; accent: string }) {
@@ -63,7 +476,7 @@ function Chevron({ open, accent }: { open: boolean; accent: string }) {
 
 function InsightCard({ icon, title, body, accent }: { icon: React.ReactNode; title: React.ReactNode; body: string; accent: string }) {
   return (
-    <div className="bg-secondary border border-primary/30 rounded-xl p-5 shadow-sm">
+    <div className="bg-secondary border border-primary/40 rounded-xl p-5 shadow-sm">
       <div className="flex items-center gap-2 mb-3">
         <span className={`w-4 h-4 ${accent}`}>{icon}</span>
         <h4 className="font-sans text-sm text-primary font-medium">{title}</h4>
@@ -75,18 +488,17 @@ function InsightCard({ icon, title, body, accent }: { icon: React.ReactNode; tit
 
 // ─── Core Numbers ─────────────────────────────────────────────────────────────
 
-function CoreNumbersContent({ coreNumbers, onToggle }: {
+function CoreNumbersContent({ coreNumbers, onToggle, member, profile }: {
   coreNumbers: CoreNumberData[];
   onToggle: (id: string) => void;
+  member: Member;
+  profile: NumerologyProfile;
 }) {
   return (
     <div className="space-y-4">
-      {/* Description only - no duplicate header */}
       <p className="font-serif text-base leading-relaxed text-primary font-light mb-4">
         The permanent blueprint — calculated from name and date of birth
       </p>
-
-      {/* Cards */}
       <div className="space-y-3">
         {coreNumbers.map((n, index) => {
           const theme = coreThemes[index] || coreThemes[0];
@@ -94,12 +506,9 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
 
           return (
             <div key={n.id} tabIndex={-1}
-                 className={`${theme.bg} border border-primary/30 border-l-4 ${theme.border} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 outline-none focus:outline-none`}>
+                 className={`${theme.bg} border border-primary/40 border-l-4 ${theme.border} rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 outline-none focus:outline-none`}>
 
-              {/* Collapsed row */}
               <div className="flex items-center gap-5 px-5 py-4 cursor-pointer outline-none" onClick={() => onToggle(n.id)}>
-
-                {/* Number */}
                 <div className="flex flex-col items-center min-w-[52px]">
                   <span className={`text-5xl font-serif italic font-light leading-none ${theme.number}`}>
                     {n.number}
@@ -109,13 +518,12 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
                   </span>
                 </div>
 
-                {/* Divider */}
                 <div className="w-px h-10 bg-primary/20 flex-shrink-0" />
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-baseline gap-3 mb-1">
+                  <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-serif text-xl font-medium text-primary leading-tight" style={{ letterSpacing: '-0.01em' }}>{n.title}</h3>
+                    <InfoTooltip id={n.id} member={member} profile={profile} accent={theme.accent} />
                   </div>
                   <div className={`font-serif text-xs uppercase tracking-widest ${theme.accent} mb-1 font-medium`}>
                     {n.traits.join(' · ')}
@@ -126,20 +534,21 @@ function CoreNumbersContent({ coreNumbers, onToggle }: {
                 <Chevron open={expanded} accent={theme.accent} />
               </div>
 
-              {/* Expanded content */}
               {expanded && (
                 <div className="px-5 pb-5 space-y-3 border-t border-primary/10 pt-4">
                   <p className="font-serif text-base leading-relaxed text-primary">{n.expandedDescription}</p>
-                  <InsightCard
-                    accent={theme.accent}
-                    title="Their Number in Your Life"
-                    body={n.wisdomInsight}
-                    icon={
-                      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
-                    }
-                  />
+                  {n.wisdomInsight && (
+                    <InsightCard
+                      accent={theme.accent}
+                      title="Their Number in Your Life"
+                      body={n.wisdomInsight}
+                      icon={
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" className="w-4 h-4">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                      }
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -162,13 +571,11 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
 
   return (
     <div className="space-y-4">
-      {/* Description only - no duplicate header */}
       <p className="font-serif text-base leading-relaxed text-primary font-light mb-3">
         The cyclical influences — energies that shift and evolve through time,
         revealing the cosmic rhythm of {member.fullName}{member.nickname && <span className="ml-1 italic" style={{ color: 'var(--text-tertiary)' }}>&ldquo;{member.nickname}&rdquo;</span>}'s journey.
       </p>
 
-      {/* Current year banner */}
       <div className="bg-accent-gold/12 border border-accent-gold/30 rounded-xl px-5 py-3 flex items-center gap-3 mb-2">
         <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse flex-shrink-0" />
         <div>
@@ -181,7 +588,6 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
         </div>
       </div>
 
-      {/* Cards */}
       <div className="space-y-3">
         {timingNumbers.map((n, index) => {
           const isCurrentYear = n.year === currentYear;
@@ -190,12 +596,9 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
 
           return (
             <div key={n.id} tabIndex={-1}
-                 className={`${theme.bg} border border-primary/30 border-l-4 ${theme.border} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 outline-none focus:outline-none`}>
+                 className={`${theme.bg} border border-primary/40 border-l-4 ${theme.border} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 outline-none focus:outline-none`}>
 
-              {/* Collapsed row */}
               <div className="flex items-center gap-5 px-5 py-4 cursor-pointer outline-none" onClick={() => onToggle(n.id)}>
-
-                {/* Number */}
                 <div className="flex flex-col items-center min-w-[52px]">
                   <span className={`text-5xl font-serif italic font-light leading-none ${theme.number}`}>
                     {n.number}
@@ -205,10 +608,8 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                   </span>
                 </div>
 
-                {/* Divider */}
                 <div className="w-px h-10 bg-primary/20 flex-shrink-0" />
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-serif text-xl font-medium text-primary leading-tight" style={{ letterSpacing: '-0.01em' }}>{n.title}</h3>
@@ -237,7 +638,6 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                 <Chevron open={expanded} accent={theme.accent} />
               </div>
 
-              {/* Expanded content */}
               {expanded && (
                 <div className="px-5 pb-5 space-y-3 border-t border-primary/10 pt-4">
                   <p className="font-serif text-base leading-relaxed text-primary">{n.expandedDescription}</p>
@@ -282,13 +682,11 @@ function CompatibilityContent({ compatibility, member }: {
 
   return (
     <div className="space-y-4">
-      {/* Description only - no duplicate header */}
       <p className="font-serif text-base leading-relaxed text-primary font-light mb-3">
         How your numerological blueprint meets theirs — both sides examined
       </p>
 
-      {/* Overall score card */}
-      <div className={`${overallTheme.bg} border border-primary/30 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-6 mb-2`}>
+      <div className={`${overallTheme.bg} border border-primary/40 rounded-2xl px-5 py-4 shadow-sm flex items-center gap-6 mb-2`}>
         <div className="flex flex-col items-center min-w-[64px]">
           <span className={`text-5xl font-serif italic font-light leading-none ${overallTheme.number}`}>
             {compatibility.overallScore}
@@ -299,13 +697,12 @@ function CompatibilityContent({ compatibility, member }: {
           <p className="font-serif text-base text-primary leading-snug mb-2">{getCompatibilityDescription(compatibility.overallScore)}</p>
           <div className="h-[2px] w-full rounded-full mb-1" style={{ background: 'linear-gradient(to right, #9CAF9E, #C9A58F)' }} />
           <div className="flex justify-between font-mono text-xs uppercase tracking-widest text-tertiary">
-            <span>You — LP {compatibility.lifePath.yourNumber}</span>
+            <span>You — LP {compatibility.lifePath.yourNumber || '—'}</span>
             <span>{member.fullName} — LP {compatibility.lifePath.theirNumber}</span>
           </div>
         </div>
       </div>
 
-      {/* Compatibility cards */}
       <div className="space-y-3">
         {cards.map((card) => {
           const theme = getCompatibilityTheme(card.score);
@@ -313,24 +710,19 @@ function CompatibilityContent({ compatibility, member }: {
 
           return (
             <div key={card.id}
-                 className={`${theme.bg} border border-primary/30 border-l-4 ${theme.border} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 outline-none focus:outline-none`}>
+                 className={`${theme.bg} border border-primary/40 border-l-4 ${theme.border} rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 outline-none focus:outline-none`}>
 
-              {/* Collapsed row */}
               <div className="flex items-center gap-5 px-5 py-4 cursor-pointer outline-none" onClick={() => toggleCard(card.id)}>
-
-                {/* Two numbers */}
                 <div className="flex items-center gap-2 min-w-[80px]">
-                  <span className={`text-3xl font-serif italic font-light leading-none ${theme.number}`}>{card.yourNumber}</span>
+                  <span className={`text-3xl font-serif italic font-light leading-none ${theme.number}`}>{card.yourNumber || '?'}</span>
                   <svg className={`w-5 h-4 ${theme.accent} flex-shrink-0`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16l-4-4m0 0l4-4m-4 4h18m0 0l-4-4m4 4l-4 4" />
                   </svg>
                   <span className={`text-3xl font-serif italic font-light leading-none ${theme.number}`}>{card.theirNumber}</span>
                 </div>
 
-                {/* Divider */}
                 <div className="w-px h-10 bg-primary/20 flex-shrink-0" />
 
-                {/* Content */}
                 <div className="flex-1 min-w-0">
                   <h3 className="font-serif text-xl font-medium text-primary leading-tight mb-0.5" style={{ letterSpacing: '-0.01em' }}>{card.title}</h3>
                   <div className="flex items-center gap-3">
@@ -346,7 +738,6 @@ function CompatibilityContent({ compatibility, member }: {
                 <Chevron open={isExpanded} accent={theme.accent} />
               </div>
 
-              {/* Expanded content */}
               {isExpanded && (
                 <div className="px-5 pb-5 space-y-3 border-t border-primary/10 pt-4">
                   <p className="font-serif text-base leading-relaxed text-primary">{card.expandedContent}</p>
@@ -370,15 +761,105 @@ function CompatibilityContent({ compatibility, member }: {
   );
 }
 
+// ─── Empty State ──────────────────────────────────────────────────────────────
+
+function EmptyState({ member, onGenerate, isLoading }: {
+  member: Member;
+  onGenerate: () => void;
+  isLoading: boolean;
+}) {
+  const hasDob = Boolean(member.dateOfBirth);
+
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+      <div className="w-16 h-16 rounded-full bg-accent-primary/10 flex items-center justify-center mb-6">
+        <svg className="w-8 h-8 text-accent-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+        </svg>
+      </div>
+
+      <h3 className="font-serif text-2xl font-light text-primary mb-2" style={{ letterSpacing: '-0.01em' }}>
+        No numerology data yet
+      </h3>
+
+      {hasDob ? (
+        <>
+          <p className="font-serif text-base text-primary font-light mb-8 max-w-sm" style={{ color: 'var(--text-tertiary)' }}>
+            Generate {member.fullName}'s numerological blueprint — life path, timing cycles, and compatibility analysis.
+          </p>
+          <button
+            onClick={onGenerate}
+            disabled={isLoading}
+            className="flex items-center gap-3 px-6 py-3 bg-accent-primary text-white rounded-xl font-sans text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {isLoading ? (
+              <>
+                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+                Generating…
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Generate Numerology
+              </>
+            )}
+          </button>
+        </>
+      ) : (
+        <p className="font-serif text-base font-light max-w-sm" style={{ color: 'var(--text-tertiary)' }}>
+          Add {member.fullName}'s date of birth to generate their numerological blueprint.
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ─── Loading Skeleton ─────────────────────────────────────────────────────────
+
+function LoadingSkeleton() {
+  return (
+    <div className="space-y-3 animate-pulse">
+      {[...Array(3)].map((_, i) => (
+        <div key={i} className="bg-primary/5 border border-primary/10 rounded-2xl h-24" />
+      ))}
+    </div>
+  );
+}
+
 // ─── Main Tab ─────────────────────────────────────────────────────────────────
 
 export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
   const [activeTab, setActiveTab] = useState<TabId>('core');
-  const data = getNumerologyDataForMember(member.id);
 
-  const [coreNumbers, setCoreNumbers] = useState(data.coreNumbers.map(n => ({ ...n, expanded: false })));
-  const [timingNumbers, setTimingNumbers] = useState(data.timingNumbers.map(n => ({ ...n, expanded: false })));
-  const compatibility = data.compatibility;
+  const { data: profile, isLoading: isFetching } = useGetMemberNumerologyQuery(member.id);
+  const [calculate, { isLoading: isCalculating }] = useCalculateNumerologyMutation();
+
+  const handleGenerate = async () => {
+    if (!member.dateOfBirth || !member.fullName) return;
+    await calculate({
+      dob: member.dateOfBirth,
+      fullName: member.fullName,
+      memberId: member.id,
+      memberRelation: member.relationType,
+    });
+  };
+
+  const [coreNumbers, setCoreNumbers] = useState<CoreNumberData[]>([]);
+  const [timingNumbers, setTimingNumbers] = useState<TimingNumberData[]>([]);
+
+  useEffect(() => {
+    if (!profile) return;
+    const display = transformToDisplayData(profile, member);
+    setCoreNumbers(display.coreNumbers.map(n => ({ ...n, expanded: false })));
+    setTimingNumbers(display.timingNumbers.map(n => ({ ...n, expanded: false })));
+  }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const display = profile ? transformToDisplayData(profile, member) : null;
 
   const toggleCoreNumber = (id: string) =>
     setCoreNumbers(prev => prev.map(n => n.id === id ? { ...n, expanded: !n.expanded } : n));
@@ -390,10 +871,12 @@ export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
       activeTab === id ? `${color} border-b border-current` : 'text-tertiary hover:text-primary'
     }`;
 
+  const isLoading = isFetching || isCalculating;
+
   return (
     <div className="w-full max-w-none">
       {/* Tab Navigation */}
-      <div className="flex border-b border-primary/20 gap-10 overflow-x-auto mb-8">
+      <div className="flex border-b border-primary/40 gap-10 overflow-x-auto mb-8">
         <button onClick={() => setActiveTab('core')} className={tabStyle('core', 'text-accent-primary')}>
           <span className={`w-2 h-2 rounded-full transition-all duration-300 ${activeTab === 'core' ? 'bg-accent-primary' : 'bg-tertiary group-hover:bg-primary'}`} />
           Core Numbers
@@ -410,9 +893,54 @@ export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
 
       {/* Tab Content */}
       <div className="w-full">
-        {activeTab === 'core' && <CoreNumbersContent coreNumbers={coreNumbers} onToggle={toggleCoreNumber} />}
-        {activeTab === 'timing' && <TimingNumbersContent timingNumbers={timingNumbers} onToggle={toggleTimingNumber} member={member} />}
-        {activeTab === 'compatibility' && <CompatibilityContent compatibility={compatibility} member={member} />}
+        {isFetching && <LoadingSkeleton />}
+
+        {!isFetching && !profile && (
+          <EmptyState member={member} onGenerate={handleGenerate} isLoading={isCalculating} />
+        )}
+
+        {!isFetching && profile && display && (
+          <>
+            {/* Re-generate button */}
+            <div className="flex justify-end mb-4">
+              <button
+                onClick={handleGenerate}
+                disabled={isCalculating}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs font-mono uppercase tracking-widest text-tertiary hover:text-primary border border-primary/40 hover:border-primary/40 rounded-lg transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isCalculating ? (
+                  <>
+                    <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Regenerating…
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Regenerate
+                  </>
+                )}
+              </button>
+            </div>
+
+            {activeTab === 'core' && <CoreNumbersContent coreNumbers={coreNumbers} onToggle={toggleCoreNumber} member={member} profile={profile} />}
+            {activeTab === 'timing' && <TimingNumbersContent timingNumbers={timingNumbers} onToggle={toggleTimingNumber} member={member} />}
+            {activeTab === 'compatibility' && display.compatibility && (
+              <CompatibilityContent compatibility={display.compatibility} member={member} />
+            )}
+            {activeTab === 'compatibility' && !display.compatibility && (
+              <div className="py-10 text-center">
+                <p className="font-serif text-base font-light" style={{ color: 'var(--text-tertiary)' }}>
+                  Compatibility data unavailable. Regenerate to include it.
+                </p>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

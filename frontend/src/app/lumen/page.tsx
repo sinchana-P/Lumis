@@ -7,6 +7,8 @@ import { MicrophoneButton, PauseButton } from '@/components/ui/AudioButtons';
 import { type AnalysisDepthMode, ANALYSIS_DEPTH_MODES } from '@/components/lumen/AnalysisDepthSelector';
 import { MemberContextSelector } from '@/components/lumen/MemberContextSelector';
 import { LumenHistory } from '@/components/lumen/LumenHistory';
+import { useGetMembersQuery } from '@/store/api/membersApi';
+import { getAccessToken } from '@/lib/tokenStorage';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -103,70 +105,11 @@ const WELCOME_PROMPTS: Record<LumenMode, Record<AnalysisDepthMode, string>> = {
   },
 };
 
-// ─── Mock Data ─────────────────────────────────────────────────────────────────
-
-const mockMembers: Member[] = [
-  {
-    id: '1',
-    fullName: 'Zara',
-    relationType: 'partner',
-    dateOfBirth: '1992-08-15',
-    numerology: { lifePath: 7, soulUrge: 3, personalYear: 4, personalMonth: 8 },
-    astrology: { sunSign: 'Leo', moonSign: 'Pisces', risingSign: 'Virgo' },
-    traits: {
-      pros: [
-        { text: 'Always makes me laugh even on my worst days', intensity: 5, emotionTag: 'joyful' },
-        { text: 'Great listener and gives thoughtful advice', intensity: 4, emotionTag: 'safe' },
-      ],
-      cons: [{ text: "Sometimes interrupts when I'm speaking", intensity: 2, emotionTag: 'frustrated' }],
-    },
-    recentInteractions: [
-      { date: '2024-03-10', moodBefore: 'stressed', moodAfter: 'peaceful', description: 'Long conversation about work challenges' },
-      { date: '2024-03-08', moodBefore: 'neutral', moodAfter: 'drained', description: 'Disagreement about weekend plans' },
-    ],
-    incidents: [{ date: '2024-03-05', description: 'Forgot our anniversary dinner reservation', emotionalImpact: 4 }],
-    patterns: [
-      { description: 'Becomes distant when stressed at work', frequency: 'monthly' },
-      { description: 'Very affectionate after resolving conflicts', frequency: 'occasional' },
-    ],
-  },
-  {
-    id: '2',
-    fullName: 'Rohan',
-    relationType: 'other',
-    relationTypeCustom: 'Brother',
-    dateOfBirth: '1988-12-03',
-    numerology: { lifePath: 1, soulUrge: 8, personalYear: 6, personalMonth: 3 },
-    traits: {
-      pros: [{ text: 'Always has my back in difficult situations', intensity: 5, emotionTag: 'safe' }],
-      cons: [{ text: 'Can be overly critical of my choices', intensity: 3, emotionTag: 'hurt' }],
-    },
-    recentInteractions: [
-      { date: '2024-03-09', moodBefore: 'anxious', moodAfter: 'grounded', description: 'Called for advice about career decision' },
-    ],
-  },
-  {
-    id: '3',
-    fullName: 'Mom',
-    relationType: 'family',
-    traits: {
-      pros: [{ text: 'Unconditional love and support', intensity: 5, emotionTag: 'loved' }],
-      cons: [
-        { text: 'Tends to worry excessively about my life', intensity: 4, emotionTag: 'anxious' },
-        { text: 'Sometimes gives unsolicited advice', intensity: 2, emotionTag: 'frustrated' },
-      ],
-    },
-  },
-  {
-    id: '4',
-    fullName: 'Arjun',
-    relationType: 'friend',
-    traits: {
-      pros: [{ text: 'Most positive and energetic person I know', intensity: 4, emotionTag: 'energized' }],
-      cons: [],
-    },
-  },
-];
+const DEPTH_MAP: Record<AnalysisDepthMode, string> = {
+  'full-spectrum': 'FULL_SPECTRUM',
+  'cosmic': 'COSMIC',
+  'behavioral': 'BEHAVIORAL',
+};
 
 function getMockWelcome(mode: LumenMode, analysisDepth: AnalysisDepthMode): Message {
   return {
@@ -286,8 +229,12 @@ export default function LumenPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [conversationId, setConversationId] = useState<string | undefined>(undefined);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const { data: membersResponse } = useGetMembersQuery(undefined);
+  const realMembers = membersResponse?.data ?? [];
 
   useEffect(() => {
     setMessages([getMockWelcome(mode, analysisDepth)]);
@@ -308,19 +255,17 @@ export default function LumenPage() {
   const handleModeChange = (newMode: LumenMode) => {
     setMode(newMode);
     setInputText('');
+    setConversationId(undefined);
+    setActiveConversationId(undefined);
     speech.reset();
   };
 
   const addMemberToContext = (memberId: string) => {
-    const member = mockMembers.find((m) => m.id === memberId);
+    const member = realMembers.find((m) => m.id === memberId);
     if (!member || memberContexts.some((ctx) => ctx.member.id === memberId)) return;
 
-    const dataLayers: string[] = [];
-    if (member.numerology) dataLayers.push('Numerology');
-    if (member.astrology) dataLayers.push('Astrology');
-    if (member.traits) dataLayers.push('Logged Traits');
-    if (member.incidents) dataLayers.push('Incidents & Logs');
-    if (member.recentInteractions) dataLayers.push('Interaction History');
+    const dataLayers = ['Behavioral Data'];
+    if (member.dateOfBirth) dataLayers.push('Numerology', 'Astrology');
 
     setMemberContexts((prev) => [...prev, { member, dataLayers, addedAt: new Date() }]);
   };
@@ -329,27 +274,75 @@ export default function LumenPage() {
     setMemberContexts((prev) => prev.filter((ctx) => ctx.member.id !== memberId));
   };
 
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const text = inputText.trim();
-    if (!text) return;
+    if (!text || isTyping) return;
 
     const userMsg: Message = { id: Date.now().toString(), role: 'user', text, timestamp: new Date() };
     setMessages((prev) => [...prev, userMsg]);
     setInputText('');
     setIsTyping(true);
 
-    setTimeout(() => {
+    const history = messages.slice(-10).map((m) => ({
+      role: m.role === 'lumen' ? 'assistant' as const : 'user' as const,
+      content: m.text,
+    }));
+
+    try {
+      const token = getAccessToken();
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+      const response = await fetch(`${apiBase}/lumen/ask/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({
+          prompt: text,
+          mode: mode.toUpperCase(),
+          depth: DEPTH_MAP[analysisDepth],
+          memberIds: memberContexts.map((c) => c.member.id),
+          history,
+          conversationId,
+        }),
+      });
+
       setIsTyping(false);
-      const reply: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'lumen',
-        text: getLumenReply(mode, analysisDepth, text, memberContexts),
-        timestamp: new Date(),
-        mode,
-        analysisDepth,
+      const lumenMsgId = (Date.now() + 1).toString();
+      setMessages((prev) => [...prev, { id: lumenMsgId, role: 'lumen', text: '', timestamp: new Date(), mode, analysisDepth }]);
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = '';
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          const data = line.slice(6).trim();
+          if (data === '[DONE]') break;
+          try {
+            const parsed = JSON.parse(data);
+            if (parsed.conversationId) {
+              setConversationId(parsed.conversationId);
+            } else if (parsed.text) {
+              fullText += parsed.text;
+              setMessages((prev) => prev.map((m) => m.id === lumenMsgId ? { ...m, text: fullText } : m));
+            }
+          } catch { /* partial chunk — skip */ }
+        }
+      }
+    } catch {
+      setIsTyping(false);
+      const errorMsg: Message = {
+        id: (Date.now() + 1).toString(), role: 'lumen',
+        text: 'Something went wrong. Please try again.',
+        timestamp: new Date(), mode, analysisDepth,
       };
-      setMessages((prev) => [...prev, reply]);
-    }, 1600 + Math.random() * 800);
+      setMessages((prev) => [...prev, errorMsg]);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -369,8 +362,27 @@ export default function LumenPage() {
       <LumenHistory
         open={showHistory}
         activeConversationId={activeConversationId}
-        onSelectConversation={(id) => setActiveConversationId(id)}
-        onNewChat={() => { setMessages([getMockWelcome(mode, analysisDepth)]); setActiveConversationId(undefined); }}
+        onSelectConversation={(id, dbMessages) => {
+          setActiveConversationId(id);
+          setConversationId(id);
+          // Reconstruct Message[] from DB messages
+          const loaded: Message[] = dbMessages.map((m, i) => ({
+            id: `${id}-${i}`,
+            role: m.role === 'assistant' ? 'lumen' : 'user',
+            text: m.content,
+            timestamp: new Date(m.timestamp),
+            mode: m.mode ? (m.mode.toLowerCase() as LumenMode) : mode,
+            analysisDepth: m.depth
+              ? ({ FULL_SPECTRUM: 'full-spectrum', COSMIC: 'cosmic', BEHAVIORAL: 'behavioral' } as const)[m.depth as 'FULL_SPECTRUM' | 'COSMIC' | 'BEHAVIORAL'] ?? analysisDepth
+              : analysisDepth,
+          }));
+          setMessages(loaded.length ? loaded : [getMockWelcome(mode, analysisDepth)]);
+        }}
+        onNewChat={() => {
+          setMessages([getMockWelcome(mode, analysisDepth)]);
+          setActiveConversationId(undefined);
+          setConversationId(undefined);
+        }}
         onClose={() => setShowHistory(false)}
       />
 
@@ -746,7 +758,7 @@ export default function LumenPage() {
       </main>
 
       <MemberContextSelector
-        members={mockMembers}
+        members={realMembers}
         memberContexts={memberContexts}
         onAddMember={addMemberToContext}
         onRemoveMember={removeMemberFromContext}
@@ -755,140 +767,4 @@ export default function LumenPage() {
       />
     </div>
   );
-}
-
-// ─── Mock reply generator ───────────────────────────────────────────────────────
-
-function getLumenReply(mode: LumenMode, depth: AnalysisDepthMode, input: string, memberContexts: MemberContext[] = []): string {
-  const mentionedMember = memberContexts.find((ctx) =>
-    input.toLowerCase().includes(ctx.member.fullName.toLowerCase()) ||
-    input.toLowerCase().includes(ctx.member.fullName.toLowerCase().split(' ')[0])
-  );
-
-  if (mentionedMember && memberContexts.length > 0) {
-    return getMemberSpecificReply(mode, depth, input, mentionedMember);
-  }
-
-  const replies: Record<LumenMode, Record<AnalysisDepthMode, string[]>> = {
-    vent: {
-      cosmic: [
-        "That sounds really heavy. I hear you, and I'm holding space for this with you.",
-        "You don't have to figure this out right now. Sometimes the stars ask us to just feel what we're feeling.",
-        "Thank you for sharing that with me. I'm here, sitting with it alongside you in this cosmic moment.",
-      ],
-      behavioral: [
-        "That sounds really heavy. I hear you, and I see the pattern you're describing.",
-        "You don't have to figure this out right now. Your feelings are valid, and I'm here with you.",
-        "Thank you for sharing that with me. I'm here, holding space for what you're experiencing.",
-      ],
-      'full-spectrum': [
-        "That sounds really heavy. I hear you — both the cosmic currents and your lived experience are speaking here.",
-        "You don't have to figure this out right now. The universe and your patterns are both asking you to just be with this.",
-        "Thank you for sharing that with me. I'm here, holding all of it — your story, your stars, your truth.",
-      ],
-    },
-    guided: {
-      cosmic: [
-        "When you say that, what does your cosmic blueprint suggest about this feeling? What's your Life Path asking of you here?",
-        "I'm curious — with your current Personal Year energy, how does this situation feel different than it might have last year?",
-        "What do you think your soul chose to learn through this experience? What's the deeper cosmic invitation?",
-      ],
-      behavioral: [
-        "When you say that, what emotion comes up most strongly? I notice this connects to a pattern you've logged before.",
-        "What do you think this situation is asking of you, based on what you know about your triggers and needs?",
-        "If you could speak to the part of you that always responds this way, what would you want to tell them?",
-      ],
-      'full-spectrum': [
-        "When you say that, I see both your cosmic nature and your learned patterns at play. What feels most true right now?",
-        "What do you think this situation is asking of you — both from your soul's perspective and your human experience?",
-        "If the other person could hear one thing from you right now — drawing on everything you know about yourself — what would it be?",
-      ],
-    },
-    analysis: {
-      cosmic: [
-        "Based on your numerology, this reflects a classic Life Path 6 challenge with boundaries. Your current Personal Year 4 is actually perfect timing to address this.",
-        "What you're describing aligns with your Venus in Cancer placement — you crave emotional depth, but they're showing Mars in Aries energy (action over processing).",
-        "The cosmic timing here is significant. You're both in challenging Personal Month cycles, which explains the friction. This will shift by next month.",
-      ],
-      behavioral: [
-        "Based on the patterns I've observed, this dynamic reflects a recurring push-pull between your autonomy needs and connection needs.",
-        "What you're describing aligns with a shadow trigger I've seen come up before — specifically around acknowledgment and feeling heard.",
-        "The interaction history suggests this tension has been building since that boundary conversation three weeks ago.",
-      ],
-      'full-spectrum': [
-        "I see this from multiple angles. Cosmically, you're a Life Path 6 (nurturer) and they're showing Life Path 1 energy — natural tension. Behaviorally, this manifests in your logged data: 4 out of 5 recent interactions left you drained.",
-        "Your Venus in Cancer craves emotional depth, but your logged data shows they dismiss feelings at a moderate intensity. The cosmic blueprint explains WHY, the behavioral data shows HOW it plays out.",
-        "You're in a Personal Year 4 (boundaries) while your logged patterns show you struggle with feeling unheard. The universe is asking you to practice what your human experience has been teaching you.",
-      ],
-    },
-    advice: {
-      cosmic: [
-        "Before responding, check your Personal Day energy — if it's a 7 or 9 day, wait. Your numerology suggests you need space to process before engaging.",
-        "An NVC approach here, timed with your cosmic cycles: Wait until your next Personal Day 3 or 6, then try: 'When this happens, I feel disconnected because I need emotional attunement.'",
-        "The most powerful move right now honors your Life Path 6 need for harmony while respecting their Life Path 1 need for independence.",
-      ],
-      behavioral: [
-        "Before responding, try naming your own feeling first — not the story, just the feeling. Your logged data shows this helps you stay centered.",
-        "An NVC approach: 'When [this specific behavior], I feel [your actual emotion] because I need [your core need]. Would you be willing to [specific request]?'",
-        "The most powerful move right now isn't saying more — it's creating space for them to be heard first. Your interaction logs show this works better than explaining.",
-      ],
-      'full-spectrum': [
-        "Before responding, check both your Personal Day energy AND your emotional state from recent interactions. If either feels heavy, wait until tomorrow.",
-        "An NVC approach timed with your cosmic wisdom: 'When you dismiss my feelings, I feel unseen because I need connection. Would you be willing to just acknowledge what I'm sharing?'",
-        "Combine your cosmic timing with behavioral insights: Wait for a Personal Day 3 or 6, then create space for them to be heard first — your logs show this works — THEN share your need.",
-      ],
-    },
-    timing: {
-      cosmic: [
-        "They're in a 7 Personal Year — introspective, inward-facing. Pushing for resolution now may meet resistance. Wait for their Personal Month 3 cycle next month.",
-        "Mercury is retrograde through their natal communication house until the 15th. Misunderstandings are amplified — put important conversations on hold.",
-        "Your Life Path 1 and their Expression 8 are in a power axis this quarter. Collaboration works better than confrontation. Best days: 6th, 15th, 24th.",
-      ],
-      behavioral: [
-        "Based on your interaction patterns, Tuesday evenings work best for deeper conversations — they're typically in a better mood then.",
-        "Your logs show they're most receptive after they've had alone time. Wait until they initiate contact rather than reaching out first.",
-        "The pattern suggests waiting 3–5 days after conflict before addressing it. They need processing time, and you need space from your people-pleasing trigger.",
-      ],
-      'full-spectrum': [
-        "Cosmically, they're in a 7 Personal Year (introspective) and behaviorally, your logs show they need 3–5 days to process after conflict. Wait until their Personal Day 6 next week AND after they've had their usual processing time.",
-        "Mercury retrograde through their communication house until the 15th, plus your interaction data shows Tuesday evenings work best. The sweet spot: Tuesday the 16th, after 7pm.",
-        "Your Life Path 1 wants to address this now, but both cosmic timing (their 7 year) and behavioral patterns (they withdraw when pushed) suggest patience. Wait for their Personal Day 3 or 6, after they've had space.",
-      ],
-    },
-  };
-
-  const modeReplies = replies[mode][depth];
-  return modeReplies[Math.floor(Math.random() * modeReplies.length)];
-}
-
-function getMemberSpecificReply(mode: LumenMode, _depth: AnalysisDepthMode, _input: string, memberContext: MemberContext): string {
-  const member = memberContext.member;
-  const name = member.fullName;
-
-  const contextReplies: Record<LumenMode, string[]> = {
-    vent: [
-      `I hear you about ${name}. That sounds really difficult, and I'm holding space for these feelings with you.`,
-      `Your feelings about ${name} are completely valid. You don't need to figure this out right now — just feel what you're feeling.`,
-    ],
-    guided: [
-      `When you think about ${name}, what comes up most strongly for you right now?`,
-      `I'm curious — what do you think ${name} might be experiencing in this situation too?`,
-      `What would it look like to approach this with ${name} from a place of curiosity rather than certainty?`,
-    ],
-    analysis: [
-      `Looking at your history with ${name}, I see a pattern where ${member.recentInteractions?.[0]?.moodAfter === 'drained' ? 'interactions often leave you feeling drained' : 'your connection has ups and downs'}. This suggests ${member.traits?.cons?.[0]?.text?.toLowerCase() || 'some underlying dynamic at play'}.`,
-      `Based on what you've logged about ${name}, they're a ${member.relationType === 'other' ? member.relationTypeCustom : member.relationType} who ${member.traits?.pros?.[0]?.text?.toLowerCase() || 'brings both gifts and challenges to your relationship'}.`,
-    ],
-    advice: [
-      `With ${name}, I'd suggest starting with: "When [specific behavior], I feel [emotion] because I need [need]." Based on your logs, they respond better to ${member.recentInteractions?.[0]?.moodAfter === 'peaceful' ? 'direct but gentle communication' : 'space before deeper conversations'}.`,
-      `Given what you know about ${name}, the most effective approach might be ${member.traits?.pros?.[0]?.text?.includes('listen') ? "sharing your feelings openly — they're a good listener" : 'giving them time to process before having this conversation'}.`,
-    ],
-    timing: [
-      `Based on ${name}'s patterns, ${member.patterns?.[0]?.frequency === 'monthly' ? 'this might be part of their monthly cycle of stress. Wait for the pattern to shift' : 'timing matters here. They typically need space to process before engaging'}.`,
-      `Your interaction history with ${name} shows ${member.recentInteractions?.[0]?.moodAfter === 'drained' ? 'recent conversations have been draining. Give it a few days before reaching out' : "they're more receptive when they initiate contact"}.`,
-    ],
-  };
-
-  const replies = contextReplies[mode];
-  return replies[Math.floor(Math.random() * replies.length)];
 }
