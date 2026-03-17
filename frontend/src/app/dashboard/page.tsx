@@ -329,10 +329,9 @@ export default function DashboardPage() {
                 <Label>Quick Actions</Label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { label: 'Log Interaction',   path: '/orbit'      },
-                    { label: 'New Journal Entry', path: '/lumen'      },
-                    { label: 'Add Luminary',      path: '/orbit/add'  },
-                    { label: 'Ask Lumen',         path: '/lumen'      },
+                    { label: 'New Journal Entry', path: '/profile?tab=journal' },
+                    { label: 'Add Luminary',      path: '/orbit/add'           },
+                    { label: 'Ask Lumen',         path: '/lumen'               },
                   ].map(({ label, path }) => (
                     <button key={label} onClick={() => router.push(path)}
                       className="font-mono uppercase tracking-widest transition-all"
@@ -477,13 +476,32 @@ export default function DashboardPage() {
               <section>
                 <Label>Your Blueprint</Label>
                 <div style={{ border: '1px solid var(--bg-tertiary)', borderRadius: 12, overflow: 'hidden' }}>
-                  {user.date_of_birth ? (
+                  {isRefreshing && !dashSummary?.blueprint ? (
+                    /* Loading skeleton */
+                    [0,1,2,3].map(i => (
+                      <div key={i} className="flex items-center justify-between"
+                        style={{ padding: '12px 16px', borderBottom: i < 3 ? '1px solid var(--bg-tertiary)' : 'none', background: 'var(--bg-primary)' }}>
+                        <div>
+                          <div className="rounded" style={{ height: 8, width: 40, background: 'var(--bg-tertiary)', marginBottom: 8 }} />
+                          <div className="rounded" style={{ height: 12, width: 80, background: 'var(--bg-tertiary)' }} />
+                        </div>
+                        <div className="rounded-full" style={{ width: 22, height: 22, background: 'var(--bg-tertiary)' }} />
+                      </div>
+                    ))
+                  ) : dashSummary?.blueprint ? (
                     [
-                      { label: 'Sun',       value: 'Scorpio',         symbol: '☀',  color: '#D4A84B' },
-                      { label: 'Moon',      value: 'Taurus',          symbol: '☽',  color: '#7B78D4' },
-                      { label: 'Rising',    value: 'Leo',             symbol: '↑',  color: '#D4728A' },
-                      { label: 'Life Path', value: '7 · The Seeker',  symbol: '∞',  color: '#4AABCF' },
-                    ].map(({ label, value, symbol, color }, i, arr) => (
+                      { label: 'Sun',       value: dashSummary.blueprint.sun,     symbol: '☀',  color: '#D4A84B' },
+                      { label: 'Moon',      value: dashSummary.blueprint.moon,    symbol: '☽',  color: '#7B78D4' },
+                      { label: 'Rising',    value: dashSummary.blueprint.rising,  symbol: '↑',  color: '#D4728A' },
+                      {
+                        label: 'Life Path',
+                        value: dashSummary.blueprint.lifePath
+                          ? `${dashSummary.blueprint.lifePath.number} · ${dashSummary.blueprint.lifePath.archetype}`
+                          : null,
+                        symbol: '∞',
+                        color: '#4AABCF',
+                      },
+                    ].filter(row => row.value).map(({ label, value, symbol, color }, i, arr) => (
                       <div key={label} className="flex items-center justify-between"
                         style={{ padding: '12px 16px', borderBottom: i < arr.length - 1 ? '1px solid var(--bg-tertiary)' : 'none', background: 'var(--bg-primary)' }}>
                         <div>
@@ -499,12 +517,12 @@ export default function DashboardPage() {
                   ) : (
                     <div style={{ padding: '22px 18px', textAlign: 'center' }}>
                       <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 14, lineHeight: 1.6 }}>
-                        Add your birth details to unlock your cosmic blueprint.
+                        Generate your numerology & astrology to unlock your blueprint.
                       </p>
-                      <button onClick={() => router.push('/profile')}
+                      <button onClick={() => router.push('/profile?tab=numerology')}
                         className="font-mono uppercase tracking-widest"
                         style={{ fontSize: 11, padding: '6px 14px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-                        Complete Profile
+                        Generate Now
                       </button>
                     </div>
                   )}

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
+import { LIFE_PATH_LABELS } from '../numerology/numerology-engine.service';
 
 @Injectable()
 export class DashboardService {
@@ -17,13 +18,15 @@ export class DashboardService {
       patternsRes,
       membersRes,
       numerologyRes,
+      astrologyRes,
     ] = await Promise.all([
       supabase.from('interactions').select('id, quality, date, member_id').eq('user_id', userId).is('deleted_at', null).gte('date', since7d),
       supabase.from('incidents').select('id, date, title, severity, member_id').eq('user_id', userId).is('deleted_at', null).gte('date', since7d),
       supabase.from('journal_entries').select('id, date, member_id').eq('user_id', userId).is('deleted_at', null).gte('date', since7d),
       supabase.from('patterns').select('id, title, frequency, member_id').eq('user_id', userId).is('deleted_at', null).order('updated_at', { ascending: false }).limit(5),
       supabase.from('members').select('id, full_name, relation_type, photo_url').eq('user_id', userId).is('deleted_at', null),
-      supabase.from('numerology_profiles').select('timing_numbers').eq('user_id', userId).is('member_id', null).maybeSingle(),
+      supabase.from('numerology_profiles').select('core_numbers, timing_numbers').eq('user_id', userId).is('member_id', null).maybeSingle(),
+      supabase.from('astrology_profiles').select('computed').eq('user_id', userId).is('member_id', null).maybeSingle(),
     ]);
 
     const interactions = interactionsRes.data ?? [];
@@ -32,6 +35,7 @@ export class DashboardService {
     const patterns = patternsRes.data ?? [];
     const members = membersRes.data ?? [];
     const numerology = numerologyRes.data;
+    const astrology = astrologyRes.data;
 
     // Build member lookup
     const memberMap: Record<string, string> = {};
@@ -86,12 +90,26 @@ export class DashboardService {
         }
       : null;
 
+    // Blueprint — sun/moon/rising from astrology + life path from numerology
+    const lifePath = numerology?.core_numbers?.lifePath ?? null;
+    const blueprint = (astrology?.computed || lifePath)
+      ? {
+          sun:     astrology?.computed?.sunSign     ?? null,
+          moon:    astrology?.computed?.moonSign    ?? null,
+          rising:  astrology?.computed?.ascendant   ?? null,
+          lifePath: lifePath
+            ? { number: lifePath, archetype: LIFE_PATH_LABELS[lifePath] ?? null }
+            : null,
+        }
+      : null;
+
     return {
       emotionalWeather: weatherResult,
       activity7d,
       recentSignals: recentSignals.slice(0, 5),
       memberStats,
       numerologySnapshot,
+      blueprint,
       generatedAt: new Date().toISOString(),
     };
   }

@@ -30,12 +30,20 @@ export interface DashboardMemberStats {
   family: number;
 }
 
+export interface DashboardBlueprint {
+  sun: string | null;
+  moon: string | null;
+  rising: string | null;
+  lifePath: { number: number; archetype: string } | null;
+}
+
 export interface DashboardSummary {
   emotionalWeather: DashboardEmotionalWeather;
   activity7d: DashboardActivity7d;
   recentSignals: DashboardSignal[];
   memberStats: DashboardMemberStats;
   numerologySnapshot: DashboardNumerologySnapshot | null;
+  blueprint: DashboardBlueprint | null;
   generatedAt: string;
 }
 
