@@ -83,7 +83,7 @@ export function TimePicker({ value, onChange, placeholder = '--:-- --', label }:
       </div>
 
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-50 p-2.5">
+        <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-[9999] p-2.5 w-44">
           <div className="flex gap-2">
             {/* Hour column */}
             <div className="flex-1">

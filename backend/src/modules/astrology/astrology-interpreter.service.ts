@@ -71,30 +71,50 @@ export interface AstrologyInsights {
 export class AstrologyInterpreterService {
   constructor(private readonly gemini: GeminiService) {}
 
+  private async safeGenerate(prompt: string, maxTokens: number, fallback: string): Promise<string> {
+    try {
+      return await this.gemini.generate(prompt, maxTokens);
+    } catch {
+      return fallback;
+    }
+  }
+
   async buildInsights(
     computed: AstrologyComputed,
     memberName: string,
     memberRelation: string,
     userName: string,
+    isSelf = false,
   ): Promise<AstrologyInsights> {
     const s = this.buildSignalContext(computed);
+    const p = isSelf
+      ? { subj: 'you', poss: 'your', obj: 'you', refl: 'yourself', they: 'you', their: 'your', them: 'you' }
+      : { subj: 'they', poss: 'their', obj: 'them', refl: 'themselves', they: 'they', their: 'their', them: 'them' };
 
-    const [
-      emotionalNature, emotionalGift, whatTriggersWithdrawal,
-      whatMakesThemFeelSafe, emotionalAvailabilityData,
-      whenThingsGoWrong, relationshipGuidance,
-      planetarySignatures, dashaInfluence,
-    ] = await Promise.all([
-      this.gemini.generate(this.promptEmotionalNature(s, memberName), 200),
-      this.gemini.generate(this.promptEmotionalGift(s, memberName), 150),
-      this.gemini.generate(this.promptWhatTriggersWithdrawal(s, memberName), 180),
-      this.gemini.generate(this.promptWhatMakesThemFeelSafe(s, memberName), 180),
-      this.genEmotionalAvailability(s, memberName),
-      this.gemini.generate(this.promptWhenThingsGoWrong(s, memberName), 180),
-      this.genRelationshipGuidance(s, memberName, memberRelation, userName),
-      this.gemini.generate(this.promptPlanetarySignatures(computed, memberName), 200),
-      this.gemini.generate(this.promptDashaInfluence(computed, memberName), 180),
-    ]);
+    // Batch into two sequential rounds to avoid rate limit (15 req/min)
+    const [emotionalNature, emotionalGift, whatTriggersWithdrawal, whatMakesThemFeelSafe, emotionalAvailabilityData] =
+      await Promise.all([
+        this.safeGenerate(this.promptEmotionalNature(s, memberName, isSelf), 400,
+          `${isSelf ? 'Your' : `${memberName}'s`} emotional world moves through ${p.poss} ${s.moonSign} Moon. ${isSelf ? 'You process' : 'They process'} feelings in ways that are deeply personal and shaped by ${p.poss} inner landscape. In relationships, this translates to a need for space and understanding.`),
+        this.safeGenerate(this.promptEmotionalGift(s, memberName, isSelf), 300,
+          `${isSelf ? 'Your' : `${memberName}'s`} greatest emotional gift is ${p.poss} capacity for depth and genuine presence in relationships. ${isSelf ? 'You bring' : 'They bring'} a quality of attention that makes others feel truly seen.`),
+        this.safeGenerate(this.promptWhatTriggersWithdrawal(s, memberName, isSelf), 350,
+          `${isSelf ? 'You tend to' : `${memberName} tends to`} withdraw when ${p.subj} feel unseen or pressured to respond before ${p.subj} ${isSelf ? 'have' : 'have'} had time to process. From the outside this can look like distance or coldness. It's worth knowing that this is self-protection, not rejection.`),
+        this.safeGenerate(this.promptWhatMakesThemFeelSafe(s, memberName, isSelf), 350,
+          `${isSelf ? 'You feel' : `${memberName} feels`} safest with consistency, honest communication, and space to be ${p.refl} without judgment. Predictable, low-pressure environments let ${p.obj} open up naturally.`),
+        this.genEmotionalAvailability(s, memberName),
+      ]);
+
+    const [whenThingsGoWrong, relationshipGuidance, planetarySignatures, dashaInfluence] =
+      await Promise.all([
+        this.safeGenerate(this.promptWhenThingsGoWrong(s, memberName, isSelf), 350,
+          `When things go wrong, ${isSelf ? 'you tend to' : `${memberName} tends to`} go quiet and inward. From outside this can look like distance, but it's ${p.poss} way of protecting emotional clarity. The most helpful response is to hold space without pressure.`),
+        this.genRelationshipGuidance(s, memberName, memberRelation, userName, isSelf),
+        this.safeGenerate(this.promptPlanetarySignatures(computed, memberName, isSelf), 350,
+          `${isSelf ? 'Your' : `${memberName}'s`} chart shows a distinct pattern shaped by ${p.poss} Moon in ${s.moonSign} and current ${s.currentDasha} Mahadasha. These placements speak to ${p.poss} core nature and the particular quality ${p.subj} bring to all ${p.poss} relationships. The dominant energies in ${p.poss} chart point toward a life shaped by depth, discernment, and inner work.`),
+        this.safeGenerate(this.promptDashaInfluence(computed, memberName, isSelf), 350,
+          `${isSelf ? 'You are' : `${memberName} is`} currently in ${p.poss} ${s.currentDasha} Mahadasha / ${s.currentAntardasha} Antardasha — a period that shapes how ${p.subj} show up in life and relationships right now. This combination creates a particular flavour in how ${p.subj} engage, what ${p.subj} are drawn to, and where ${p.poss} energy naturally goes.`),
+      ]);
 
     return {
       emotionalNature,
@@ -143,11 +163,14 @@ export class AstrologyInterpreterService {
     };
   }
 
-  private promptEmotionalNature(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+  private promptEmotionalNature(s: ReturnType<typeof this.buildSignalContext>, name: string, isSelf: boolean) {
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your" — as if speaking to them).`
+      : `Write ABOUT ${name} in third person (use "they", "them", "their" — never "you" or "your").`;
     return `You are Lumen, a Vedic astrology and psychology specialist.
-Write the "Emotional Nature" section for ${name}.
-Length: 3-4 sentences. Style: warm, specific, layman-readable. No jargon. No bullet points.
-First sentence: how their emotional world moves. Second: how they process feelings. Third: what this means in relationships.
+Write the "Emotional Nature" section for ${name}. ${pov}
+Write 3-4 COMPLETE sentences. Do not stop mid-sentence. Style: warm, specific, layman-readable. No jargon. No bullet points.
+First sentence: how their/your emotional world moves. Second: how they/you process feelings. Third: what this means in relationships.
 
 Moon sign: ${s.moonSign} (${s.moonEmotional})
 Nakshatra: ${s.nakshatra} — ${s.nakshatraSignature}
@@ -155,36 +178,51 @@ Moon dignity: ${s.moonDignity}, Moon house: ${s.moonHouse}
 Current Mahadasha: ${s.currentDasha}`;
   }
 
-  private promptEmotionalGift(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+  private promptEmotionalGift(s: ReturnType<typeof this.buildSignalContext>, name: string, isSelf: boolean) {
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your").`
+      : `Write ABOUT ${name} in third person (use "they", "them", "their" — never "you" or "your").`;
     return `You are Lumen.
-Write the "Emotional Gift" section for ${name}.
-Length: 2-3 sentences. What is their emotional superpower in relationships? Be specific.
+Write the "Emotional Gift" section for ${name}. ${pov}
+Write 2-3 COMPLETE sentences. Do not stop mid-sentence. What is their/your emotional superpower in relationships? Be specific.
 
 Moon sign: ${s.moonSign}, Nakshatra: ${s.nakshatra}
 Moon house: ${s.moonHouse}, Yogas present: ${s.yogas || 'none noted'}`;
   }
 
-  private promptWhatTriggersWithdrawal(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+  private promptWhatTriggersWithdrawal(s: ReturnType<typeof this.buildSignalContext>, name: string, isSelf: boolean) {
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your").`
+      : `Write ABOUT ${name} in third person (use "they", "them", "their" — never "you" or "your").`;
     return `You are Lumen.
-Write "What Triggers Withdrawal" for ${name}. Length: 3 sentences.
-First: specific trigger pattern. Second: what withdrawal looks like. Third: reframe for the reader.
+Write "What Triggers Withdrawal" for ${name}. ${pov}
+Write exactly 3 COMPLETE sentences. Do not stop mid-sentence.
+First: specific trigger pattern. Second: what withdrawal looks like. Third: the reframe.
 
 Moon sign: ${s.moonSign}, Nakshatra: ${s.nakshatra}
 Mars house: ${s.marsHouse}, Saturn house: ${s.saturnHouse}`;
   }
 
-  private promptWhatMakesThemFeelSafe(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+  private promptWhatMakesThemFeelSafe(s: ReturnType<typeof this.buildSignalContext>, name: string, isSelf: boolean) {
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your").`
+      : `Write ABOUT ${name} in third person (use "they", "them", "their" — never "you" or "your").`;
     return `You are Lumen.
-Write "What Makes Them Feel Safe" for ${name}. Length: 3-4 sentences. Be concrete and actionable.
+Write "What Makes ${isSelf ? 'You' : 'Them'} Feel Safe" for ${name}. ${pov}
+Write 3-4 COMPLETE sentences. Do not stop mid-sentence. Be concrete and actionable.
 
 Moon sign: ${s.moonSign}, Nakshatra: ${s.nakshatra}
 Moon house: ${s.moonHouse}, Lagna: ${s.lagna}
 Venus house: ${s.venusHouse}, Jupiter house: ${s.jupiterHouse}`;
   }
 
-  private promptWhenThingsGoWrong(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+  private promptWhenThingsGoWrong(s: ReturnType<typeof this.buildSignalContext>, name: string, isSelf: boolean) {
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your").`
+      : `Write ABOUT ${name} in third person (use "they", "them", "their" — never "you" or "your").`;
     return `You are Lumen.
-Write "When Things Go Wrong" for ${name}. Length: 3 sentences.
+Write "When Things Go Wrong" for ${name}. ${pov}
+Write exactly 3 COMPLETE sentences. Do not stop mid-sentence.
 First: specific defence mechanism. Second: what it looks like from outside. Third: the reframe.
 
 Moon sign: ${s.moonSign}, Nakshatra: ${s.nakshatra}
@@ -215,10 +253,14 @@ Mahadasha ends: ${s.dashaEnd}, Moon sign: ${s.moonSign}, Nakshatra: ${s.nakshatr
   private async genRelationshipGuidance(
     s: ReturnType<typeof this.buildSignalContext>,
     memberName: string, relation: string, userName: string,
+    isSelf = false,
   ): Promise<AstrologyInsights['relationshipGuidance']> {
-    const prompt = `You are Lumen. Generate Relationship Guidance for ${userName}'s relationship with ${memberName} (${relation}).
+    const selfContext = isSelf
+      ? `This is a self-reflection for ${memberName}. Write all values in second person ("you", "your") as self-insight.`
+      : `This is guidance for ${userName} about their relationship with ${memberName} (${relation}).`;
+    const prompt = `You are Lumen. Generate Relationship Guidance. ${selfContext}
 Return ONLY JSON with keys: whatThisRelationshipAsksOfYou, whatLandsWell, whereFrictionLives, howToMeetThemWell, bestMomentToApproach, avoidWhen
-Each value: 1-3 sentences. Warm, honest, specific.
+Each value: 1-3 COMPLETE sentences. Warm, honest, specific. Do not stop mid-sentence.
 
 ${memberName} chart: Moon ${s.moonSign}, Nakshatra ${s.nakshatra} (${s.nakshatraSignature})
 Emotional pattern: ${s.moonEmotional}
@@ -239,13 +281,16 @@ Mars house: ${s.marsHouse}, Venus house: ${s.venusHouse}, Dasha: ${s.currentDash
     }
   }
 
-  private promptPlanetarySignatures(computed: AstrologyComputed, name: string) {
+  private promptPlanetarySignatures(computed: AstrologyComputed, name: string, isSelf: boolean) {
     const strongPlanets = computed.planets
       .filter(p => p.dignity === 'exalted' || p.dignity === 'own')
       .map(p => `${p.name} (${p.dignity} in ${p.sign.split(' ')[0]}, house ${p.house})`);
     const retrograde = computed.planets.filter(p => p.isRetrograde).map(p => p.name);
-    return `You are Lumen. Write a 3-sentence "Planetary Signatures" summary for ${name}.
-Synthesise dominant planetary placements into human-readable insight about their character.
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your").`
+      : `Write ABOUT ${name} in third person (they/them/their — never "you"/"your").`;
+    return `You are Lumen. Write a 3-sentence "Planetary Signatures" summary for ${name}. ${pov}
+Write 3 COMPLETE sentences. Do not stop mid-sentence. Synthesise dominant planetary placements into human-readable insight about their/your character.
 
 Strong planets: ${strongPlanets.join(', ') || 'none'}
 Retrograde: ${retrograde.join(', ') || 'none'}
@@ -254,7 +299,7 @@ Yogas: ${computed.yogas.filter(y => y.isPresent).map(y => y.name).join(', ') || 
 Lagna: ${computed.ascendant}`;
   }
 
-  private promptDashaInfluence(computed: AstrologyComputed, name: string) {
+  private promptDashaInfluence(computed: AstrologyComputed, name: string, isSelf: boolean) {
     const themes: Record<string, string> = {
       Sun:'authority, self-expression, ego work',
       Moon:'emotional fluctuation, home, nurturing themes',
@@ -267,8 +312,12 @@ Lagna: ${computed.ascendant}`;
       Ketu:'detachment, spiritual seeking, isolation',
     };
     const { dasha } = computed;
-    return `You are Lumen. Write a 3-sentence "Dasha Influence" section for ${name}.
-Explain what the current Vimshottari Dasha means for how they show up in life and relationships.
+    const pov = isSelf
+      ? `Write directly TO ${name} in second person (use "you", "your").`
+      : `Write ABOUT ${name} in third person (they/them/their — never "you"/"your").`;
+    return `You are Lumen. Write a 3-sentence "Dasha Influence" section for ${name}. ${pov}
+Write 3 COMPLETE sentences. Do not stop mid-sentence.
+Explain what the current Vimshottari Dasha means for how they/you show up in life and relationships.
 Be specific. No jargon. Write for someone who doesn't know astrology.
 
 Current Mahadasha: ${dasha.currentMahadasha.planet} (${themes[dasha.currentMahadasha.planet] || ''})

@@ -22,7 +22,8 @@ export class PatternsController {
     @Param('memberId') memberId: string,
     @Body() dto: CreatePatternDto,
   ) {
-    const pattern = await this.patternsService.create(user.id, memberId, dto);
+    const mid = memberId === 'self' ? null : memberId;
+    const pattern = await this.patternsService.create(user.id, mid, dto);
     return this.ok(pattern);
   }
 
@@ -33,7 +34,8 @@ export class PatternsController {
     @Param('memberId') memberId: string,
     @Query() query: PatternsQueryDto,
   ) {
-    const patterns = await this.patternsService.findAll(user.id, memberId, query);
+    const mid = memberId === 'self' ? null : memberId;
+    const patterns = await this.patternsService.findAll(user.id, mid, query);
     return this.ok(patterns);
   }
 
@@ -44,7 +46,8 @@ export class PatternsController {
     @Param('memberId') memberId: string,
     @Param('id') id: string,
   ) {
-    const pattern = await this.patternsService.findOne(user.id, memberId, id);
+    const mid = memberId === 'self' ? null : memberId;
+    const pattern = await this.patternsService.findOne(user.id, mid, id);
     return this.ok(pattern);
   }
 
@@ -56,7 +59,8 @@ export class PatternsController {
     @Param('id') id: string,
     @Body() dto: UpdatePatternDto,
   ) {
-    const pattern = await this.patternsService.update(user.id, memberId, id, dto);
+    const mid = memberId === 'self' ? null : memberId;
+    const pattern = await this.patternsService.update(user.id, mid, id, dto);
     return this.ok(pattern);
   }
 
@@ -68,7 +72,8 @@ export class PatternsController {
     @Param('memberId') memberId: string,
     @Param('id') id: string,
   ) {
-    await this.patternsService.remove(user.id, memberId, id);
+    const mid = memberId === 'self' ? null : memberId;
+    await this.patternsService.remove(user.id, mid, id);
   }
 
   private ok(data: any) {

@@ -296,20 +296,9 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
     return acc;
   }, {} as Record<string, number>);
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
-    </div>
-  );
-
-  if (isError) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Could not load incidents. Please try again.</p>
-    </div>
-  );
-
   return (
     <div className="w-full">
+      {/* Modal always rendered so header button always works */}
       <IncidentModal isOpen={modalOpen} editing={editing} onClose={() => { setModalOpen(false); setEditing(null); }} onSave={handleSave} saving={creating || updating} />
 
       {deletingIncident && (
@@ -322,7 +311,22 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
         />
       )}
 
-      {incidents.length === 0 ? (
+      {isLoading && (
+        <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
+        </div>
+      )}
+      {isError && !isLoading && (
+        <div style={{ paddingTop: 40, textAlign: 'center' }}>
+          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 20 }}>Could not load incidents. Please try again.</p>
+          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            Log Anyway
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !isError && (incidents.length === 0 ? (
         /* ── Empty state ── */
         <div style={{ paddingTop: 40, textAlign: 'center' }}>
           <p className="font-serif" style={{ fontSize: 17, color: 'var(--text-primary)', marginBottom: 6, fontWeight: 400, letterSpacing: '-0.01em' }}>Your story begins here</p>
@@ -435,7 +439,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
             tagline="Every moment — difficult or beautiful — is a thread in the story of this relationship."
           />
         </>
-      )}
+      ))}
     </div>
   );
 }

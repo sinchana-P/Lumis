@@ -15,11 +15,17 @@ interface MemberPageHeaderProps {
   tabCount?: number;
   onActionClick?: () => void;
   onSecondaryAction?: () => void;
-  children?: React.ReactNode; // Allow custom action buttons
+  actionLabel?: string | null; // Override default button label; null = hide button
+  actionDisabled?: boolean;   // Disable the action button
+  actionLoading?: boolean;    // Show loading state on action button
+  children?: React.ReactNode;
 }
 
-export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onSecondaryAction, children }: MemberPageHeaderProps) {
+export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onSecondaryAction, actionLabel, actionDisabled, actionLoading, children }: MemberPageHeaderProps) {
   const getActionButton = () => {
+    const label = actionLabel;
+    const disabled = actionDisabled || actionLoading;
+
     switch (activeTab) {
       case 'overview':
         return (
@@ -37,11 +43,19 @@ export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onS
       case 'incidents':
         return <Button onClick={onActionClick}>Add Incident</Button>;
       case 'numerology':
-        return <Button onClick={onActionClick}>Generate Numerology</Button>;
+        if (label === null) return null; // hidden when can't generate
+        return (
+          <Button onClick={onActionClick} disabled={disabled}>
+            {actionLoading ? 'Generating…' : (label ?? 'Generate Numerology')}
+          </Button>
+        );
       case 'astrology':
-        return <Button onClick={onActionClick}>Generate Astrology</Button>;
-      // case 'traits':
-      //   return <Button onClick={onActionClick}>Add Trait</Button>;
+        if (label === null) return null;
+        return (
+          <Button onClick={onActionClick} disabled={disabled}>
+            {actionLoading ? 'Generating…' : (label ?? 'Generate Astrology')}
+          </Button>
+        );
       case 'report':
         return <Button onClick={onActionClick}>Regenerate</Button>;
       default:

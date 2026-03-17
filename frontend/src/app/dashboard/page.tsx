@@ -115,7 +115,7 @@ export default function DashboardPage() {
 
   if (!isAuthenticated || !user) return <LoadingScreen />;
 
-  const firstName = user.name?.split(' ')[0] || user.email?.split('@')[0] || 'there';
+  const firstName = user.first_name || user.name?.split(' ')[0] || user.email?.split('@')[0] || 'there';
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
   const hour = now.getHours();

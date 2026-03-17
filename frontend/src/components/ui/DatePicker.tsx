@@ -93,7 +93,7 @@ export function DatePicker({ value, onChange, placeholder = 'dd/mm/yyyy', label 
       </div>
 
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-50 p-3">
+        <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-xl shadow-lg z-[9999] p-3 w-64">
           {/* Month / Year selectors */}
           <div className="flex items-center justify-center gap-2 mb-2">
             {/* Month dropdown */}
@@ -109,7 +109,7 @@ export function DatePicker({ value, onChange, placeholder = 'dd/mm/yyyy', label 
                 </svg>
               </button>
               {showMonthDropdown && (
-                <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 w-32 max-h-44 overflow-y-auto">
+                <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-[10000] w-32 max-h-44 overflow-y-auto">
                   {MONTHS.map((month, i) => (
                     <button key={month} type="button"
                       onClick={() => { const d = new Date(calendarDate); d.setMonth(i); setCalendarDate(d); setShowMonthDropdown(false); }}
@@ -133,7 +133,7 @@ export function DatePicker({ value, onChange, placeholder = 'dd/mm/yyyy', label 
                 </svg>
               </button>
               {showYearDropdown && (
-                <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-50 w-24 max-h-44 overflow-y-auto">
+                <div className="absolute top-full left-0 mt-1 bg-surface-elevated border border-primary rounded-lg shadow-lg z-[10000] w-24 max-h-44 overflow-y-auto">
                   {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
                     <button key={year} type="button"
                       onClick={() => { const d = new Date(calendarDate); d.setFullYear(year); setCalendarDate(d); setShowYearDropdown(false); }}

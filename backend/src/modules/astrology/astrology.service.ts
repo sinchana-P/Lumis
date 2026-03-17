@@ -27,11 +27,13 @@ export class AstrologyService {
 
     const computed = await this.engine.calculate(birthData);
 
+    const isSelf = !dto.memberId;
     const insights = await this.interpreter.buildInsights(
       computed,
-      dto.memberName || 'them',
+      dto.memberName || (isSelf ? userName : 'them'),
       dto.memberRelation || 'person',
       userName,
+      isSelf,
     );
 
     const record = {
@@ -42,12 +44,40 @@ export class AstrologyService {
       updated_at: new Date().toISOString(),
     };
 
-    const conflictTarget = dto.memberId ? 'member_id' : 'user_id';
-    const { data, error } = await supabase
-      .from('astrology_profiles')
-      .upsert(record, { onConflict: conflictTarget })
-      .select()
-      .single();
+    let data: any;
+    let error: any;
+
+    if (dto.memberId) {
+      // Member profile — upsert on member_id unique constraint
+      ({ data, error } = await supabase
+        .from('astrology_profiles')
+        .upsert(record, { onConflict: 'member_id' })
+        .select()
+        .single());
+    } else {
+      // Self profile — NULL member_id breaks PostgreSQL unique upsert, do manual check
+      const { data: existing } = await supabase
+        .from('astrology_profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .is('member_id', null)
+        .maybeSingle();
+
+      if (existing) {
+        ({ data, error } = await supabase
+          .from('astrology_profiles')
+          .update(record)
+          .eq('id', existing.id)
+          .select()
+          .single());
+      } else {
+        ({ data, error } = await supabase
+          .from('astrology_profiles')
+          .insert(record)
+          .select()
+          .single());
+      }
+    }
 
     if (error) {
       this.logger.error(`Failed to persist astrology profile: ${error.message}`);

@@ -297,30 +297,9 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
     setTimeout(() => setIsPageTurning(false), 1100);
   };
 
-  if (isLoading) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading journal…</p>
-    </div>
-  );
-
-  if (isError) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Could not load journal. Please try again.</p>
-    </div>
-  );
-
   return (
     <div className="w-full">
-      {/* Custom scrollbar styles */}
-      <style>{`
-        .journal-page-scroll::-webkit-scrollbar { width: 4px; }
-        .journal-page-scroll::-webkit-scrollbar-track { background: transparent; }
-        .journal-page-scroll::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 999px; }
-        .journal-list-scroll::-webkit-scrollbar { width: 3px; }
-        .journal-list-scroll::-webkit-scrollbar-track { background: transparent; }
-        .journal-list-scroll::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 999px; }
-      `}</style>
-
+      {/* Modal always rendered so header button always works */}
       <JournalModal
         isOpen={modalOpen}
         editing={editing}
@@ -338,6 +317,32 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
           deleting={deleting}
         />
       )}
+
+      {isLoading && (
+        <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading journal…</p>
+        </div>
+      )}
+      {isError && !isLoading && (
+        <div style={{ paddingTop: 40, textAlign: 'center' }}>
+          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 20 }}>Could not load journal. Please try again.</p>
+          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+            Write Anyway
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !isError && <>
+      {/* Custom scrollbar styles */}
+      <style>{`
+        .journal-page-scroll::-webkit-scrollbar { width: 4px; }
+        .journal-page-scroll::-webkit-scrollbar-track { background: transparent; }
+        .journal-page-scroll::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 999px; }
+        .journal-list-scroll::-webkit-scrollbar { width: 3px; }
+        .journal-list-scroll::-webkit-scrollbar-track { background: transparent; }
+        .journal-list-scroll::-webkit-scrollbar-thumb { background: var(--bg-tertiary); border-radius: 999px; }
+      `}</style>
 
       {entries.length === 0 ? (
         /* ── Empty state ── */
@@ -617,6 +622,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
           </div>
         </div>
       )}
+      </>}
     </div>
   );
 }

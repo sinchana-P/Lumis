@@ -54,7 +54,7 @@ export interface NumerologyProfile {
 export interface CalculateNumerologyRequest {
   dob: string;
   fullName: string;
-  memberId: string;
+  memberId?: string;
   memberRelation?: string;
 }
 
@@ -65,6 +65,11 @@ export const numerologyApi = baseApi.injectEndpoints({
       transformResponse: (response: any) => response.data,
       providesTags: (_result, _error, memberId) => [{ type: 'MemberNumerology', id: memberId }],
     }),
+    getMyNumerology: builder.query<NumerologyProfile | null, void>({
+      query: () => `/numerology/me`,
+      transformResponse: (response: any) => response.data,
+      providesTags: [{ type: 'MemberNumerology', id: '__self__' }],
+    }),
     calculateNumerology: builder.mutation<NumerologyProfile, CalculateNumerologyRequest>({
       query: (body) => ({
         url: '/numerology/calculate',
@@ -72,9 +77,12 @@ export const numerologyApi = baseApi.injectEndpoints({
         body,
       }),
       transformResponse: (response: any) => response.data,
-      invalidatesTags: (_result, _error, arg) => [{ type: 'MemberNumerology', id: arg.memberId }],
+      invalidatesTags: (_result, _error, arg) => [
+        { type: 'MemberNumerology', id: arg.memberId },
+        { type: 'MemberNumerology', id: '__self__' },
+      ],
     }),
   }),
 });
 
-export const { useGetMemberNumerologyQuery, useCalculateNumerologyMutation } = numerologyApi;
+export const { useGetMemberNumerologyQuery, useGetMyNumerologyQuery, useCalculateNumerologyMutation } = numerologyApi;

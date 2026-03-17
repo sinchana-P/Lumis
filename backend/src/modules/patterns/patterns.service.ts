@@ -6,15 +6,15 @@ import { CreatePatternDto, UpdatePatternDto, PatternsQueryDto } from './dto';
 export class PatternsService {
   constructor(private supabaseService: SupabaseService) {}
 
-  async create(userId: string, memberId: string, dto: CreatePatternDto) {
+  async create(userId: string, memberId: string | null, dto: CreatePatternDto) {
     const supabase = this.supabaseService.getAdminClient();
-    await this.assertMemberOwnership(userId, memberId);
+    if (memberId) await this.assertMemberOwnership(userId, memberId);
 
     const { data, error } = await supabase
       .from('patterns')
       .insert({
         user_id:      userId,
-        member_id:    memberId,
+        member_id:    memberId ?? null,
         title:        dto.title,
         description:  dto.description,
         pattern_type: dto.category ?? 'behavioral',
@@ -32,15 +32,19 @@ export class PatternsService {
     return this.format(data);
   }
 
-  async findAll(userId: string, memberId: string, query: PatternsQueryDto) {
+  async findAll(userId: string, memberId: string | null, query: PatternsQueryDto) {
     const supabase = this.supabaseService.getAdminClient();
 
     let q = supabase
       .from('patterns')
       .select('*')
       .eq('user_id', userId)
-      .eq('member_id', memberId)
-      .is('deleted_at', null)
+      .is('deleted_at', null);
+
+    if (memberId) q = (q as any).eq('member_id', memberId);
+    else          q = (q as any).is('member_id', null);
+
+    q = (q as any)
       .order('created_at', { ascending: false });
 
     if (query.category) q = q.eq('category', query.category);
@@ -56,22 +60,23 @@ export class PatternsService {
     return data.map(r => this.format(r));
   }
 
-  async findOne(userId: string, memberId: string, patternId: string) {
+  async findOne(userId: string, memberId: string | null, patternId: string) {
     const supabase = this.supabaseService.getAdminClient();
-    const { data, error } = await supabase
+    let q = supabase
       .from('patterns')
       .select('*')
       .eq('id', patternId)
       .eq('user_id', userId)
-      .eq('member_id', memberId)
-      .is('deleted_at', null)
-      .single();
+      .is('deleted_at', null);
+    if (memberId) q = (q as any).eq('member_id', memberId);
+    else          q = (q as any).is('member_id', null);
+    const { data, error } = await (q as any).single();
 
     if (error || !data) throw new NotFoundException('Pattern not found');
     return this.format(data);
   }
 
-  async update(userId: string, memberId: string, patternId: string, dto: UpdatePatternDto) {
+  async update(userId: string, memberId: string | null, patternId: string, dto: UpdatePatternDto) {
     const supabase = this.supabaseService.getAdminClient();
     await this.findOne(userId, memberId, patternId);
 
@@ -97,7 +102,7 @@ export class PatternsService {
     return this.format(data);
   }
 
-  async remove(userId: string, memberId: string, patternId: string) {
+  async remove(userId: string, memberId: string | null, patternId: string) {
     const supabase = this.supabaseService.getAdminClient();
     await this.findOne(userId, memberId, patternId);
 

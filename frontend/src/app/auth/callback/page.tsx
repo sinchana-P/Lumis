@@ -37,31 +37,45 @@ export default function AuthCallbackPage() {
           return;
         }
 
-        // Store tokens in localStorage
-        const tokens = {
-          auth_token: data.session.access_token,
-          access_token: data.session.access_token,
-          refresh_token: data.session.refresh_token,
-        };
-        
+        const accessToken = data.session.access_token;
+
         // Import and use token storage
         const { storeTokens } = await import('@/lib/tokenStorage');
-        storeTokens(tokens);
+        storeTokens({
+          auth_token: accessToken,
+          access_token: accessToken,
+          refresh_token: data.session.refresh_token,
+        });
 
-        // Create user object from Supabase session
-        const user = {
-          id: data.session.user.id,
-          email: data.session.user.email!,
-          name: data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.name || null,
-          avatar_url: data.session.user.user_metadata?.avatar_url || data.session.user.user_metadata?.picture || null,
-          provider: 'google' as const,
-          analysis_depth_mode: 'full-spectrum' as const, // Default for new users
-          created_at: new Date().toISOString(),
-        };
-
-        // Update auth state
         const { setUser } = await import('@/store/slices/authSlice');
         const { store } = await import('@/store');
+        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+
+        // Fetch full user profile from backend
+        let user: any;
+        try {
+          const res = await fetch(`${API_BASE_URL}/auth/me`, {
+            headers: { Authorization: `Bearer ${accessToken}` },
+          });
+          if (res.ok) {
+            const json = await res.json();
+            user = { ...json.data, provider: 'google' as const };
+          }
+        } catch {}
+
+        // Fallback to session metadata if fetch failed
+        if (!user) {
+          user = {
+            id: data.session.user.id,
+            email: data.session.user.email!,
+            name: data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.name || null,
+            avatar_url: data.session.user.user_metadata?.avatar_url || data.session.user.user_metadata?.picture || null,
+            provider: 'google' as const,
+            analysis_depth_mode: 'full-spectrum' as const,
+            created_at: new Date().toISOString(),
+          };
+        }
+
         store.dispatch(setUser(user));
 
         // Check if user has completed onboarding (you can add this logic later)

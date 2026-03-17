@@ -39,9 +39,18 @@ export class NumerologyService {
         .eq('name_hash', nameHash)
         .maybeSingle();
 
-      if (cached) {
-        return this.formatProfile(cached);
-      }
+      if (cached) return this.formatProfile(cached);
+    } else {
+      const { data: cached } = await supabase
+        .from('numerology_profiles')
+        .select('*')
+        .eq('user_id', userId)
+        .is('member_id', null)
+        .eq('dob_hash', dobHash)
+        .eq('name_hash', nameHash)
+        .maybeSingle();
+
+      if (cached) return this.formatProfile(cached);
     }
 
     // Compute core numbers (pure math)
@@ -100,11 +109,40 @@ export class NumerologyService {
       updated_at: new Date().toISOString(),
     };
 
-    const { data, error } = await supabase
-      .from('numerology_profiles')
-      .upsert(record, { onConflict: dto.memberId ? 'member_id' : 'user_id' })
-      .select()
-      .single();
+    let data: any;
+    let error: any;
+
+    if (dto.memberId) {
+      // Member profile — upsert on member_id unique constraint
+      ({ data, error } = await supabase
+        .from('numerology_profiles')
+        .upsert(record, { onConflict: 'member_id' })
+        .select()
+        .single());
+    } else {
+      // Self profile — NULL member_id breaks PostgreSQL unique upsert, do manual check
+      const { data: existing } = await supabase
+        .from('numerology_profiles')
+        .select('id')
+        .eq('user_id', userId)
+        .is('member_id', null)
+        .maybeSingle();
+
+      if (existing) {
+        ({ data, error } = await supabase
+          .from('numerology_profiles')
+          .update(record)
+          .eq('id', existing.id)
+          .select()
+          .single());
+      } else {
+        ({ data, error } = await supabase
+          .from('numerology_profiles')
+          .insert(record)
+          .select()
+          .single());
+      }
+    }
 
     if (error) {
       this.logger.error(`Failed to persist numerology profile: ${error.message}`);

@@ -3,6 +3,9 @@
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { useGetMemberQuery } from '@/store/api/membersApi';
+import { useGetMemberNumerologyQuery, useCalculateNumerologyMutation } from '@/store/api/numerologyApi';
+import { useGetMemberAstrologyQuery, useCalculateAstrologyMutation } from '@/store/api/astrologyApi';
+import { getAccessToken } from '@/lib/tokenStorage';
 import { MemberPageHeader } from '@/components/members/MemberPageHeader';
 import { EditMemberModal } from '@/components/members/EditMemberModal';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
@@ -104,6 +107,68 @@ export default function MemberDetailPage() {
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
 
+  // Numerology
+  const { data: numerologyProfile } = useGetMemberNumerologyQuery(memberId, { skip: !member });
+  const [calculateNumerology, { isLoading: isGeneratingNumerology }] = useCalculateNumerologyMutation();
+  const [numerologyError, setNumerologyError] = useState<string | null>(null);
+
+  const canGenerateNumerology = Boolean(member?.dateOfBirth && member?.fullName);
+  const hasNumerologyData = Boolean(numerologyProfile);
+
+  const handleGenerateNumerology = async () => {
+    if (!member?.dateOfBirth || !member?.fullName) return;
+    setNumerologyError(null);
+    try {
+      await calculateNumerology({
+        dob: member.dateOfBirth,
+        fullName: member.fullName,
+        memberId: member.id,
+        memberRelation: member.relationType,
+      }).unwrap();
+    } catch (err: any) {
+      setNumerologyError(err?.data?.error?.message || 'Failed to generate. Please try again.');
+    }
+  };
+
+  // Astrology
+  const { data: astrologyProfile } = useGetMemberAstrologyQuery(memberId, { skip: !member });
+  const [calculateAstrology, { isLoading: isGeneratingAstrology }] = useCalculateAstrologyMutation();
+  const [astrologyError, setAstrologyError] = useState<string | null>(null);
+
+  const canGenerateAstrology = Boolean(member?.dateOfBirth && member?.timeOfBirth && member?.placeOfBirth);
+  const hasAstrologyData = Boolean(astrologyProfile);
+
+  const handleGenerateAstrology = async () => {
+    if (!member?.dateOfBirth || !member?.timeOfBirth || !member?.placeOfBirth) return;
+    setAstrologyError(null);
+    try {
+      const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api/v1';
+      const token = getAccessToken();
+      let lat = 0, lon = 0, utcOffset = 0;
+      try {
+        const geoRes = await fetch(`${API_BASE}/astrology/geocode?place=${encodeURIComponent(member.placeOfBirth)}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (geoRes.ok) {
+          const geoJson = await geoRes.json();
+          lat = geoJson.data?.lat ?? 0;
+          lon = geoJson.data?.lon ?? 0;
+          utcOffset = geoJson.data?.utcOffset ?? 0;
+        }
+      } catch {}
+      await calculateAstrology({
+        dob: member.dateOfBirth,
+        birthTime: member.timeOfBirth,
+        lat, lon, utcOffset,
+        memberId: member.id,
+        memberRelation: member.relationType,
+        memberName: member.fullName.split(' ')[0],
+      }).unwrap();
+    } catch (err: any) {
+      setAstrologyError(err?.data?.error?.message || 'Failed to generate reading. Please try again.');
+    }
+  };
+
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -172,9 +237,9 @@ export default function MemberDetailPage() {
       case 'journal':
         return <MemberJournalTab member={member} externalAddOpen={journalAddOpen} onExternalAddClose={() => setJournalAddOpen(false)} onCountChange={setJournalCount} />;
       case 'numerology':
-        return <MemberNumerologyTab member={member} />;
+        return <MemberNumerologyTab member={member} isExternalLoading={isGeneratingNumerology} />;
       case 'astrology':
-        return <MemberAstrologyTab member={member} />;
+        return <MemberAstrologyTab member={member} isExternalLoading={isGeneratingAstrology} externalError={astrologyError} />;
       case 'report':
         return <MemberAIReportTab member={member} />;
       default:
@@ -280,34 +345,28 @@ export default function MemberDetailPage() {
           }
           onSecondaryAction={() => setShowEditModal(true)}
           onActionClick={() => {
-            // Handle tab-specific actions
-            if (activeTab === 'journal') {
-              setJournalAddOpen(true);
-            } else if (activeTab === 'patterns') {
-              setPatternsAddOpen(true);
-            } else if (activeTab === 'interactions') {
-              setInteractionsAddOpen(true);
-            } else if (activeTab === 'incidents') {
-              setIncidentsAddOpen(true);
-            } else if (activeTab === 'numerology') {
-              // Handle numerology generation
-              console.log('Generate numerology data for member:', member.fullName);
-              // TODO: Implement numerology generation logic
-            } else if (activeTab === 'astrology') {
-              // Handle astrology generation
-              console.log('Generate astrology data for member:', member.fullName);
-              // TODO: Implement astrology generation logic
-            } else if (activeTab === 'traits') {
-              // Trigger add trait
-              console.log('Open add trait');
-            } else if (activeTab === 'report') {
-              // Trigger regenerate report
-              console.log('Regenerate report');
-            } else if (activeTab === 'overview') {
-              // Trigger quick log
-              console.log('Open quick log');
-            }
+            if (activeTab === 'journal') setJournalAddOpen(true);
+            else if (activeTab === 'patterns') setPatternsAddOpen(true);
+            else if (activeTab === 'interactions') setInteractionsAddOpen(true);
+            else if (activeTab === 'incidents') setIncidentsAddOpen(true);
+            else if (activeTab === 'numerology') handleGenerateNumerology();
+            else if (activeTab === 'astrology') handleGenerateAstrology();
           }}
+          actionLabel={
+            activeTab === 'numerology'
+              ? (hasNumerologyData ? 'Regenerate Numerology' : canGenerateNumerology ? 'Generate Numerology' : null)
+              : activeTab === 'astrology'
+              ? (hasAstrologyData ? 'Regenerate Astrology' : canGenerateAstrology ? 'Generate Astrology' : null)
+              : undefined
+          }
+          actionDisabled={
+            (activeTab === 'numerology' && !canGenerateNumerology) ||
+            (activeTab === 'astrology' && !canGenerateAstrology)
+          }
+          actionLoading={
+            (activeTab === 'numerology' && isGeneratingNumerology) ||
+            (activeTab === 'astrology' && isGeneratingAstrology)
+          }
         />
 
         {/* Scrollable Tab Content */}

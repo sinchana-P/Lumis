@@ -12,20 +12,22 @@ export class JournalController {
   constructor(private readonly journalService: JournalService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all journal entries for a member' })
+  @ApiOperation({ summary: 'Get all journal entries for a member (use "self" for your own)' })
   async findAll(@Request() req: any, @Param('memberId') memberId: string) {
-    const data = await this.journalService.findAll(req.user.id, memberId);
+    const resolvedId = memberId === 'self' ? null : memberId;
+    const data = await this.journalService.findAll(req.user.id, resolvedId);
     return { success: true, data };
   }
 
   @Post()
-  @ApiOperation({ summary: 'Create a new journal entry' })
+  @ApiOperation({ summary: 'Create a new journal entry (use "self" for your own)' })
   async create(
     @Request() req: any,
     @Param('memberId') memberId: string,
     @Body() dto: CreateJournalEntryDto,
   ) {
-    const data = await this.journalService.create(req.user.id, memberId, dto);
+    const resolvedId = memberId === 'self' ? null : memberId;
+    const data = await this.journalService.create(req.user.id, resolvedId, dto);
     return { success: true, data };
   }
 

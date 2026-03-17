@@ -300,13 +300,15 @@ export class AuthService {
         // Continue with basic user data if database lookup fails
       }
 
-      const user = {
+      const user = userData ?? {
         id: data.user.id,
         email: data.user.email,
-        name: userData?.full_name || null,
-        avatar_url: userData?.avatar_url || null,
+        full_name: null,
+        first_name: null,
+        last_name: null,
+        avatar_url: null,
         provider: 'local',
-        analysis_depth_mode: userData?.analysis_depth_mode || 'full-spectrum',
+        analysis_depth_mode: 'full-spectrum',
         created_at: data.user.created_at,
       };
 
@@ -440,15 +442,7 @@ export class AuthService {
       throw new UnauthorizedException('User not found');
     }
 
-    return {
-      id: userId,
-      email: userData.email || null,
-      name: userData.full_name || null,
-      avatar_url: userData.avatar_url || null,
-      provider: userData.provider || 'local',
-      analysis_depth_mode: userData.analysis_depth_mode || 'full-spectrum',
-      created_at: userData.created_at || new Date().toISOString(),
-    };
+    return userData;
   }
 
   /**

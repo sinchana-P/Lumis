@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import {
   useGetMemberNumerologyQuery,
+  useGetMyNumerologyQuery,
   useCalculateNumerologyMutation,
   type NumerologyProfile,
 } from '@/store/api/numerologyApi';
@@ -19,6 +20,8 @@ interface Member {
 
 interface MemberNumerologyTabProps {
   member: Member;
+  isUser?: boolean;
+  isExternalLoading?: boolean;
 }
 
 type TabId = 'core' | 'timing' | 'compatibility';
@@ -763,58 +766,25 @@ function CompatibilityContent({ compatibility, member }: {
 
 // ─── Empty State ──────────────────────────────────────────────────────────────
 
-function EmptyState({ member, onGenerate, isLoading }: {
-  member: Member;
-  onGenerate: () => void;
-  isLoading: boolean;
-}) {
+function EmptyState({ member }: { member: Member }) {
   const hasDob = Boolean(member.dateOfBirth);
+  const firstName = member.fullName.split(' ')[0];
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="w-16 h-16 rounded-full bg-accent-primary/10 flex items-center justify-center mb-6">
-        <svg className="w-8 h-8 text-accent-primary/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+    <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
+      <div className="w-14 h-14 rounded-full flex items-center justify-center mb-6" style={{ background: 'color-mix(in srgb, var(--accent-primary) 15%, transparent)' }}>
+        <svg className="w-7 h-7" style={{ color: 'var(--accent-primary)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" />
         </svg>
       </div>
-
-      <h3 className="font-serif text-2xl font-light text-primary mb-2" style={{ letterSpacing: '-0.01em' }}>
+      <h3 className="font-serif text-2xl font-light mb-2" style={{ color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
         No numerology data yet
       </h3>
-
-      {hasDob ? (
-        <>
-          <p className="font-serif text-base text-primary font-light mb-8 max-w-sm" style={{ color: 'var(--text-tertiary)' }}>
-            Generate {member.fullName}'s numerological blueprint — life path, timing cycles, and compatibility analysis.
-          </p>
-          <button
-            onClick={onGenerate}
-            disabled={isLoading}
-            className="flex items-center gap-3 px-6 py-3 bg-accent-primary text-white rounded-xl font-sans text-sm font-medium hover:opacity-90 active:scale-[0.98] transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isLoading ? (
-              <>
-                <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                Generating…
-              </>
-            ) : (
-              <>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                Generate Numerology
-              </>
-            )}
-          </button>
-        </>
-      ) : (
-        <p className="font-serif text-base font-light max-w-sm" style={{ color: 'var(--text-tertiary)' }}>
-          Add {member.fullName}'s date of birth to generate their numerological blueprint.
-        </p>
-      )}
+      <p className="font-serif text-base font-light max-w-xs" style={{ color: 'var(--text-tertiary)' }}>
+        {hasDob
+          ? `Generate ${firstName}'s numerological blueprint — life path, timing cycles, and compatibility.`
+          : `Add ${firstName}'s date of birth to unlock their numerological blueprint.`}
+      </p>
     </div>
   );
 }
@@ -833,10 +803,14 @@ function LoadingSkeleton() {
 
 // ─── Main Tab ─────────────────────────────────────────────────────────────────
 
-export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
+export function MemberNumerologyTab({ member, isUser = false, isExternalLoading = false }: MemberNumerologyTabProps) {
   const [activeTab, setActiveTab] = useState<TabId>('core');
 
-  const { data: profile, isLoading: isFetching } = useGetMemberNumerologyQuery(member.id);
+  const { data: memberProfile, isLoading: isFetchingMember } = useGetMemberNumerologyQuery(member.id, { skip: isUser });
+  const { data: myProfile, isLoading: isFetchingMe } = useGetMyNumerologyQuery(undefined, { skip: !isUser });
+  const profile = isUser ? myProfile : memberProfile;
+  const isFetching = isUser ? isFetchingMe : isFetchingMember;
+
   const [calculate, { isLoading: isCalculating }] = useCalculateNumerologyMutation();
 
   const handleGenerate = async () => {
@@ -844,7 +818,7 @@ export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
     await calculate({
       dob: member.dateOfBirth,
       fullName: member.fullName,
-      memberId: member.id,
+      ...(isUser ? {} : { memberId: member.id }),
       memberRelation: member.relationType,
     });
   };
@@ -871,7 +845,7 @@ export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
       activeTab === id ? `${color} border-b border-current` : 'text-tertiary hover:text-primary'
     }`;
 
-  const isLoading = isFetching || isCalculating;
+  const isLoading = isFetching || isCalculating || isExternalLoading;
 
   return (
     <div className="w-full max-w-none">
@@ -895,37 +869,12 @@ export function MemberNumerologyTab({ member }: MemberNumerologyTabProps) {
       <div className="w-full">
         {isFetching && <LoadingSkeleton />}
 
-        {!isFetching && !profile && (
-          <EmptyState member={member} onGenerate={handleGenerate} isLoading={isCalculating} />
+        {!isLoading && !profile && (
+          <EmptyState member={member} />
         )}
 
-        {!isFetching && profile && display && (
+        {!isLoading && profile && display && (
           <>
-            {/* Re-generate button */}
-            <div className="flex justify-end mb-4">
-              <button
-                onClick={handleGenerate}
-                disabled={isCalculating}
-                className="flex items-center gap-2 px-3 py-1.5 text-xs font-mono uppercase tracking-widest text-tertiary hover:text-primary border border-primary/40 hover:border-primary/40 rounded-lg transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isCalculating ? (
-                  <>
-                    <svg className="w-3 h-3 animate-spin" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Regenerating…
-                  </>
-                ) : (
-                  <>
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Regenerate
-                  </>
-                )}
-              </button>
-            </div>
 
             {activeTab === 'core' && <CoreNumbersContent coreNumbers={coreNumbers} onToggle={toggleCoreNumber} member={member} profile={profile} />}
             {activeTab === 'timing' && <TimingNumbersContent timingNumbers={timingNumbers} onToggle={toggleTimingNumber} member={member} />}

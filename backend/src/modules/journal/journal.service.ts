@@ -10,31 +10,34 @@ export class JournalService {
     private vectorMemory: VectorMemoryService,
   ) {}
 
-  async findAll(userId: string, memberId: string) {
+  async findAll(userId: string, memberId: string | null) {
     const supabase = this.supabaseService.getAdminClient();
-    await this.assertMemberOwnership(userId, memberId);
+    if (memberId) await this.assertMemberOwnership(userId, memberId);
 
-    const { data, error } = await supabase
+    let q = supabase
       .from('journal_entries')
       .select('*')
       .eq('user_id', userId)
-      .eq('member_id', memberId)
       .is('deleted_at', null)
       .order('created_at', { ascending: false });
 
+    if (memberId) q = q.eq('member_id', memberId);
+    else          q = q.is('member_id', null);
+
+    const { data, error } = await q;
     if (error) throw new Error(error.message);
     return data ?? [];
   }
 
-  async create(userId: string, memberId: string, dto: CreateJournalEntryDto) {
+  async create(userId: string, memberId: string | null, dto: CreateJournalEntryDto) {
     const supabase = this.supabaseService.getAdminClient();
-    await this.assertMemberOwnership(userId, memberId);
+    if (memberId) await this.assertMemberOwnership(userId, memberId);
 
     const { data, error } = await supabase
       .from('journal_entries')
       .insert({
         user_id:    userId,
-        member_id:  memberId,
+        member_id:  memberId ?? null,
         content:    dto.content,
         title:      dto.title      ?? null,
         date:       dto.date       ?? new Date().toISOString().split('T')[0],
@@ -47,7 +50,7 @@ export class JournalService {
 
     if (error) throw new Error(error.message);
     this.vectorMemory.storeJournalEntry(
-      { id: data.id, memberId, text: data.content, date: data.date },
+      { id: data.id, memberId: memberId ?? '', text: data.content, date: data.date },
       userId,
     ).catch(() => {/* non-fatal */});
     return data;
@@ -76,7 +79,7 @@ export class JournalService {
 
     if (error) throw new Error(error.message);
     this.vectorMemory.storeJournalEntry(
-      { id: data.id, memberId, text: data.content, date: data.date },
+      { id: data.id, memberId: memberId ?? '', text: data.content, date: data.date },
       userId,
     ).catch(() => {/* non-fatal */});
     return data;

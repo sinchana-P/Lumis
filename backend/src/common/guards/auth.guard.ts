@@ -54,8 +54,9 @@ export class AuthGuard implements CanActivate {
       // Ensure user exists in our database
       await this.ensureUserExists(user);
 
-      // Attach user object to request context
-      request.user = {
+      // Fetch full user record from DB and attach to request
+      const { user: dbUser } = await this.supabaseService.getUserById(user.id);
+      request.user = dbUser ?? {
         id: user.id,
         email: user.email,
         provider: user.app_metadata?.provider || 'local',

@@ -108,6 +108,8 @@ export class SupabaseService {
         id: authData.user.id,
         email: authData.user.email,
         full_name: userData?.full_name || null,
+        first_name: userData?.first_name || null,
+        last_name: userData?.last_name || null,
         date_of_birth: userData?.date_of_birth || null,
         time_of_birth: userData?.time_of_birth || null,
         place_of_birth: userData?.place_of_birth || null,

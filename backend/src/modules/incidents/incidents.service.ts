@@ -10,15 +10,15 @@ export class IncidentsService {
     private vectorMemory: VectorMemoryService,
   ) {}
 
-  async create(userId: string, memberId: string, dto: CreateIncidentDto) {
+  async create(userId: string, memberId: string | null, dto: CreateIncidentDto) {
     const supabase = this.supabaseService.getAdminClient();
-    await this.assertMemberOwnership(userId, memberId);
+    if (memberId) await this.assertMemberOwnership(userId, memberId);
 
     const { data, error } = await supabase
       .from('incidents')
       .insert({
         user_id: userId,
-        member_id: memberId,
+        member_id: memberId ?? null,
         title: dto.title,
         description: dto.description,
         date: dto.date,
@@ -42,15 +42,17 @@ export class IncidentsService {
     return formatted;
   }
 
-  async findAll(userId: string, memberId: string, query: IncidentsQueryDto) {
+  async findAll(userId: string, memberId: string | null, query: IncidentsQueryDto) {
     const supabase = this.supabaseService.getAdminClient();
 
     let q = supabase
       .from('incidents')
       .select('*')
       .eq('user_id', userId)
-      .eq('member_id', memberId)
       .order('created_at', { ascending: false });
+
+    if (memberId) q = q.eq('member_id', memberId);
+    else          q = q.is('member_id', null);
 
     if (query.category) q = q.eq('category', query.category);
     if (query.severity)  q = q.eq('severity', query.severity);
@@ -65,21 +67,18 @@ export class IncidentsService {
     return data.map(r => this.format(r));
   }
 
-  async findOne(userId: string, memberId: string, incidentId: string) {
+  async findOne(userId: string, memberId: string | null, incidentId: string) {
     const supabase = this.supabaseService.getAdminClient();
-    const { data, error } = await supabase
-      .from('incidents')
-      .select('*')
-      .eq('id', incidentId)
-      .eq('user_id', userId)
-      .eq('member_id', memberId)
-      .single();
+    let q = supabase.from('incidents').select('*').eq('id', incidentId).eq('user_id', userId);
+    if (memberId) q = q.eq('member_id', memberId);
+    else          q = q.is('member_id', null);
+    const { data, error } = await (q as any).single();
 
     if (error || !data) throw new NotFoundException('Incident not found');
     return this.format(data);
   }
 
-  async update(userId: string, memberId: string, incidentId: string, dto: UpdateIncidentDto) {
+  async update(userId: string, memberId: string | null, incidentId: string, dto: UpdateIncidentDto) {
     const supabase = this.supabaseService.getAdminClient();
     await this.findOne(userId, memberId, incidentId);
 
@@ -112,7 +111,7 @@ export class IncidentsService {
     return formatted;
   }
 
-  async remove(userId: string, memberId: string, incidentId: string) {
+  async remove(userId: string, memberId: string | null, incidentId: string) {
     const supabase = this.supabaseService.getAdminClient();
     await this.findOne(userId, memberId, incidentId);
 
