@@ -215,6 +215,44 @@ export class MethodologyService {
             { type: 'heading', text: 'Nakshatra' },
             { type: 'paragraph', text: 'The 27 Nakshatras are lunar mansions that refine the Moon sign into a more precise emotional signature. Each Nakshatra has a ruling planet (lord) that further shades how the Moon energy expresses itself.' },
             { type: 'note', text: 'Birth time and place are required for accurate ascendant and house positions. Without them, Lumen uses Moon sign and Dasha only.' },
+
+            { type: 'heading', text: 'Responsible Disclosure — What We Deliberately Withhold' },
+            { type: 'paragraph', text: 'A full Vedic birth chart contains far more information than Lumis surfaces. We made a deliberate architectural decision to limit what the AI receives — not because the data isn\'t available, but because unrestricted chart access creates real vectors for psychological and financial exploitation.' },
+            { type: 'list', items: [
+              {
+                label: 'Full house placements',
+                color: '#C47AA8',
+                text: 'Knowing every planet\'s exact house position (especially 2nd, 8th, 11th — wealth and gains) could allow timing of financial manipulation. We expose only Mars house for conflict mode derivation.',
+              },
+              {
+                label: 'Exact planetary degrees',
+                color: '#C47AA8',
+                text: 'Degree-level precision reveals when a planet is debilitated, exalted, or on a critical cusp — information that could be used to target someone during their weakest astrological windows.',
+              },
+              {
+                label: 'Antardasha & sub-periods',
+                color: '#C47AA8',
+                text: 'We surface only the Mahadasha (major period, 6–20 years). Sub-periods (Antardasha, Pratyantardasha) are granular enough to pinpoint 3–6 month vulnerability windows — too precise for safe exposure.',
+              },
+              {
+                label: 'Sensitive house lords',
+                color: '#C47AA8',
+                text: '8th house lord governs transformation, crisis, and mortality themes. 12th house lord governs losses and isolation. These are computed internally but never passed to the AI prompt.',
+              },
+              {
+                label: 'Malefic transit overlays',
+                color: '#C47AA8',
+                text: 'Real-time transit data (e.g., Saturn transiting the natal Moon) can identify periods of depression, grief, or instability. We compute this for Timing mode suggestions only — never expose raw transit data.',
+              },
+              {
+                label: 'Sensitive yogas',
+                color: '#C47AA8',
+                text: 'Certain planetary combinations (Dhana yogas, Raja yogas) indicate wealth accumulation periods. These are filtered out of AI context entirely to prevent targeting.',
+              },
+            ]},
+            { type: 'heading', text: 'The Principle' },
+            { type: 'paragraph', text: 'Lumis is built on the premise that astrological data should illuminate emotional patterns and support self-awareness — not become a targeting instrument. The AI receives only the signals that serve understanding: emotional style, availability, and timing themes. Everything else stays at the infrastructure layer.' },
+            { type: 'note', text: 'This is an intentional product boundary, not a technical limitation. The full chart is computed and stored — we choose not to surface it.' },
           ],
         },
 
