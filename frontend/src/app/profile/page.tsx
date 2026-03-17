@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { clearUser, updateUser } from '@/store/slices/authSlice';
 import { clearTokens } from '@/lib/tokenStorage';
@@ -622,7 +622,11 @@ function SettingsTab({ user }: { user: any }) {
 export default function ProfilePage() {
   const user = useAppSelector(s => s.auth.user);
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<TabId>('overview');
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<TabId>(() => {
+    const tab = searchParams.get('tab') as TabId | null;
+    return (tab && TABS.some(t => t.id === tab)) ? tab : 'overview';
+  });
   const [traitsAddOpen, setTraitsAddOpen]       = useState(false);
   const [patternsAddOpen, setPatternsAddOpen]   = useState(false);
   const [incidentsAddOpen, setIncidentsAddOpen] = useState(false);
@@ -762,6 +766,8 @@ export default function ProfilePage() {
           <UserSelfReportTab
             reportText={selfReportResponse?.data?.text ?? null}
             isLoading={isGeneratingSelfReport}
+            userName={user?.full_name?.split(' ')[0] || user?.first_name || user?.email || 'You'}
+            userPhotoUrl={user?.avatar_url ?? undefined}
           />
         );
       case 'settings':

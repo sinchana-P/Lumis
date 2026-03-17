@@ -2,7 +2,7 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { useGetMemberQuery } from '@/store/api/membersApi';
+import { useGetMemberQuery, useGetMemberHealthScoresQuery } from '@/store/api/membersApi';
 import { useGetMemberNumerologyQuery, useCalculateNumerologyMutation } from '@/store/api/numerologyApi';
 import { useGetMemberAstrologyQuery, useCalculateAstrologyMutation } from '@/store/api/astrologyApi';
 import { useLumenRelationshipReportMutation } from '@/store/api/lumenApi';
@@ -107,6 +107,10 @@ export default function MemberDetailPage() {
   
   const { data: memberResponse, isLoading, error } = useGetMemberQuery(memberId);
   const member = memberResponse?.data;
+
+  // Health scores
+  const { data: healthScores } = useGetMemberHealthScoresQuery();
+  const memberHealthScore = healthScores?.find(h => h.memberId === memberId)?.score;
 
   // Numerology
   const { data: numerologyProfile } = useGetMemberNumerologyQuery(memberId, { skip: !member });
@@ -260,7 +264,7 @@ export default function MemberDetailPage() {
       case 'astrology':
         return <MemberAstrologyTab member={member} isExternalLoading={isGeneratingAstrology} externalError={astrologyError} />;
       case 'report':
-        return <MemberAIReportTab member={member} reportText={reportText} isLoading={isGeneratingReport} error={reportError} />;
+        return <MemberAIReportTab member={member} reportText={reportText} isLoading={isGeneratingReport} error={reportError} healthScore={memberHealthScore} />;
       default:
         return <MemberOverviewTab member={member} />;
     }
