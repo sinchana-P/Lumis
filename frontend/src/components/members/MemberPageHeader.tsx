@@ -30,7 +30,7 @@ export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onS
       case 'overview':
         return (
           <>
-            <Button onClick={onActionClick}>Quick Log</Button>
+            {/* <Button onClick={onActionClick}>Quick Log</Button> */}
             <Button variant="secondary" onClick={onSecondaryAction}>Edit Luminary</Button>
           </>
         );
