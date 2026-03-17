@@ -50,6 +50,17 @@ export class MembersController {
     };
   }
 
+  @Get('health-scores')
+  @ApiOperation({ summary: 'Get relationship health scores for all members' })
+  async healthScores(@User() user: any) {
+    const scores = await this.membersService.getHealthScores(user.id);
+    return {
+      success: true,
+      data: scores,
+      meta: { timestamp: new Date().toISOString(), request_id: this.generateRequestId() },
+    };
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get member by ID' })
   async findOne(@User() user: any, @Param('id') id: string) {

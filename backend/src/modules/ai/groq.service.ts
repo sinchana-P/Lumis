@@ -69,4 +69,17 @@ export class GroqService {
     });
     return res.choices[0].message.content || '';
   }
+
+  async generateReport(systemPrompt: string, userPrompt: string, maxTokens = 2048): Promise<string> {
+    const res = await this.client.chat.completions.create({
+      model: this.MODEL,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt },
+      ],
+      max_tokens: maxTokens,
+      temperature: 0.7,
+    });
+    return res.choices[0].message.content || '';
+  }
 }

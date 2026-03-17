@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, ForbiddenException, Get, NotFoundException, Param, Post, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, ForbiddenException, Get, Logger, NotFoundException, Param, Post, Res, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthGuard } from '../../common/guards/auth.guard';
@@ -13,6 +13,8 @@ import { LumenMember, LumenUserProfile } from './lumen-types';
 @UseGuards(AuthGuard)
 @Controller('lumen')
 export class LumenController {
+  private readonly logger = new Logger(LumenController.name);
+
   constructor(
     private readonly lumenService: LumenService,
     private readonly supabaseService: SupabaseService,
@@ -204,14 +206,19 @@ export class LumenController {
     @Param('memberId') memberId: string,
     @Body() dto: RelationshipReportDto,
   ) {
-    const { userProfile, members } = await this.loadContext(user.id, [memberId]);
-    const member = members[0];
-    if (!member) return { success: false, error: { message: 'Member not found' } };
+    try {
+      const { userProfile, members } = await this.loadContext(user.id, [memberId]);
+      const member = members[0];
+      if (!member) return { success: false, error: { message: 'Member not found' } };
 
-    const text = await this.lumenService.generateRelationshipReport(
-      userProfile, member, dto.depth || 'FULL_SPECTRUM',
-    );
-    return { success: true, data: { text } };
+      const text = await this.lumenService.generateRelationshipReport(
+        userProfile, member, dto.depth || 'FULL_SPECTRUM',
+      );
+      return { success: true, data: { text } };
+    } catch (err: any) {
+      this.logger.error('relationship-report error', err?.stack || err?.message || err);
+      return { success: false, error: { code: 'AI_SERVICE_ERROR', message: err?.message || 'Failed to generate report' } };
+    }
   }
 
   @Get('weekly-digest')
@@ -243,7 +250,7 @@ export class LumenController {
     };
 
     // Load members
-    let memberQuery = supabase.from('members').select('*').eq('user_id', userId).is('deleted_at', null);
+    let memberQuery = supabase.from('members').select('*').eq('user_id', userId).eq('archived', false);
     if (memberIds.length) memberQuery = memberQuery.in('id', memberIds);
     const { data: membersData } = await memberQuery;
 

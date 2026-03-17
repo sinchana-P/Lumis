@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useGetMemberQuery } from '@/store/api/membersApi';
 import { useGetMemberNumerologyQuery, useCalculateNumerologyMutation } from '@/store/api/numerologyApi';
 import { useGetMemberAstrologyQuery, useCalculateAstrologyMutation } from '@/store/api/astrologyApi';
+import { useLumenRelationshipReportMutation } from '@/store/api/lumenApi';
 import { getAccessToken } from '@/lib/tokenStorage';
 import { MemberPageHeader } from '@/components/members/MemberPageHeader';
 import { EditMemberModal } from '@/components/members/EditMemberModal';
@@ -124,6 +125,8 @@ export default function MemberDetailPage() {
         fullName: member.fullName,
         memberId: member.id,
         memberRelation: member.relationType,
+        memberDob: member.dateOfBirth,
+        memberFullName: member.fullName,
       }).unwrap();
     } catch (err: any) {
       setNumerologyError(err?.data?.error?.message || 'Failed to generate. Please try again.');
@@ -137,6 +140,22 @@ export default function MemberDetailPage() {
 
   const canGenerateAstrology = Boolean(member?.dateOfBirth && member?.timeOfBirth && member?.placeOfBirth);
   const hasAstrologyData = Boolean(astrologyProfile);
+
+  // Report
+  const [generateReport, { isLoading: isGeneratingReport }] = useLumenRelationshipReportMutation();
+  const [reportText, setReportText] = useState<string | null>(null);
+  const [reportError, setReportError] = useState<string | null>(null);
+
+  const handleGenerateReport = async () => {
+    if (!member) return;
+    setReportError(null);
+    try {
+      const result = await generateReport({ memberId: member.id, depth: 'FULL_SPECTRUM' }).unwrap();
+      setReportText(result.data?.text ?? null);
+    } catch (err: any) {
+      setReportError(err?.data?.error?.message || 'Failed to generate report. Please try again.');
+    }
+  };
 
   const handleGenerateAstrology = async () => {
     if (!member?.dateOfBirth || !member?.timeOfBirth || !member?.placeOfBirth) return;
@@ -241,7 +260,7 @@ export default function MemberDetailPage() {
       case 'astrology':
         return <MemberAstrologyTab member={member} isExternalLoading={isGeneratingAstrology} externalError={astrologyError} />;
       case 'report':
-        return <MemberAIReportTab member={member} />;
+        return <MemberAIReportTab member={member} reportText={reportText} isLoading={isGeneratingReport} error={reportError} />;
       default:
         return <MemberOverviewTab member={member} />;
     }
@@ -351,12 +370,15 @@ export default function MemberDetailPage() {
             else if (activeTab === 'incidents') setIncidentsAddOpen(true);
             else if (activeTab === 'numerology') handleGenerateNumerology();
             else if (activeTab === 'astrology') handleGenerateAstrology();
+            else if (activeTab === 'report') handleGenerateReport();
           }}
           actionLabel={
             activeTab === 'numerology'
               ? (hasNumerologyData ? 'Regenerate Numerology' : canGenerateNumerology ? 'Generate Numerology' : null)
               : activeTab === 'astrology'
               ? (hasAstrologyData ? 'Regenerate Astrology' : canGenerateAstrology ? 'Generate Astrology' : null)
+              : activeTab === 'report'
+              ? (reportText ? 'Regenerate Report' : 'Generate Report')
               : undefined
           }
           actionDisabled={
@@ -365,7 +387,8 @@ export default function MemberDetailPage() {
           }
           actionLoading={
             (activeTab === 'numerology' && isGeneratingNumerology) ||
-            (activeTab === 'astrology' && isGeneratingAstrology)
+            (activeTab === 'astrology' && isGeneratingAstrology) ||
+            (activeTab === 'report' && isGeneratingReport)
           }
         />
 

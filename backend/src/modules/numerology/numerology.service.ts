@@ -29,7 +29,9 @@ export class NumerologyService {
     const dobHash = hashString(dto.dob);
     const nameHash = hashString(dto.fullName);
 
-    // Check cache — if same dob+name, return existing
+    const compatibilityRequested = Boolean(dto.memberDob && dto.memberFullName);
+
+    // Check cache — if same dob+name, return existing (unless compatibility was requested but missing)
     if (dto.memberId) {
       const { data: cached } = await supabase
         .from('numerology_profiles')
@@ -39,7 +41,9 @@ export class NumerologyService {
         .eq('name_hash', nameHash)
         .maybeSingle();
 
-      if (cached) return this.formatProfile(cached);
+      if (cached && !(compatibilityRequested && !cached.compatibility)) {
+        return this.formatProfile(cached);
+      }
     } else {
       const { data: cached } = await supabase
         .from('numerology_profiles')
@@ -50,7 +54,9 @@ export class NumerologyService {
         .eq('name_hash', nameHash)
         .maybeSingle();
 
-      if (cached) return this.formatProfile(cached);
+      if (cached && !(compatibilityRequested && !cached.compatibility)) {
+        return this.formatProfile(cached);
+      }
     }
 
     // Compute core numbers (pure math)

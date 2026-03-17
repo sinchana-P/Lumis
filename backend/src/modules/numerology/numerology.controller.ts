@@ -15,8 +15,9 @@ export class NumerologyController {
   @Post('calculate')
   @ApiOperation({ summary: 'Calculate and persist numerology profile for a member or self' })
   async calculate(@User() user: any, @Body() dto: CalculateNumerologyDto) {
-    const userProfile = user.dob
-      ? { dob: user.dob, fullName: user.full_name || user.email }
+    const userFullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.full_name || user.email;
+    const userProfile = user.date_of_birth
+      ? { dob: user.date_of_birth, fullName: userFullName }
       : undefined;
     const result = await this.numerologyService.calculate(user.id, dto, userProfile);
     return { success: true, data: result };

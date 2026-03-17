@@ -89,6 +89,12 @@ export const membersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Members'],
     }),
+
+    getMemberHealthScores: builder.query<{ memberId: string; score: number; breakdown: Record<string, number> }[], void>({
+      query: () => '/members/health-scores',
+      transformResponse: (response: any) => response.data,
+      providesTags: ['Members'],
+    }),
   }),
 });
 
@@ -98,4 +104,5 @@ export const {
   useGetMemberQuery,
   useUpdateMemberMutation,
   useDeleteMemberMutation,
+  useGetMemberHealthScoresQuery,
 } = membersApi;

@@ -21,6 +21,7 @@ import { DottedDivider } from '@/components/ui/DottedDivider';
 import { useGetTraitsQuery } from '@/store/api/traitsApi';
 import { useGetMyNumerologyQuery, useCalculateNumerologyMutation } from '@/store/api/numerologyApi';
 import { useGetMyAstrologyQuery, useCalculateAstrologyMutation } from '@/store/api/astrologyApi';
+import { useLumenSelfReportQuery } from '@/store/api/lumenApi';
 import { getAccessToken } from '@/lib/tokenStorage';
 import { useGetJournalEntriesQuery } from '@/store/api/journalApi';
 import { useGetIncidentsQuery } from '@/store/api/incidentsApi';
@@ -231,36 +232,44 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
 
       {/* ── Self-Awareness ─────────────────────────────────── */}
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Self-Awareness Map</p>
+        <p className="font-mono text-xs uppercase tracking-widest mb-5" style={{ color: 'var(--text-tertiary)' }}>Self-Awareness Map</p>
         {totalTraits === 0 ? (
           <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
             Start logging your traits to build self-awareness over time.
           </p>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col">
             {[
               { label: 'Strengths', items: strengths, color: '#7FA87A' },
               { label: 'Shadows',   items: shadows,   color: '#C47A7A' },
               { label: 'Triggers',  items: triggers,  color: '#C4A87A' },
-              { label: 'Needs',     items: needs,     color: 'var(--accent-ai)' },
-            ].map(({ label, items, color }) => (
-              <div key={label} style={{ padding: '12px 14px', borderRadius: 12, border: `1px solid ${color}22`, background: `${color}09` }}>
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="font-serif" style={{ fontSize: 22, lineHeight: 1, color: 'var(--text-primary)' }}>{items.length}</span>
-                  <p className="font-mono text-xs uppercase tracking-widest" style={{ color }}>{label}</p>
-                </div>
-                {items.length > 0 ? (
-                  <div className="flex flex-wrap gap-1.5">
-                    {items.map((t: any) => (
-                      <span key={t.id} className="font-serif text-xs px-2 py-0.5 rounded-full"
-                        style={{ background: `${color}15`, border: `1px solid ${color}30`, color: 'var(--text-secondary)' }}>
-                        {t.description}
-                      </span>
-                    ))}
+              { label: 'Needs',     items: needs,     color: '#9B8EC4' },
+            ].map(({ label, items, color }, i, arr) => (
+              <div key={label}>
+                <div className="flex items-start gap-5 py-4">
+                  {/* Accent bar + count + label */}
+                  <div className="flex items-stretch gap-3 flex-shrink-0" style={{ width: 100 }}>
+                    <div style={{ width: 3, minHeight: 42, borderRadius: 2, backgroundColor: color, opacity: 0.6, alignSelf: 'stretch' }} />
+                    <div className="flex flex-col justify-center">
+                      <span className="font-serif" style={{ fontSize: 30, lineHeight: 1, color: 'var(--text-primary)' }}>{items.length}</span>
+                      <p className="font-mono uppercase" style={{ fontSize: 9, color, marginTop: 5, letterSpacing: '0.1em' }}>{label}</p>
+                    </div>
                   </div>
-                ) : (
-                  <p className="font-serif italic text-xs" style={{ color: 'var(--text-tertiary)' }}>none logged</p>
-                )}
+                  {/* Pills */}
+                  <div className="flex-1 flex flex-wrap gap-1.5 pt-1.5">
+                    {items.length > 0 ? (
+                      items.map((t: any) => (
+                        <span key={t.id} className="font-serif text-xs px-2.5 py-1 rounded-full"
+                          style={{ background: `${color}12`, border: `1px solid ${color}28`, color: 'var(--text-secondary)' }}>
+                          {t.description}
+                        </span>
+                      ))
+                    ) : (
+                      <p className="font-serif italic text-xs pt-1" style={{ color: 'var(--text-tertiary)', opacity: 0.5 }}>none logged</p>
+                    )}
+                  </div>
+                </div>
+                {i < arr.length - 1 && <DottedDivider />}
               </div>
             ))}
           </div>
@@ -612,6 +621,7 @@ function SettingsTab({ user }: { user: any }) {
 
 export default function ProfilePage() {
   const user = useAppSelector(s => s.auth.user);
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const [traitsAddOpen, setTraitsAddOpen]       = useState(false);
   const [patternsAddOpen, setPatternsAddOpen]   = useState(false);
@@ -619,6 +629,7 @@ export default function ProfilePage() {
   const [journalAddOpen, setJournalAddOpen]     = useState(false);
   const [numerologyError, setNumerologyError]   = useState<string | null>(null);
   const [astrologyError, setAstrologyError]     = useState<string | null>(null);
+  const [selfReportTriggered, setSelfReportTriggered] = useState(false);
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -639,6 +650,7 @@ export default function ProfilePage() {
   const [calculateNumerology, { isLoading: isGeneratingNumerology }] = useCalculateNumerologyMutation();
   const { data: myAstrologyData } = useGetMyAstrologyQuery(undefined, { skip: !user });
   const [calculateAstrology, { isLoading: isGeneratingAstrology }] = useCalculateAstrologyMutation();
+  const { data: selfReportResponse, isLoading: isGeneratingSelfReport, refetch: refetchSelfReport } = useLumenSelfReportQuery(undefined, { skip: !selfReportTriggered });
 
   if (!user) return null;
 
@@ -746,7 +758,12 @@ export default function ProfilePage() {
       case 'astrology':
         return <MemberAstrologyTab member={userAsMember} isUser isExternalLoading={isGeneratingAstrology} externalError={astrologyError} />;
       case 'report':
-        return <UserSelfReportTab />;
+        return (
+          <UserSelfReportTab
+            reportText={selfReportResponse?.data?.text ?? null}
+            isLoading={isGeneratingSelfReport}
+          />
+        );
       case 'settings':
         return <SettingsTab user={user} />;
       default:
@@ -798,6 +815,18 @@ export default function ProfilePage() {
         </button>
       );
     }
+    if (activeTab === 'report') {
+      const hasReport = Boolean(selfReportResponse?.data?.text);
+      return (
+        <button
+          onClick={() => { if (selfReportTriggered) refetchSelfReport(); else setSelfReportTriggered(true); }}
+          disabled={isGeneratingSelfReport}
+          className="font-mono uppercase tracking-widest"
+          style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-ai)', color: '#fff', border: 'none', cursor: isGeneratingSelfReport ? 'default' : 'pointer', opacity: isGeneratingSelfReport ? 0.7 : 1 }}>
+          {isGeneratingSelfReport ? 'Generating…' : hasReport ? 'Regenerate Report' : 'Generate Report'}
+        </button>
+      );
+    }
     return null;
   };
 
@@ -806,6 +835,22 @@ export default function ProfilePage() {
     <div className="h-screen flex overflow-hidden" style={{ backgroundColor: 'var(--bg-primary)' }}>
       {/* Sidebar */}
       <aside className="w-48 flex flex-col h-full flex-shrink-0">
+        {/* Back Navigation */}
+        <div className="pl-12 pr-4 py-5 flex-shrink-0">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="flex items-center gap-2 transition-colors"
+            style={{ color: 'var(--text-tertiary)', fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-tertiary)')}
+          >
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+            Dashboard
+          </button>
+        </div>
+
         {/* Avatar + name */}
         <div className="pl-12 pr-4 pt-4 pb-6" style={{ borderBottom: '1px solid var(--bg-tertiary)' }}>
           <div className="text-center">

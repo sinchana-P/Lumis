@@ -57,7 +57,11 @@ export function MemberPageHeader({ tabs, activeTab, tabCount, onActionClick, onS
           </Button>
         );
       case 'report':
-        return <Button onClick={onActionClick}>Regenerate</Button>;
+        return (
+          <Button onClick={onActionClick} disabled={actionDisabled || actionLoading}>
+            {actionLoading ? 'Generating…' : (label ?? 'Generate Report')}
+          </Button>
+        );
       default:
         return null;
     }

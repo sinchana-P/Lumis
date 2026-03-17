@@ -4,7 +4,8 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppSelector } from '@/store/hooks';
 import { selectUser, selectIsAuthenticated } from '@/store/slices/authSlice';
-import { useGetMembersQuery } from '@/store/api/membersApi';
+import { useGetMembersQuery, useGetMemberHealthScoresQuery } from '@/store/api/membersApi';
+import { useGetDashboardSummaryQuery } from '@/store/api/dashboardApi';
 import { Header } from '@/components/layout/Header';
 import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import { TourButton } from '@/components/tour';
@@ -21,72 +22,44 @@ const ORBIT_COLORS = [
   '#C8B8B0', // blush stone
 ];
 
-// Generate positions based on relationship health scores
-const generateHealthBasedPositions = (members: any[]): { [key: string]: { d: number; a: number } } => {
+// Generate positions based on real health scores — closer = healthier
+const generateHealthBasedPositions = (
+  members: any[],
+  healthMap: Record<string, number>,
+): { [key: string]: { d: number; a: number } } => {
   if (members.length === 0) return {};
-  
-  // Simple seeded random function for consistent positioning
+
   const seededRandom = (seed: number) => {
     const x = Math.sin(seed) * 10000;
     return x - Math.floor(x);
   };
-  
-  // Calculate health scores for all members
-  const membersWithHealth = members.map(member => ({
-    ...member,
-    health: getRelationshipHealth(member)
+
+  const membersWithHealth = members.map(m => ({
+    ...m,
+    health: healthMap[m.id] ?? getFallbackHealth(m),
   }));
-  
-  // Sort by health score (highest first)
-  const sortedMembers = [...membersWithHealth].sort((a, b) => b.health - a.health);
-  
+
+  const sorted = [...membersWithHealth].sort((a, b) => b.health - a.health);
   const positions: { [key: string]: { d: number; a: number } } = {};
-  
-  sortedMembers.forEach((member, i) => {
-    const health = member.health;
-    
-    // Use member ID as seed for consistent randomness
-    const seed = member.id.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-    
-    // Determine distance based on health score
-    let distance;
-    if (health >= 80) {
-      distance = 15; // Very close - excellent relationships
-    } else if (health >= 70) {
-      distance = 20; // Close - good relationships
-    } else if (health >= 60) {
-      distance = 25; // Medium - okay relationships
-    } else if (health >= 50) {
-      distance = 30; // Further - challenging relationships
-    } else {
-      distance = 35; // Furthest - difficult relationships
-    }
-    
-    // Add some randomness to avoid perfect circles (but consistent)
-    const randomOffset = (seededRandom(seed) - 0.5) * 4;
-    distance += randomOffset;
-    
-    // Calculate angle with some spacing
-    const baseAngle = (i * 360) / sortedMembers.length;
-    const angleVariation = (seededRandom(seed + 1) - 0.5) * 30; // ±15 degrees variation
-    const angle = baseAngle + angleVariation;
-    
-    positions[member.id] = { d: Math.max(12, Math.min(38, distance)), a: angle };
+
+  sorted.forEach((member, i) => {
+    const seed = member.id.split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0);
+    // Score 80-100 → orbit ring 1 (d≈13-16), 60-79 → ring 2 (d≈20-24), 40-59 → ring 3 (d≈27-31), <40 → outer (d≈33-37)
+    const base = member.health >= 80 ? 14 : member.health >= 60 ? 22 : member.health >= 40 ? 29 : 35;
+    const jitter = (seededRandom(seed) - 0.5) * 4;
+    const distance = Math.max(12, Math.min(38, base + jitter));
+    const baseAngle = (i * 360) / sorted.length;
+    const angleVar = (seededRandom(seed + 1) - 0.5) * 30;
+    positions[member.id] = { d: distance, a: baseAngle + angleVar };
   });
-  
+
   return positions;
 };
 
-// Helper function to get relationship health (same as in orbit page)
-const getRelationshipHealth = (member: any) => {
-  const healthMap: Record<string, number> = {
-    'partner': Math.floor(Math.random() * 20) + 80,
-    'family': Math.floor(Math.random() * 30) + 60,
-    'friend': Math.floor(Math.random() * 40) + 50,
-    'colleague': Math.floor(Math.random() * 30) + 40,
-    'acquaintance': Math.floor(Math.random() * 20) + 30,
-  };
-  return healthMap[member.relationType] || 65;
+// Fallback health score when real data not yet loaded (seeded by member id for stability)
+const getFallbackHealth = (member: any) => {
+  const seed = member.id.split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0);
+  return 45 + (seed % 30); // 45–75
 };
 
 function Label({ children }: { children: React.ReactNode }) {
@@ -106,8 +79,16 @@ export default function DashboardPage() {
   const router = useRouter();
   const user = useAppSelector(selectUser);
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
-  const { data: membersResponse } = useGetMembersQuery();
+  const { data: membersResponse, refetch: refetchMembers } = useGetMembersQuery();
   const members = membersResponse?.data || [];
+  const { data: healthScores } = useGetMemberHealthScoresQuery();
+  const healthMap = Object.fromEntries((healthScores || []).map(h => [h.memberId, h.score]));
+  const { data: dashSummary, isFetching: isRefreshing, refetch: refetchDashboard } = useGetDashboardSummaryQuery();
+
+  const handleSync = () => {
+    refetchDashboard();
+    refetchMembers();
+  };
 
   useEffect(() => {
     if (!isAuthenticated) router.push('/login');
@@ -190,7 +171,37 @@ export default function DashboardPage() {
 
               {/* Emotional Weather */}
               <section data-tour="emotional-weather">
-                <Label>Emotional Weather</Label>
+                <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
+                  <p className="font-mono uppercase tracking-widest"
+                    style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+                    Emotional Weather
+                  </p>
+                  <div className="flex items-center gap-3">
+                    {dashSummary?.generatedAt && (
+                      <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', opacity: 0.7 }}>
+                        {new Date(dashSummary.generatedAt).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    )}
+                    <button
+                      onClick={handleSync}
+                      title="Refresh dashboard"
+                      style={{
+                        background: 'none', border: 'none', cursor: 'pointer', padding: 4,
+                        color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center',
+                        transition: 'color 0.15s',
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
+                      onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
+                      <svg
+                        width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        style={{ transition: 'transform 0.6s', transform: isRefreshing ? 'rotate(360deg)' : 'none' }}>
+                        <path d="M23 4v6h-6" /><path d="M1 20v-6h6" />
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
                 <div style={{
                   padding: '20px 22px',
                   background: 'var(--bg-secondary)',
@@ -208,58 +219,107 @@ export default function DashboardPage() {
                     fontSize: 18, color: 'var(--text-primary)',
                     lineHeight: 1.7, marginBottom: 14, position: 'relative',
                   }}>
-                    Mostly peaceful this week, with moments of warmth around{' '}
-                    <em>family connections</em>.
+                    {dashSummary?.emotionalWeather.summary ?? 'Loading your emotional weather…'}
                   </p>
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-primary)' }} />
                     <span className="font-mono uppercase tracking-widest"
                       style={{ fontSize: 11, color: 'var(--accent-primary)' }}>
-                      Current vibe: Serene
+                      Current vibe: {dashSummary?.emotionalWeather.vibe ?? '—'}
                     </span>
                   </div>
                 </div>
               </section>
 
-              <Divider />
-
-              {/* Insights */}
-              <section>
-                <Label>Recent Insights</Label>
-                <div style={{ border: '1px solid var(--bg-tertiary)', borderRadius: 12, overflow: 'hidden' }}>
+              {/* 7-day activity pills */}
+              {dashSummary?.activity7d && (
+                <div className="flex items-center gap-2" style={{ marginTop: 14 }}>
                   {[
-                    { tag: 'Pattern Alert',       color: '#D4728A', text: <>You've logged feeling unheard <strong>4 times</strong> with Mom this week.</>,                action: 'Explore Blueprint' },
-                    { tag: 'Growth Opportunity',  color: 'var(--accent-primary)', text: 'Energy peaks correlate with evening creative sessions.',                             action: 'Schedule Time'    },
-                    { tag: 'Lumen Nudge',          color: '#7B78D4', text: "You haven't journaled in 5 days. A few honest lines can shift everything.",                       action: 'Open Journal'     },
-                  ].map(({ tag, color, text, action }, i, arr) => (
-                    <div key={tag} style={{
-                      padding: '16px 20px',
-                      borderBottom: i < arr.length - 1 ? '1px solid var(--bg-tertiary)' : 'none',
-                      background: 'var(--bg-primary)',
+                    { label: 'Interactions', value: dashSummary.activity7d.interactions },
+                    { label: 'Incidents', value: dashSummary.activity7d.incidents },
+                    { label: 'Journal', value: dashSummary.activity7d.journalEntries },
+                    { label: 'Patterns', value: dashSummary.activity7d.patternsActive },
+                  ].map(({ label, value }) => (
+                    <div key={label} style={{
+                      padding: '4px 12px', borderRadius: 20,
+                      border: '1px solid var(--bg-tertiary)',
+                      display: 'flex', alignItems: 'center', gap: 6,
                     }}>
-                      <div className="flex items-start gap-3">
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, marginTop: 6, flexShrink: 0 }} />
-                        <div className="flex-1">
-                          <p className="font-mono uppercase tracking-widest"
-                            style={{ fontSize: 11, color, marginBottom: 5 }}>
-                            {tag}
-                          </p>
-                          <p className="font-serif"
-                            style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>
-                            {text}
-                          </p>
-                          <button
-                            className="font-mono uppercase tracking-widest transition-colors"
-                            style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', padding: 0, marginTop: 8, cursor: 'pointer' }}
-                            onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
-                            onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
-                            {action} →
-                          </button>
-                        </div>
-                      </div>
+                      <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-primary)' }}>{value}</span>
+                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{label}</span>
                     </div>
                   ))}
+                  <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginLeft: 4 }}>last 7 days</span>
                 </div>
+              )}
+
+              <Divider />
+
+              {/* Insights / Recent Signals */}
+              <section>
+                <Label>Recent Signals</Label>
+                {dashSummary?.recentSignals && dashSummary.recentSignals.length > 0 ? (
+                  <div style={{ border: '1px solid var(--bg-tertiary)', borderRadius: 12, overflow: 'hidden' }}>
+                    {dashSummary.recentSignals.map((signal, i, arr) => {
+                      const colorMap: Record<string, string> = {
+                        pattern: '#D4728A',
+                        incident: '#D4A84B',
+                        interaction: 'var(--accent-primary)',
+                      };
+                      const labelMap: Record<string, string> = {
+                        pattern: 'Pattern',
+                        incident: 'Incident',
+                        interaction: 'Interaction',
+                      };
+                      const color = colorMap[signal.type] ?? 'var(--text-tertiary)';
+                      const label = labelMap[signal.type] ?? signal.type;
+                      return (
+                        <div key={i} style={{
+                          padding: '16px 20px',
+                          borderBottom: i < arr.length - 1 ? '1px solid var(--bg-tertiary)' : 'none',
+                          background: 'var(--bg-primary)',
+                        }}>
+                          <div className="flex items-start gap-3">
+                            <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, marginTop: 6, flexShrink: 0 }} />
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2" style={{ marginBottom: 5 }}>
+                                <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color }}>
+                                  {label}
+                                </p>
+                                {signal.memberName && (
+                                  <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                                    · {signal.memberName}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>
+                                {signal.title}
+                              </p>
+                              <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginTop: 4, display: 'block' }}>
+                                {new Date(signal.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : dashSummary ? (
+                  <div style={{ padding: '24px 0', textAlign: 'center' }}>
+                    <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)', lineHeight: 1.7 }}>
+                      No recent signals. Start logging interactions to see insights here.
+                    </p>
+                  </div>
+                ) : (
+                  <div style={{ border: '1px solid var(--bg-tertiary)', borderRadius: 12, overflow: 'hidden' }}>
+                    {[0, 1, 2].map(i => (
+                      <div key={i} style={{ padding: '16px 20px', borderBottom: i < 2 ? '1px solid var(--bg-tertiary)' : 'none', background: 'var(--bg-primary)' }}>
+                        <div className="rounded" style={{ height: 9, width: 80, background: 'var(--bg-tertiary)', marginBottom: 8 }} />
+                        <div className="rounded" style={{ height: 12, width: '75%', background: 'var(--bg-tertiary)' }} />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </section>
 
               <Divider />
@@ -306,7 +366,7 @@ export default function DashboardPage() {
                     <>
                       {(() => {
                         // Calculate positions once and reuse for both lines and nodes
-                        const positions = generateHealthBasedPositions(members);
+                        const positions = generateHealthBasedPositions(members, healthMap);
                         
                         return (
                           <>

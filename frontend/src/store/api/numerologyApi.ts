@@ -56,6 +56,8 @@ export interface CalculateNumerologyRequest {
   fullName: string;
   memberId?: string;
   memberRelation?: string;
+  memberDob?: string;
+  memberFullName?: string;
 }
 
 export const numerologyApi = baseApi.injectEndpoints({

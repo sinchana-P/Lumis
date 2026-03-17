@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useGetMembersQuery, useCreateMemberMutation } from '@/store/api/membersApi';
+import { useGetMembersQuery, useCreateMemberMutation, useGetMemberHealthScoresQuery } from '@/store/api/membersApi';
 import { useSeedDemoLuminaryMutation } from '@/store/api/seedApi';
 import { useDragAndDrop } from '@/hooks/useDragAndDrop';
 import { useZoom } from '@/hooks/useZoom';
@@ -43,6 +43,15 @@ export default function MembersPage() {
   
   const members = membersResponse?.data || [];
   const displayMembers = members;
+  const { data: healthScores } = useGetMemberHealthScoresQuery();
+  const healthMap = Object.fromEntries((healthScores || []).map(h => [h.memberId, h.score]));
+
+  // Get health for a member — real score if loaded, seeded fallback otherwise
+  const getRelationshipHealth = (member: any): number => {
+    if (healthMap[member.id] !== undefined) return healthMap[member.id];
+    const seed = member.id.split('').reduce((acc: number, c: string) => acc + c.charCodeAt(0), 0);
+    return 45 + (seed % 30);
+  };
 
   // Initialize drag and drop functionality
   const {
@@ -102,17 +111,6 @@ export default function MembersPage() {
       resetMemberPositions();
     }
   }, [displayMembers.length, memberPositions, resetMemberPositions]);
-
-  const getRelationshipHealth = (member: any) => {
-    const healthMap: Record<string, number> = {
-      'partner': Math.floor(Math.random() * 20) + 80,
-      'family': Math.floor(Math.random() * 30) + 60,
-      'friend': Math.floor(Math.random() * 40) + 50,
-      'colleague': Math.floor(Math.random() * 30) + 40,
-      'acquaintance': Math.floor(Math.random() * 20) + 30,
-    };
-    return healthMap[member.relationType] || 65;
-  };
 
   const getRelationshipType = (member: any) => {
     return member.relationTypeCustom || member.relationType.toUpperCase();

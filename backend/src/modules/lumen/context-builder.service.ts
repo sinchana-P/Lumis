@@ -15,20 +15,22 @@ export class ContextBuilderService {
   buildSignals(member: LumenMember): AstroNumerologySignals {
     const yr = new Date().getFullYear();
     const mo = new Date().getMonth() + 1;
-    const fullName = member.fullName || member.name;
+    const fullName = member.fullName || member.name || '';
+    const dob = member.dob || '1990-01-01'; // safe fallback — engine crashes on null
 
-    const lp = this.engine.lifePath(member.dob);
-    const su = this.engine.soulUrge(fullName);
-    const pyNum = this.engine.personalYear(member.dob, yr);
-    const pmNum = this.engine.personalMonth(member.dob, yr, mo);
-    const lc = this.engine.lifeCycle(member.dob);
+    const lp = this.engine.lifePath(dob);
+    const su = fullName ? this.engine.soulUrge(fullName) : 1;
+    const pyNum = this.engine.personalYear(dob, yr);
+    const pmNum = this.engine.personalMonth(dob, yr, mo);
+    const lc = this.engine.lifeCycle(dob);
 
-    const moonSign = member.astrologyData?.computed.moonSign || 'Unknown';
-    const nakshatra = member.astrologyData?.computed.nakshatra || 'Unknown';
-    const nakshatraLord = member.astrologyData?.computed.nakshatraLord || 'Unknown';
-    const currentDasha = member.astrologyData?.computed.dasha.currentMahadasha.planet || 'Unknown';
-    const lagna = member.astrologyData?.computed.ascendant || 'Unknown';
-    const marsHouse = member.astrologyData?.computed.planets.find(p => p.name === 'Mars')?.house || 0;
+    const computed = member.astrologyData?.computed;
+    const moonSign = computed?.moonSign || 'Unknown';
+    const nakshatra = computed?.nakshatra || 'Unknown';
+    const nakshatraLord = computed?.nakshatraLord || 'Unknown';
+    const currentDasha = computed?.dasha?.currentMahadasha?.planet || 'Unknown';
+    const lagna = computed?.ascendant || 'Unknown';
+    const marsHouse = computed?.planets?.find((p: any) => p.name === 'Mars')?.house || 0;
 
     const emotionalStyle = this.deriveEmotionalStyle(moonSign);
     const conflictMode = this.deriveConflictMode(moonSign, marsHouse);

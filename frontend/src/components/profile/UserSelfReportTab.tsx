@@ -1,106 +1,181 @@
 'use client';
 
-import { useState } from 'react';
 import { DottedDivider } from '@/components/ui/DottedDivider';
-import { useLumenSelfReportQuery } from '@/store/api/lumenApi';
 
-// ── Paragraph block ───────────────────────────────────────────────────────────
+interface UserSelfReportTabProps {
+  reportText?: string | null;
+  isLoading?: boolean;
+  error?: string | null;
+}
 
-function ReportBlock({ text }: { text: string }) {
+interface ReportSection {
+  title: string;
+  body: string;
+}
+
+// ─── Parse text into sections ─────────────────────────────────────────────────
+
+function parseReport(text: string): { intro: string; sections: ReportSection[] } {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  let intro = '';
+  const sections: ReportSection[] = [];
+  let current: ReportSection | null = null;
+
+  for (const line of lines) {
+    const isBold = line.startsWith('**') && line.endsWith('**') && line.length < 120;
+    const isHash = /^#{1,3}\s/.test(line) && line.length < 120;
+    const isNumbered = /^(\d+\.\s+[A-Z]|Section \d+[:.]\s)/.test(line) && line.length < 120;
+    const isHeading = isBold || isHash || isNumbered;
+
+    if (isHeading) {
+      if (current) sections.push(current);
+      const title = line
+        .replace(/^\*\*|\*\*$/g, '')
+        .replace(/^#+\s*/, '')
+        .replace(/^\d+\.\s*/, '')
+        .replace(/^Section \d+[:.]?\s*/i, '')
+        .replace(/\s*[—–(].*$/, '')
+        .trim();
+      current = { title, body: '' };
+    } else {
+      if (current) {
+        current.body += (current.body ? '\n\n' : '') + line;
+      } else {
+        intro += (intro ? '\n\n' : '') + line;
+      }
+    }
+  }
+
+  if (current) sections.push(current);
+  return { intro, sections: sections.filter(s => s.body.trim()) };
+}
+
+const SECTION_ACCENTS = [
+  'var(--accent-ai)',
+  'var(--accent-primary)',
+  'var(--accent-gold, #C4A87A)',
+  'var(--accent-secondary)',
+];
+
+// ─── Loading skeleton ─────────────────────────────────────────────────────────
+
+function LoadingSkeleton() {
   return (
-    <p className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.8 }}>
-      {text}
-    </p>
+    <div style={{ maxWidth: 640, paddingTop: 8 }}>
+      <div style={{ marginBottom: 24 }}>
+        <div className="rounded" style={{ height: 10, width: 180, background: 'var(--bg-tertiary)', marginBottom: 10 }} />
+        <div className="rounded" style={{ height: 10, width: 240, background: 'var(--bg-tertiary)' }} />
+      </div>
+      <div style={{ height: 1, background: 'var(--bg-tertiary)', marginBottom: 24 }} />
+      {[1, 2, 3, 4].map(i => (
+        <div key={i} style={{ paddingTop: 20, paddingBottom: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
+          <div className="rounded" style={{ height: 9, width: 130, background: 'var(--bg-tertiary)', marginBottom: 14 }} />
+          {[100, 88, 70].map((w, j) => (
+            <div key={j} className="rounded" style={{ height: 12, width: `${w}%`, background: 'var(--bg-tertiary)', marginBottom: 10, opacity: 0.6 - j * 0.1 }} />
+          ))}
+        </div>
+      ))}
+      <div className="flex items-center justify-center gap-2 pt-8">
+        {[0, 150, 300].map(delay => (
+          <div
+            key={delay}
+            className="rounded-full animate-bounce"
+            style={{ width: 5, height: 5, background: 'var(--accent-ai)', animationDelay: `${delay}ms` }}
+          />
+        ))}
+      </div>
+      <p className="font-mono text-center" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 12 }}>
+        Lumen is reflecting…
+      </p>
+    </div>
   );
 }
 
-export function UserSelfReportTab() {
-  const [generated, setGenerated] = useState(false);
-  const { data: response, isLoading, isFetching, refetch } = useLumenSelfReportQuery(undefined, {
-    skip: !generated,
-  });
+// ─── Empty state ──────────────────────────────────────────────────────────────
 
-  const report = response?.data?.text ?? '';
-  const paragraphs = report
-    ? report.split(/\n{2,}/).map(p => p.trim()).filter(Boolean)
-    : [];
-
-  if (!generated) {
-    return (
-      <div style={{ paddingTop: 48, textAlign: 'center', maxWidth: 480, margin: '0 auto' }}>
-        <p className="font-serif" style={{ fontSize: 18, color: 'var(--text-primary)', marginBottom: 10, lineHeight: 1.6 }}>
-          Your Self-Intelligence Report
-        </p>
-        <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 32, lineHeight: 1.7 }}>
-          Lumen will synthesise your numerology, astrology, and self-tracked traits into a personal intelligence portrait — a reflection of who you are and how you move through the world.
-        </p>
-        <button
-          onClick={() => setGenerated(true)}
-          className="font-mono uppercase tracking-widest"
-          style={{ fontSize: 11, padding: '10px 28px', borderRadius: 8, border: '1px solid var(--accent-ai)', background: 'transparent', color: 'var(--accent-ai)', cursor: 'pointer' }}>
-          Generate Report
-        </button>
+function EmptyState({ error }: { error?: string | null }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
+      <div
+        className="w-14 h-14 rounded-full flex items-center justify-center mb-6"
+        style={{ background: 'color-mix(in srgb, var(--accent-ai) 14%, transparent)' }}
+      >
+        <svg className="w-7 h-7" style={{ color: 'var(--accent-ai)' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2}
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
       </div>
-    );
-  }
+      <h3 className="font-serif text-2xl font-light mb-2" style={{ color: 'var(--text-primary)', letterSpacing: '-0.01em' }}>
+        Your Self-Intelligence Report
+      </h3>
+      <p className="font-serif font-light max-w-xs" style={{ fontSize: 15, color: 'var(--text-tertiary)', lineHeight: 1.7 }}>
+        Lumen will synthesise your numerology, astrology, and self-tracked data into a personal portrait — a reflection of who you are and how you move through the world.
+      </p>
+      {error && (
+        <p className="font-mono text-xs mt-4" style={{ color: '#ef4444', letterSpacing: '0.05em' }}>{error}</p>
+      )}
+    </div>
+  );
+}
 
-  if (isLoading || isFetching) {
-    return (
-      <div style={{ paddingTop: 48, textAlign: 'center' }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
-          Lumen is reflecting…
-        </p>
-        <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginTop: 8 }}>
-          This may take a moment.
-        </p>
-      </div>
-    );
-  }
+// ─── Report view ──────────────────────────────────────────────────────────────
 
-  if (!response || !report) {
-    return (
-      <div style={{ paddingTop: 48, textAlign: 'center' }}>
-        <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 20 }}>
-          Could not generate report. Make sure you have your birth date, time, and place set in your profile.
-        </p>
-        <button onClick={() => refetch()}
-          className="font-mono uppercase tracking-widest"
-          style={{ fontSize: 10, padding: '8px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-          Try Again
-        </button>
-      </div>
-    );
-  }
+function ReportView({ reportText }: { reportText: string }) {
+  const { intro, sections } = parseReport(reportText);
+  const generatedAt = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
 
   return (
-    <div style={{ maxWidth: 680 }}>
-      {/* Header */}
-      <div style={{ marginBottom: 32 }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 8 }}>
+    <div style={{ maxWidth: 640 }}>
+      {/* Metadata */}
+      <div style={{ marginBottom: 24 }}>
+        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 5, letterSpacing: '0.12em' }}>
           Lumen · Self Intelligence Report
         </p>
         <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
-          Generated {new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+          Generated {generatedAt}
         </p>
       </div>
 
       <DottedDivider style={{ marginBottom: 28 }} />
 
-      {/* Report body */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        {paragraphs.map((p, i) => <ReportBlock key={i} text={p} />)}
-      </div>
+      {/* Intro */}
+      {intro && (
+        <div style={{ marginBottom: 8 }}>
+          {intro.split('\n\n').map((para, i) => (
+            <p key={i} className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.85, marginBottom: 16 }}>
+              {para}
+            </p>
+          ))}
+        </div>
+      )}
 
-      <DottedDivider style={{ marginTop: 32, marginBottom: 20 }} />
-
-      {/* Regenerate */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button onClick={() => refetch()} disabled={isFetching}
-          className="font-mono uppercase tracking-widest"
-          style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-tertiary)', cursor: isFetching ? 'default' : 'pointer', opacity: isFetching ? 0.5 : 1 }}>
-          Regenerate
-        </button>
-      </div>
+      {/* Sections */}
+      {sections.map((section, i) => {
+        const accent = SECTION_ACCENTS[i % SECTION_ACCENTS.length];
+        return (
+          <div key={i} style={{ paddingTop: 24, paddingBottom: 24, borderTop: '1px solid var(--bg-tertiary)' }}>
+            <p
+              className="font-mono uppercase tracking-widest"
+              style={{ fontSize: 10, color: accent, marginBottom: 14, letterSpacing: '0.12em' }}
+            >
+              {section.title}
+            </p>
+            {section.body.split('\n\n').map((para, j) => (
+              <p key={j} className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.85, marginBottom: 14 }}>
+                {para}
+              </p>
+            ))}
+          </div>
+        );
+      })}
     </div>
   );
+}
+
+// ─── Main export ──────────────────────────────────────────────────────────────
+
+export function UserSelfReportTab({ reportText, isLoading, error }: UserSelfReportTabProps) {
+  if (isLoading) return <LoadingSkeleton />;
+  if (!reportText) return <EmptyState error={error} />;
+  return <ReportView reportText={reportText} />;
 }

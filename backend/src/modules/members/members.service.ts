@@ -156,6 +156,103 @@ export class MembersService {
     }
   }
 
+  // ── RELATIONSHIP HEALTH SCORE ────────────────────────────────
+  //
+  // Formula (base 50, clamped 0–100):
+  //   Traits (±20)       : (pros_weight - cons_weight) / total_weight * 20
+  //   Interactions (±20) : avg quality score × (20/3)
+  //   Incidents (±20)    : net resolved vs unresolved, weighted by severity
+  //   Patterns (±10)     : (positive - negative) / max(total, 1) * 10
+  //
+  // Intensity weights  : mild=1, moderate=2, strong=3
+  // Interaction scores : energised=3, connected/safe=2, neutral=0, drained=-2, tense/conflicted=-3
+  // Incident severity  : low=1, medium=2, high=3  |  resolved=+sev, unresolved=-sev*1.5
+  // Pattern impact     : positive=+1, neutral=0, negative=-1
+
+  async getHealthScores(userId: string): Promise<{ memberId: string; score: number; breakdown: Record<string, number> }[]> {
+    const supabase = this.supabaseService.getAdminClient();
+
+    const { data: members } = await supabase
+      .from('members')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('archived', false);
+
+    if (!members?.length) return [];
+
+    const memberIds = members.map(m => m.id);
+
+    // Batch-fetch all relevant data in parallel
+    const [traitsRes, interactionsRes, incidentsRes, patternsRes] = await Promise.all([
+      supabase.from('traits').select('member_id,category,intensity').in('member_id', memberIds).is('deleted_at', null),
+      supabase.from('interactions').select('member_id,quality').in('member_id', memberIds).is('deleted_at', null).order('date', { ascending: false }),
+      supabase.from('incidents').select('member_id,severity,outcome').in('member_id', memberIds).is('deleted_at', null),
+      supabase.from('patterns').select('member_id,impact').in('member_id', memberIds).is('deleted_at', null),
+    ]);
+
+    const intensityWeight = (i: string | null) => i === 'strong' ? 3 : i === 'moderate' ? 2 : 1;
+    const qualityScore = (q: string | null) => {
+      if (!q) return 0;
+      if (q === 'energised') return 3;
+      if (q === 'connected' || q === 'safe') return 2;
+      if (q === 'neutral') return 0;
+      if (q === 'drained') return -2;
+      return -3; // tense, conflicted, etc.
+    };
+    const severityWeight = (s: string | null) => s === 'high' ? 3 : s === 'medium' ? 2 : 1;
+
+    return memberIds.map(memberId => {
+      // ── Traits component ──────────────────────────────────────
+      const traits = (traitsRes.data || []).filter(t => t.member_id === memberId);
+      const posCategories = ['pro', 'strength', 'positive'];
+      const negCategories = ['con', 'shadow', 'negative', 'trigger', 'conflict'];
+      const prosW = traits.filter(t => posCategories.includes(t.category)).reduce((s, t) => s + intensityWeight(t.intensity), 0);
+      const consW = traits.filter(t => negCategories.includes(t.category)).reduce((s, t) => s + intensityWeight(t.intensity), 0);
+      const totalTraitW = prosW + consW;
+      const traitScore = totalTraitW > 0 ? ((prosW - consW) / totalTraitW) * 20 : 0;
+
+      // ── Interactions component ──────────────────────────────────
+      const interactions = (interactionsRes.data || []).filter(i => i.member_id === memberId).slice(0, 10);
+      const interactionScore = interactions.length > 0
+        ? (interactions.reduce((s, i) => s + qualityScore(i.quality), 0) / interactions.length) * (20 / 3)
+        : 0;
+
+      // ── Incidents component ──────────────────────────────────────
+      const incidents = (incidentsRes.data || []).filter(i => i.member_id === memberId);
+      const incidentNet = incidents.reduce((s, i) => {
+        const w = severityWeight(i.severity);
+        const resolved = i.outcome === 'resolved' || i.outcome === 'positive';
+        return s + (resolved ? w : -w * 1.5);
+      }, 0);
+      const maxIncidentScore = Math.max(incidents.length * 3, 1);
+      const incidentScore = Math.max(-20, Math.min(20, (incidentNet / maxIncidentScore) * 20));
+
+      // ── Patterns component ──────────────────────────────────────
+      const patterns = (patternsRes.data || []).filter(p => p.member_id === memberId);
+      const patternNet = patterns.reduce((s, p) => {
+        if (p.impact === 'positive') return s + 1;
+        if (p.impact === 'negative') return s - 1;
+        return s;
+      }, 0);
+      const patternScore = patterns.length > 0 ? (patternNet / Math.max(patterns.length, 1)) * 10 : 0;
+
+      const raw = 50 + traitScore + interactionScore + incidentScore + patternScore;
+      const score = Math.round(Math.max(0, Math.min(100, raw)));
+
+      return {
+        memberId,
+        score,
+        breakdown: {
+          base: 50,
+          traits: Math.round(traitScore * 10) / 10,
+          interactions: Math.round(interactionScore * 10) / 10,
+          incidents: Math.round(incidentScore * 10) / 10,
+          patterns: Math.round(patternScore * 10) / 10,
+        },
+      };
+    });
+  }
+
   private formatMember(member: any) {
     return {
       id: member.id,

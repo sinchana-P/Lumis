@@ -139,6 +139,7 @@ export const baseApi = createApi({
     'MemberReport',
     'LumenConversations',
     'LumenMessages',
+    'DashboardSummary',
     'Insights',
     'Notifications',
     'ShareLinks',

@@ -187,7 +187,7 @@ Moon: ${userProfile.astrologyData?.computed?.moonSign}
 Nakshatra: ${userProfile.astrologyData?.computed?.nakshatra}
 Current Dasha: ${userProfile.astrologyData?.computed?.dasha?.currentMahadasha?.planet}`;
 
-    return this.gemini.generateReport(systemPrompt, userContext, 1500);
+    return this.generateReportWithFallback(systemPrompt, userContext, 1500);
   }
 
   async generateRelationshipReport(
@@ -213,7 +213,7 @@ Style: flowing prose, no bullet points, deeply honest, warm.
 Length: 700-900 words.
 Depth setting: ${DEPTH_INSTRUCTIONS[depth]}`;
 
-    return this.gemini.generateReport(systemPrompt, memberContext, 2048);
+    return this.generateReportWithFallback(systemPrompt, memberContext, 2048);
   }
 
   async generateWeeklyDigest(userProfile: LumenUserProfile, members: LumenMember[]): Promise<string> {
@@ -231,7 +231,21 @@ Structure: 4 short sections.
 
 Style: like a letter from a very wise friend. Warm but honest. 300-400 words.`;
 
-    return this.gemini.generateReport(systemPrompt, allContext, 800);
+    return this.generateReportWithFallback(systemPrompt, allContext, 800);
+  }
+
+  // ── GEMINI → GROQ FALLBACK ───────────────────────────────────
+  private async generateReportWithFallback(systemPrompt: string, userPrompt: string, maxTokens: number): Promise<string> {
+    try {
+      return await this.gemini.generateReport(systemPrompt, userPrompt, maxTokens);
+    } catch (err: any) {
+      const is429 = err?.message?.includes('429') || err?.message?.includes('quota') || err?.message?.includes('Too Many Requests');
+      if (is429) {
+        this.logger.warn('Gemini quota exceeded — falling back to Groq');
+        return this.groq.generateReport(systemPrompt, userPrompt, Math.min(maxTokens, 2048));
+      }
+      throw err;
+    }
   }
 
   // ── RESPONSE SELF-VALIDATION ─────────────────────────────────
