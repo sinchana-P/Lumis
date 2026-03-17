@@ -16,6 +16,7 @@ import { NumerologyModule } from './modules/numerology/numerology.module';
 import { AstrologyModule } from './modules/astrology/astrology.module';
 import { LumenModule } from './modules/lumen/lumen.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { MethodologyModule } from './modules/methodology/methodology.module';
 import configuration from './config/configuration';
 
 @Module({
@@ -39,6 +40,7 @@ import configuration from './config/configuration';
     AstrologyModule,
     LumenModule,
     DashboardModule,
+    MethodologyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
