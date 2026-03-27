@@ -219,6 +219,7 @@ const NUMBER_INFO: Record<string, NumberInfoDef> = {
 function transformToDisplayData(
   profile: NumerologyProfile,
   member: Member,
+  myProfile?: NumerologyProfile,
 ): { coreNumbers: CoreNumberData[]; timingNumbers: TimingNumberData[]; compatibility: CompatibilityData | null } {
   const { coreNumbers, timingNumbers, insights } = profile;
   const currentYear = new Date().getFullYear();
@@ -328,12 +329,13 @@ function transformToDisplayData(
   }
 
   const c = profile.compatibility;
+  const myCore = myProfile?.coreNumbers;
   const compatibility: CompatibilityData = {
     overallScore: c.overallScore,
     lifePath: {
       id: 'lp-compat',
       title: 'Life Path Compatibility',
-      yourNumber: 0, // user's LP not available here; placeholder
+      yourNumber: myCore?.lifePath ?? 0,
       theirNumber: coreNumbers.lifePath,
       score: c.lifePathScore,
       expandedContent: c.dimensionTexts?.lifePath ?? '',
@@ -342,7 +344,7 @@ function transformToDisplayData(
     soulUrge: {
       id: 'su-compat',
       title: 'Soul Urge Compatibility',
-      yourNumber: 0,
+      yourNumber: myCore?.soulUrge ?? 0,
       theirNumber: coreNumbers.soulUrge,
       score: c.soulUrgeScore,
       expandedContent: c.dimensionTexts?.soulUrge ?? '',
@@ -351,7 +353,7 @@ function transformToDisplayData(
     compatibilityScore: {
       id: 'expr-compat',
       title: 'Expression Compatibility',
-      yourNumber: 0,
+      yourNumber: myCore?.expression ?? 0,
       theirNumber: coreNumbers.expression,
       score: c.expressionScore,
       expandedContent: c.dimensionTexts?.expression ?? '',
@@ -807,7 +809,7 @@ export function MemberNumerologyTab({ member, isUser = false, isExternalLoading 
   const [activeTab, setActiveTab] = useState<TabId>('core');
 
   const { data: memberProfile, isLoading: isFetchingMember } = useGetMemberNumerologyQuery(member.id, { skip: isUser });
-  const { data: myProfile, isLoading: isFetchingMe } = useGetMyNumerologyQuery(undefined, { skip: !isUser });
+  const { data: myProfile, isLoading: isFetchingMe } = useGetMyNumerologyQuery(undefined);
   const profile = isUser ? myProfile : memberProfile;
   const isFetching = isUser ? isFetchingMe : isFetchingMember;
 
@@ -828,12 +830,12 @@ export function MemberNumerologyTab({ member, isUser = false, isExternalLoading 
 
   useEffect(() => {
     if (!profile) return;
-    const display = transformToDisplayData(profile, member);
+    const display = transformToDisplayData(profile, member, isUser ? undefined : myProfile);
     setCoreNumbers(display.coreNumbers.map(n => ({ ...n, expanded: false })));
     setTimingNumbers(display.timingNumbers.map(n => ({ ...n, expanded: false })));
   }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const display = profile ? transformToDisplayData(profile, member) : null;
+  const display = profile ? transformToDisplayData(profile, member, isUser ? undefined : myProfile) : null;
 
   const toggleCoreNumber = (id: string) =>
     setCoreNumbers(prev => prev.map(n => n.id === id ? { ...n, expanded: !n.expanded } : n));
