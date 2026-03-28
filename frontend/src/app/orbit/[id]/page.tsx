@@ -318,23 +318,30 @@ export default function MemberDetailPage() {
           <nav className="pl-14 pr-0 flex-1 flex items-center" data-tour="member-tabs">
             <div className="space-y-1 w-full">
               {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className="w-full text-left transition-all flex items-center gap-2.5"
-                  style={{ color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)', padding: '4px 0' }}
-                  onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-primary)'; }}
-                  onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}
-                  data-tour={`tab-${tab.id}`}
-                >
-                  <div
-                    className="rounded-full transition-all flex-shrink-0"
-                    style={{ width: 5, height: 5, backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent', border: activeTab === tab.id ? 'none' : '1px solid var(--bg-tertiary)' }}
-                  />
-                  <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: activeTab === tab.id ? 600 : 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    {tab.label}
-                  </span>
-                </button>
+                <div key={tab.id}>
+                  {tab.id === 'numerology' && (
+                    <div style={{ borderTop: '1px dashed var(--text-tertiary)', margin: '6px 0', opacity: 0.4 }} />
+                  )}
+                  <button
+                    onClick={() => setActiveTab(tab.id)}
+                    className="w-full text-left transition-all flex items-center gap-2.5"
+                    style={{ color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)', padding: '4px 0' }}
+                    onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-primary)'; }}
+                    onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}
+                    data-tour={`tab-${tab.id}`}
+                  >
+                    <div
+                      className="rounded-full transition-all flex-shrink-0"
+                      style={{ width: 5, height: 5, backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent', border: activeTab === tab.id ? 'none' : '1px solid var(--bg-tertiary)' }}
+                    />
+                    <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: activeTab === tab.id ? 600 : 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      {tab.label}
+                    </span>
+                  </button>
+                  {tab.id === 'astrology' && (
+                    <div style={{ borderTop: '1px dashed var(--text-tertiary)', margin: '6px 0', opacity: 0.4 }} />
+                  )}
+                </div>
               ))}
             </div>
           </nav>
