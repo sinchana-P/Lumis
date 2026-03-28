@@ -355,7 +355,7 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
         />
       )}
 
-      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8 pb-8">
         {/* Traits grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
 

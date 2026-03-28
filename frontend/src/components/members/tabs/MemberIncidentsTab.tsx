@@ -315,7 +315,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
         />
       )}
 
-      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8 pb-8">
         {isLoading && (
           <div className="flex items-center justify-center">
             <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading incidents…</p>

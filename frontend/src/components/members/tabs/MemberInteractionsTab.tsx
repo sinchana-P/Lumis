@@ -428,7 +428,7 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
         />
       )}
 
-      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8 pb-8">
         {interactions.length === 0 ? (
           <div style={{ textAlign: 'center' }}>
             <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No interactions logged yet</p>
