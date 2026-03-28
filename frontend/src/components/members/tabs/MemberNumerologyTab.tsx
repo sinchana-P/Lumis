@@ -578,7 +578,7 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
     <div className="space-y-4">
       <p className="font-serif text-base leading-relaxed text-primary font-light mb-3">
         The cyclical influences — energies that shift and evolve through time,
-        revealing the cosmic rhythm of {member.fullName}{member.nickname && <span className="ml-1 italic" style={{ color: 'var(--text-tertiary)' }}>&ldquo;{member.nickname}&rdquo;</span>}'s journey.
+        revealing the cosmic rhythm of {member.fullName}{member.nickname && <span className="ml-1 italic" style={{ color: 'var(--text-tertiary)' }}>&ldquo;{member.nickname}&rdquo;</span>}&apos;s journey.
       </p>
 
       <div className="bg-accent-gold/12 border border-accent-gold/30 rounded-xl px-5 py-3 flex items-center gap-3 mb-2">
@@ -835,7 +835,7 @@ export function MemberNumerologyTab({ member, isUser = false, isExternalLoading 
     setTimingNumbers(display.timingNumbers.map(n => ({ ...n, expanded: false })));
   }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const display = profile ? transformToDisplayData(profile, member, isUser ? undefined : myProfile) : null;
+  const display = profile ? transformToDisplayData(profile, member, isUser ? undefined : myProfile ?? undefined) : null;
 
   const toggleCoreNumber = (id: string) =>
     setCoreNumbers(prev => prev.map(n => n.id === id ? { ...n, expanded: !n.expanded } : n));
