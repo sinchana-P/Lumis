@@ -17,27 +17,27 @@ export function TabFooter({ stats, tagline, columns }: TabFooterProps) {
 
   return (
     <div
-      className="flex-shrink-0 px-8 pb-4 pt-3"
+      className="flex-shrink-0 px-8 pb-3 pt-3"
       style={{
-        boxShadow: '0 -12px 18px 0px rgba(0,0,0,0.06)',
+        borderTop: '1px solid var(--bg-tertiary)',
+        boxShadow: '0 -8px 20px 0px rgba(0,0,0,0.04)',
+        background: 'var(--bg-primary)',
       }}
     >
-      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 8, marginBottom: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 1fr)`, gap: 4, marginBottom: 6 }}>
         {stats.map(({ val, label, color }, i) => {
-          const opacity = 1 - (i / stats.length) * 0.6;
+          const opacity = 1 - (i / stats.length) * 0.55;
           return (
             <div key={label} className="text-center" style={{ opacity }}>
-              <div className="font-serif" style={{ fontSize: 22, fontWeight: 300, color, lineHeight: 1, marginBottom: 2 }}>{val}</div>
-              <div className="font-rounded uppercase" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.07em' }}>{label}</div>
+              <div className="font-serif" style={{ fontSize: 20, fontWeight: 300, color, lineHeight: 1, marginBottom: 2 }}>{val}</div>
+              <div className="font-rounded uppercase" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.07em' }}>{label}</div>
             </div>
           );
         })}
       </div>
-      <div style={{ paddingTop: 8, borderTop: '1px solid var(--bg-tertiary)' }}>
-        <p className="font-serif italic text-center" style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
-          &ldquo;{tagline}&rdquo;
-        </p>
-      </div>
+      <p className="font-serif italic text-center" style={{ fontSize: 11, color: 'var(--text-tertiary)', lineHeight: 1.5, opacity: 0.7 }}>
+        &ldquo;{tagline}&rdquo;
+      </p>
     </div>
   );
 }

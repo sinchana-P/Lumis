@@ -18,6 +18,7 @@ import { MemberPatternsTab } from '@/components/members/tabs/MemberPatternsTab';
 import { UserTraitsTab } from '@/components/profile/UserTraitsTab';
 import { UserSelfReportTab } from '@/components/profile/UserSelfReportTab';
 import { DottedDivider } from '@/components/ui/DottedDivider';
+import { Button } from '@/components/ui/Button';
 import { useGetTraitsQuery } from '@/store/api/traitsApi';
 import { useGetMyNumerologyQuery, useCalculateNumerologyMutation } from '@/store/api/numerologyApi';
 import { useGetMyAstrologyQuery, useCalculateAstrologyMutation } from '@/store/api/astrologyApi';
@@ -101,7 +102,9 @@ function TraitPill({ label, color }: { label: string; color: string }) {
   );
 }
 
-function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void }) {
+const LABEL: React.CSSProperties = { fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-tertiary)', marginBottom: 5 };
+
+function OverviewTab({ user, onEditClick, onNavigate }: { user: any; onEditClick: () => void; onNavigate: (tab: TabId) => void }) {
   const displayName = [user.first_name, user.last_name].filter(Boolean).join(' ') || null;
   const memberSince = user.created_at
     ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
@@ -134,171 +137,175 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
   const lifePath    = numerologyData?.coreNumbers?.lifePath;
   const personalYear = numerologyData?.timingNumbers?.personalYear;
 
-  const activityStats = [
-    { value: totalTraits,        label: 'total traits'   },
-    { value: incidents.length,   label: 'incidents'      },
-    { value: patterns.length,    label: 'patterns'       },
-    { value: journalEntries.length, label: 'journal entries' },
+  const traitGroups = [
+    { label: 'Strengths', items: strengths, color: '#7FA87A' },
+    { label: 'Shadows',   items: shadows,   color: '#C47A7A' },
+    { label: 'Triggers',  items: triggers,  color: '#C4A87A' },
+    { label: 'Needs',     items: needs,     color: '#9B8EC4' },
   ];
 
   return (
-    <div className="flex flex-col gap-6 max-w-3xl">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
 
-      {/* ── Identity ───────────────────────────────────────── */}
-      <div className="grid grid-cols-2 gap-x-12 gap-y-3">
-        {displayName && (
-          <div>
-            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Name</p>
-            <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{displayName}</p>
-          </div>
-        )}
-        <div>
-          <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Email</p>
-          <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{user.email}</p>
-        </div>
-        {user.date_of_birth && (
-          <div>
-            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Date of Birth</p>
-            <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>
-              {new Date(user.date_of_birth + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-              {user.time_of_birth && (
-                <span className="font-mono text-xs ml-2" style={{ color: 'var(--text-tertiary)' }}>{user.time_of_birth}</span>
-              )}
+      {/* ── Identity ── 3-column grid ───────────────────────── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 32px', paddingBottom: 16 }}>
+        {[
+          { label: 'Name',          value: displayName ?? user.email,      icon: <path strokeLinecap="round" strokeLinejoin="round" d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" /> },
+          { label: 'Email',         value: user.email,                      icon: <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /> },
+          { label: 'Date of Birth', value: user.date_of_birth ? new Date(user.date_of_birth + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) + (user.time_of_birth ? `  ·  ${user.time_of_birth}` : '') : null, icon: <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /> },
+          { label: 'Origin',        value: user.place_of_birth ?? null,     icon: <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z" /> },
+          { label: 'Member Since',  value: memberSince,                     icon: <><path strokeLinecap="round" strokeLinejoin="round" d="M5 3l14 9-14 9V3z" /></> },
+        ].map(({ label, value, icon }) => (
+          <div key={label} style={{ paddingBottom: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+              <svg width={10} height={10} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}>{icon}</svg>
+              <p style={{ ...LABEL, marginBottom: 0 }}>{label}</p>
+            </div>
+            <p className="font-serif" style={{ fontSize: 15, color: value ? 'var(--text-primary)' : 'var(--text-tertiary)', fontStyle: value ? 'normal' : 'italic' }}>
+              {value ?? 'not set'}
             </p>
           </div>
-        )}
-        {user.place_of_birth && (
-          <div>
-            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Origin</p>
-            <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{user.place_of_birth}</p>
-          </div>
-        )}
-        {memberSince && (
-          <div>
-            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Member Since</p>
-            <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{memberSince}</p>
-          </div>
-        )}
-      </div>
-
-      <button onClick={onEditClick}
-        className="flex items-center gap-2 font-rounded uppercase tracking-widest self-start"
-        style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer' }}
-        onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
-        onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
-        <PencilIcon size={9} /> Edit in Settings
-      </button>
-
-      <DottedDivider />
-
-      {/* ── Activity ───────────────────────────────────────── */}
-      <div>
-        <p className="font-rounded text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Activity</p>
-        <div className="flex items-end gap-8">
-          {activityStats.map(({ value, label }, i, arr) => (
-            <div key={label} className="flex items-end gap-8">
-              <div>
-                <span className="font-serif" style={{ fontSize: 32, lineHeight: 1, color: 'var(--text-primary)' }}>{value}</span>
-                <p className="font-rounded text-xs uppercase tracking-widest mt-1" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
-              </div>
-              {i < arr.length - 1 && (
-                <span className="font-serif text-lg pb-1.5" style={{ color: 'var(--bg-tertiary)' }}>&middot;</span>
-              )}
-            </div>
-          ))}
+        ))}
+        <div style={{ display: 'flex', alignItems: 'flex-end', paddingBottom: 16 }}>
+          <button onClick={onEditClick}
+            className="flex items-center gap-1.5"
+            style={{ ...LABEL, marginBottom: 0, cursor: 'pointer', color: 'var(--text-tertiary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 20, padding: '5px 10px', transition: 'color 0.15s, border-color 0.15s, background 0.15s' }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-tertiary)'; e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-tertiary)'; e.currentTarget.style.borderColor = 'var(--bg-tertiary)'; e.currentTarget.style.background = 'var(--bg-secondary)'; }}>
+            <PencilIcon size={9} /> Edit in Settings
+          </button>
         </div>
       </div>
 
-      {/* ── Last Journal Signal ────────────────────────────── */}
-      {lastJournal && (
-        <>
-          <DottedDivider />
-          <div>
-            <p className="font-rounded text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-tertiary)' }}>Last Journal Signal</p>
-            <div className="flex items-start gap-3">
-              <span className="font-rounded text-xs uppercase tracking-widest flex-shrink-0 mt-0.5 px-2 py-0.5 rounded"
-                style={{ background: 'var(--surface)', color: 'var(--text-tertiary)', border: '1px solid var(--bg-tertiary)' }}>
-                {lastJournalDate}
-              </span>
-              <p className="font-serif text-base leading-relaxed italic" style={{ color: 'var(--text-primary)' }}>
-                {lastJournal.content?.slice(0, 160)}{lastJournal.content?.length > 160 ? '…' : ''}
-              </p>
-            </div>
-          </div>
-        </>
-      )}
-
       <DottedDivider />
 
-      {/* ── Self-Awareness ─────────────────────────────────── */}
-      <div>
-        <p className="font-rounded text-xs uppercase tracking-widest mb-5" style={{ color: 'var(--text-tertiary)' }}>Self-Awareness Map</p>
-        {totalTraits === 0 ? (
-          <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
-            Start logging your traits to build self-awareness over time.
-          </p>
-        ) : (
-          <div className="flex flex-col">
+      {/* ── 3-col: Activity | Self-Awareness | Signal + Numbers ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0 48px', paddingTop: 24, paddingBottom: 24 }}>
+
+        {/* Col 1 — Activity */}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+            <svg width={10} height={10} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+            <p style={{ ...LABEL, marginBottom: 0 }}>Activity</p>
+          </div>
+          <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 32px' }}>
             {[
-              { label: 'Strengths', items: strengths, color: '#7FA87A' },
-              { label: 'Shadows',   items: shadows,   color: '#C47A7A' },
-              { label: 'Triggers',  items: triggers,  color: '#C4A87A' },
-              { label: 'Needs',     items: needs,     color: '#9B8EC4' },
-            ].map(({ label, items, color }, i, arr) => (
+              { value: totalTraits,           label: 'Traits',    color: 'var(--accent-primary)' },
+              { value: incidents.length,      label: 'Incidents', color: '#C47A7A' },
+              { value: patterns.length,       label: 'Patterns',  color: '#C4A87A' },
+              { value: journalEntries.length, label: 'Journal',   color: 'var(--accent-ai)' },
+            ].map(({ value, label, color }) => (
               <div key={label}>
-                <div className="flex items-start gap-5 py-4">
-                  {/* Accent bar + count + label */}
-                  <div className="flex items-stretch gap-3 flex-shrink-0" style={{ width: 100 }}>
-                    <div style={{ width: 3, minHeight: 42, borderRadius: 2, backgroundColor: color, opacity: 0.6, alignSelf: 'stretch' }} />
-                    <div className="flex flex-col justify-center">
-                      <span className="font-serif" style={{ fontSize: 30, lineHeight: 1, color: 'var(--text-primary)' }}>{items.length}</span>
-                      <p className="font-rounded uppercase" style={{ fontSize: 9, color, marginTop: 5, letterSpacing: '0.1em' }}>{label}</p>
-                    </div>
-                  </div>
-                  {/* Pills */}
-                  <div className="flex-1 flex flex-wrap gap-1.5 pt-1.5">
-                    {items.length > 0 ? (
-                      items.map((t: any) => (
-                        <span key={t.id} className="font-serif text-xs px-2.5 py-1 rounded-full"
-                          style={{ background: `${color}12`, border: `1px solid ${color}28`, color: 'var(--text-secondary)' }}>
-                          {t.description}
-                        </span>
-                      ))
-                    ) : (
-                      <p className="font-serif italic text-xs pt-1" style={{ color: 'var(--text-tertiary)', opacity: 0.5 }}>none logged</p>
-                    )}
-                  </div>
-                </div>
-                {i < arr.length - 1 && <DottedDivider />}
+                <p className="font-serif" style={{ fontSize: 28, fontWeight: 300, color, lineHeight: 1, marginBottom: 4 }}>{value}</p>
+                <p style={LABEL}>{label}</p>
               </div>
             ))}
           </div>
-        )}
+        </div>
+
+        {/* Col 2 — Self-Awareness */}
+        <div style={{ borderLeft: '1px dashed var(--bg-tertiary)', paddingLeft: 40, paddingRight: 24, display: 'flex', flexDirection: 'column' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+            <svg width={10} height={10} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01" /></svg>
+            <p style={{ ...LABEL, marginBottom: 0 }}>Self-Awareness</p>
+          </div>
+          {totalTraits === 0 ? (
+            <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 12 }}>
+              Start logging traits.
+            </p>
+          ) : (
+            <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px 32px' }}>
+              {traitGroups.map(({ label, items, color }) => (
+                <div key={label}>
+                  <p className="font-serif" style={{ fontSize: 28, fontWeight: 300, color, lineHeight: 1, marginBottom: 4 }}>{items.length}</p>
+                  <p style={LABEL}>{label}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Col 3 — Journal + Numerology */}
+        <div style={{ borderLeft: '1px dashed var(--bg-tertiary)', paddingLeft: 40, paddingRight: 24, display: 'flex', flexDirection: 'column', gap: 24 }}>
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+              <svg width={10} height={10} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 0L19 8.414a2 2 0 010 2.828L12.414 17H9v-3.586z" /></svg>
+              <p style={{ ...LABEL, marginBottom: 0 }}>Last Journal Signal</p>
+            </div>
+            {lastJournal ? (
+              <>
+                <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 8 }}>{lastJournalDate}</p>
+                <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-secondary)', lineHeight: 1.6, marginTop: 4 }}>
+                  {lastJournal.content?.slice(0, 80)}{(lastJournal.content?.length ?? 0) > 80 ? '…' : ''}
+                </p>
+              </>
+            ) : (
+              <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)', marginTop: 8 }}>No entries yet.</p>
+            )}
+          </div>
+
+          {(lifePath || personalYear) && (
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+                <svg width={10} height={10} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>
+                <p style={{ ...LABEL, marginBottom: 0 }}>Numerology</p>
+              </div>
+              <div style={{ display: 'flex', gap: 28, marginTop: 12 }}>
+                {lifePath && (
+                  <div>
+                    <p style={{ ...LABEL, color: 'var(--accent-primary)' }}>Life Path</p>
+                    <p className="font-serif" style={{ fontSize: 30, color: 'var(--text-primary)', lineHeight: 1 }}>{lifePath}</p>
+                  </div>
+                )}
+                {personalYear && (
+                  <div>
+                    <p style={{ ...LABEL, color: 'var(--accent-ai)' }}>Personal Year</p>
+                    <p className="font-serif" style={{ fontSize: 30, color: 'var(--text-primary)', lineHeight: 1 }}>{personalYear}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
       </div>
 
-      {/* ── Numerology Snapshot ────────────────────────────── */}
-      {(lifePath || personalYear) && (
-        <>
-          <DottedDivider />
-          <div>
-            <p className="font-rounded text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Numerology Snapshot</p>
-            <div className="flex gap-4">
-              {lifePath && (
-                <div style={{ padding: '12px 18px', borderRadius: 12, border: '1px solid var(--accent-primary)33', background: 'var(--accent-primary)0d', minWidth: 100 }}>
-                  <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-primary)', marginBottom: 4 }}>Life Path</p>
-                  <p className="font-serif" style={{ fontSize: 28, color: 'var(--text-primary)', lineHeight: 1 }}>{lifePath}</p>
-                </div>
-              )}
-              {personalYear && (
-                <div style={{ padding: '12px 18px', borderRadius: 12, border: '1px solid var(--accent-ai)33', background: 'var(--accent-ai)0d', minWidth: 100 }}>
-                  <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 4 }}>Personal Year</p>
-                  <p className="font-serif" style={{ fontSize: 28, color: 'var(--text-primary)', lineHeight: 1 }}>{personalYear}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+      <DottedDivider />
+
+      {/* ── Explore ────────────────────────────────────────── */}
+      <div style={{ paddingTop: 24, paddingBottom: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
+          <svg width={10} height={10} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}><path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" /></svg>
+          <p style={{ ...LABEL, marginBottom: 0 }}>Explore</p>
+        </div>
+        <div style={{ marginTop: 16, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px 32px' }}>
+          {([
+            { id: 'traits',     label: 'Traits',      desc: 'Strengths, shadows, triggers, needs',  icon: <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /> },
+            { id: 'patterns',   label: 'Patterns',    desc: 'Recurring behavioural dynamics',        icon: <><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></> },
+            { id: 'incidents',  label: 'Incidents',   desc: 'Significant moments, logged',           icon: <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /> },
+            { id: 'journal',    label: 'Journal',     desc: 'Your inner signal stream',              icon: <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 0L19 8.414a2 2 0 010 2.828L12.414 17H9v-3.586z" /> },
+            { id: 'numerology', label: 'Numerology',  desc: 'Your numbers decoded',                  icon: <><path strokeLinecap="round" strokeLinejoin="round" d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></> },
+            { id: 'astrology',  label: 'Astrology',   desc: 'Planetary influences on you',           icon: <><circle cx="12" cy="12" r="3" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2M4.93 4.93l1.41 1.41m11.32 11.32l1.41 1.41M2 12h2m16 0h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></> },
+          ] as { id: TabId; label: string; desc: string; icon: React.ReactNode }[]).map(({ id, label, desc, icon }) => (
+            <button
+              key={id}
+              onClick={() => onNavigate(id)}
+              className="text-left transition-all group"
+              style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '12px 0', borderTop: '1px solid var(--bg-tertiary)' }}
+              onMouseEnter={e => (e.currentTarget.style.borderTopColor = 'var(--accent-primary)')}
+              onMouseLeave={e => (e.currentTarget.style.borderTopColor = 'var(--bg-tertiary)')}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 4 }}>
+                <svg width={13} height={13} fill="none" stroke="var(--text-tertiary)" viewBox="0 0 24 24" strokeWidth={1.8}>{icon}</svg>
+                <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text-primary)' }}>
+                  {label}
+                </p>
+              </div>
+              <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.4 }}>{desc}</p>
+            </button>
+          ))}
+        </div>
+      </div>
 
     </div>
   );
@@ -650,6 +657,31 @@ export default function ProfilePage() {
     return () => window.removeEventListener('keydown', handler);
   }, [activeTab]);
 
+  // Tab counts for header
+  const { data: allTraitsData }    = useGetTraitsQuery({} as any, { skip: !user });
+  const { data: allPatternsData }  = useGetPatternsQuery({ memberId: 'self' }, { skip: !user });
+  const { data: allIncidentsData } = useGetIncidentsQuery({ memberId: 'self' }, { skip: !user });
+  const { data: allJournalData }   = useGetJournalEntriesQuery({ memberId: 'self' }, { skip: !user });
+
+  const TAB_COUNTS: Partial<Record<TabId, number>> = {
+    traits:    allTraitsData?.data?.length,
+    patterns:  allPatternsData?.data?.length,
+    incidents: allIncidentsData?.data?.length,
+    journal:   allJournalData?.data?.length,
+  };
+
+  const TAB_DESCS: Partial<Record<TabId, string>> = {
+    overview:   'Your identity at a glance',
+    traits:     'Strengths, shadows, triggers & needs',
+    patterns:   'Recurring behavioural dynamics',
+    incidents:  'Significant moments, logged',
+    journal:    'Your inner signal stream',
+    numerology: 'Your numbers decoded',
+    astrology:  'Planetary influences on you',
+    report:     'AI-generated self analysis',
+    settings:   'Manage your account & preferences',
+  };
+
   const { data: myNumerologyData } = useGetMyNumerologyQuery(undefined, { skip: !user });
   const [calculateNumerology, { isLoading: isGeneratingNumerology }] = useCalculateNumerologyMutation();
   const { data: myAstrologyData } = useGetMyAstrologyQuery(undefined, { skip: !user });
@@ -724,7 +756,7 @@ export default function ProfilePage() {
   const renderTab = () => {
     switch (activeTab) {
       case 'overview':
-        return <OverviewTab user={user} onEditClick={() => setActiveTab('settings')} />;
+        return <OverviewTab user={user} onEditClick={() => setActiveTab('settings')} onNavigate={setActiveTab} />;
       case 'traits':
         return (
           <UserTraitsTab
@@ -793,45 +825,15 @@ export default function ProfilePage() {
   };
   const addLabel = ADD_LABELS[activeTab] ?? '';
 
-  const getGenerateButton = () => {
-    if (addAction) {
-      return (
-        <button onClick={addAction}
-          className="font-rounded uppercase tracking-widest"
-          style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, border: '1px solid var(--accent-primary)', background: 'transparent', color: 'var(--accent-primary)', cursor: 'pointer' }}>
-          + {addLabel}
-        </button>
-      );
-    }
-    if (activeTab === 'numerology' && canGenerateNumerology) {
-      return (
-        <button onClick={handleGenerateNumerology} disabled={isGeneratingNumerology}
-          className="font-rounded uppercase tracking-widest"
-          style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none', cursor: isGeneratingNumerology ? 'default' : 'pointer', opacity: isGeneratingNumerology ? 0.7 : 1 }}>
-          {isGeneratingNumerology ? 'Generating…' : hasNumerologyData ? 'Regenerate Numerology' : 'Generate Numerology'}
-        </button>
-      );
-    }
-    if (activeTab === 'astrology' && canGenerateAstrology) {
-      return (
-        <button onClick={handleGenerateAstrology} disabled={isGeneratingAstrology}
-          className="font-rounded uppercase tracking-widest"
-          style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none', cursor: isGeneratingAstrology ? 'default' : 'pointer', opacity: isGeneratingAstrology ? 0.7 : 1 }}>
-          {isGeneratingAstrology ? 'Generating…' : hasAstrologyData ? 'Regenerate Astrology' : 'Generate Astrology'}
-        </button>
-      );
-    }
+  const getActionButton = () => {
+    if (addAction) return <Button onClick={addAction}>{addLabel}</Button>;
+    if (activeTab === 'numerology' && canGenerateNumerology)
+      return <Button onClick={handleGenerateNumerology} disabled={isGeneratingNumerology}>{isGeneratingNumerology ? 'Generating…' : hasNumerologyData ? 'Regenerate' : 'Generate Numerology'}</Button>;
+    if (activeTab === 'astrology' && canGenerateAstrology)
+      return <Button onClick={handleGenerateAstrology} disabled={isGeneratingAstrology}>{isGeneratingAstrology ? 'Generating…' : hasAstrologyData ? 'Regenerate' : 'Generate Astrology'}</Button>;
     if (activeTab === 'report') {
       const hasReport = Boolean(selfReportResponse?.data?.text);
-      return (
-        <button
-          onClick={() => { if (selfReportTriggered) refetchSelfReport(); else setSelfReportTriggered(true); }}
-          disabled={isGeneratingSelfReport}
-          className="font-rounded uppercase tracking-widest"
-          style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-ai)', color: '#fff', border: 'none', cursor: isGeneratingSelfReport ? 'default' : 'pointer', opacity: isGeneratingSelfReport ? 0.7 : 1 }}>
-          {isGeneratingSelfReport ? 'Generating…' : hasReport ? 'Regenerate Report' : 'Generate Report'}
-        </button>
-      );
+      return <Button onClick={() => { if (selfReportTriggered) refetchSelfReport(); else setSelfReportTriggered(true); }} disabled={isGeneratingSelfReport}>{isGeneratingSelfReport ? 'Generating…' : hasReport ? 'Regenerate Report' : 'Generate Report'}</Button>;
     }
     return null;
   };
@@ -875,21 +877,33 @@ export default function ProfilePage() {
         </div>
 
         {/* Nav */}
-        <nav className="pl-14 pr-4 flex-1 flex items-center" style={{ paddingTop: 16 }}>
-          <div style={{ width: '100%' }}>
-            {TABS.map(tab => (
-              <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-                className="w-full text-left flex items-center gap-2.5 transition-all"
-                style={{ color: activeTab === tab.id ? 'var(--accent-primary)' : 'var(--text-tertiary)', padding: '4px 0' }}
-                onMouseEnter={e => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-primary)'; }}
-                onMouseLeave={e => { if (activeTab !== tab.id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}>
-                <div style={{ width: 5, height: 5, borderRadius: '50%', flexShrink: 0, transition: 'all 150ms', backgroundColor: activeTab === tab.id ? 'var(--accent-primary)' : 'transparent', border: activeTab === tab.id ? 'none' : '1px solid var(--bg-tertiary)' }} />
-                <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: activeTab === tab.id ? 600 : 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                  {tab.label}
-                </span>
-              </button>
-            ))}
-          </div>
+        <nav className="pl-10 pr-4 flex-1 overflow-y-auto" style={{ paddingTop: 20 }}>
+          {([
+            { group: null,         ids: ['overview'] },
+            { group: 'Logged',     ids: ['traits', 'patterns', 'incidents', 'journal'] },
+            { group: 'Cosmic',     ids: ['numerology', 'astrology'] },
+            { group: 'Insights',   ids: ['report'] },
+            { group: null,         ids: ['settings'] },
+          ] as { group: string | null; ids: TabId[] }[]).map(({ group, ids }, gi) => (
+            <div key={gi} style={{ marginBottom: 16 }}>
+              {ids.map(id => {
+                const tab = TABS.find(t => t.id === id)!;
+                return (
+                  <button key={id} onClick={() => setActiveTab(id)}
+                    className="w-full text-left flex items-center gap-2.5 transition-all"
+                    style={{ color: activeTab === id ? 'var(--accent-primary)' : 'var(--text-tertiary)', padding: '3px 4px' }}
+                    onMouseEnter={e => { if (activeTab !== id) e.currentTarget.style.color = 'var(--text-primary)'; }}
+                    onMouseLeave={e => { if (activeTab !== id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}>
+                    <div style={{ width: 5, height: 5, borderRadius: '50%', flexShrink: 0, transition: 'all 150ms', backgroundColor: activeTab === id ? 'var(--accent-primary)' : 'transparent', border: activeTab === id ? 'none' : '1px solid var(--bg-tertiary)' }} />
+                    <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: activeTab === id ? 600 : 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                      {tab.label}
+                    </span>
+                  </button>
+                );
+              })}
+              {gi < 4 && <div style={{ height: 1, background: 'var(--bg-tertiary)', margin: '10px 0 0', opacity: 0.6 }} />}
+            </div>
+          ))}
         </nav>
 
         {/* Bottom quote */}
@@ -903,17 +917,25 @@ export default function ProfilePage() {
       {/* Main */}
       <main className="flex-1 flex flex-col h-full ml-8 overflow-hidden">
         {/* Page header bar */}
-        <div className="flex-shrink-0 flex items-center justify-between px-8 py-5" style={{ borderBottom: '1px solid var(--bg-tertiary)' }}>
+        <div className="flex-shrink-0 flex items-center justify-between px-8 border-b shadow-sm" style={{ background: 'var(--bg-primary)', borderColor: 'var(--bg-tertiary)', paddingTop: 14, paddingBottom: 14 }}>
           <div>
-            <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+            <h2 className="font-serif" style={{ fontSize: 26, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3, marginBottom: 2 }}>
               {TABS.find(t => t.id === activeTab)?.label}
+              {TAB_COUNTS[activeTab] !== undefined && (
+                <span style={{ fontSize: 18, color: 'var(--text-tertiary)', fontWeight: 300, marginLeft: 8, verticalAlign: 'baseline' }}>
+                  ({TAB_COUNTS[activeTab]})
+                </span>
+              )}
+            </h2>
+            <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 400, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+              {TAB_DESCS[activeTab]}
             </p>
           </div>
-          {getGenerateButton()}
+          {getActionButton()}
         </div>
 
         {/* Tab content */}
-        <div className="flex-1 overflow-y-auto px-8 py-8">
+        <div className={`flex-1 min-h-0 ${(['overview', 'settings'] as TabId[]).includes(activeTab) ? 'overflow-y-auto px-8 py-8' : 'flex flex-col overflow-hidden'}`}>
           {renderTab()}
         </div>
       </main>

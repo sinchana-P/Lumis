@@ -12,6 +12,7 @@ import {
 } from '@/store/api/traitsApi';
 import { ConfirmDeleteModal } from '@/components/ui/ConfirmDeleteModal';
 import { DottedDivider } from '@/components/ui/DottedDivider';
+import { TabFooter } from '@/components/ui/TabFooter';
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
@@ -261,11 +262,21 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
   }, [externalAddOpen, onExternalAddClose]);
 
   const { data, isLoading, isError } = useGetTraitsQuery({ category: selectedCat });
+  const { data: strengthsData } = useGetTraitsQuery({ category: 'strength' });
+  const { data: shadowsData }   = useGetTraitsQuery({ category: 'shadow' });
+  const { data: triggersData }  = useGetTraitsQuery({ category: 'trigger' });
+  const { data: needsData }     = useGetTraitsQuery({ category: 'need' });
   const [createTrait, { isLoading: creating }] = useCreateTraitMutation();
   const [updateTrait, { isLoading: updating }] = useUpdateTraitMutation();
   const [deleteTrait, { isLoading: isDeleting }] = useDeleteTraitMutation();
 
   const traits = data?.data ?? [];
+  const footerStats = [
+    { val: strengthsData?.data?.length ?? 0, label: 'Strengths', color: '#7FA87A' },
+    { val: shadowsData?.data?.length   ?? 0, label: 'Shadows',   color: '#C47A7A' },
+    { val: triggersData?.data?.length  ?? 0, label: 'Triggers',  color: '#C4A87A' },
+    { val: needsData?.data?.length     ?? 0, label: 'Needs',     color: 'var(--accent-ai)' },
+  ];
 
   useEffect(() => { if (data) onCountChange?.(traits.length); }, [data, traits.length]);
 
@@ -288,7 +299,7 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
   const cat = CATEGORIES.find(c => c.value === selectedCat)!;
 
   return (
-    <div className="w-full">
+    <div className="h-full flex flex-col min-h-0">
       <TraitModal
         isOpen={modalOpen}
         editingTrait={editing}
@@ -308,66 +319,74 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
         />
       )}
 
-      {/* Category tabs */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 28, flexWrap: 'wrap' }}>
-        {CATEGORIES.map(c => (
-          <button key={c.value} type="button"
-            onClick={() => setSelectedCat(c.value)}
-            className="font-rounded uppercase tracking-widest"
-            style={{
-              fontSize: 9, padding: '5px 14px', borderRadius: 8, border: '1px solid', cursor: 'pointer', transition: 'all 150ms',
-              borderColor: selectedCat === c.value ? c.color : 'var(--bg-tertiary)',
-              background: selectedCat === c.value ? c.color + '18' : 'transparent',
-              color: selectedCat === c.value ? c.color : 'var(--text-tertiary)',
-            }}>
-            {c.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Category header */}
-      <div style={{ marginBottom: 20 }}>
-        <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', fontStyle: 'italic' }}>{cat.description}</p>
-      </div>
-
-      {isLoading ? (
-        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', paddingTop: 20 }}>Loading…</p>
-      ) : isError ? (
-        <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', paddingTop: 20 }}>Could not load traits. Please try again.</p>
-      ) : traits.length === 0 ? (
-        <div style={{ paddingTop: 32, textAlign: 'center' }}>
-          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No {cat.label.toLowerCase()}s logged yet</p>
-          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>{cat.description}.</p>
-          <button onClick={() => { setEditing(null); setModalOpen(true); }}
-            className="font-rounded uppercase tracking-widest"
-            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: `1px solid ${cat.color}`, background: 'transparent', color: cat.color, cursor: 'pointer' }}>
-            Log First {cat.label}
-          </button>
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-6 pb-8">
+        {/* Category tabs */}
+        <div style={{ display: 'flex', gap: 6, marginBottom: 24, flexWrap: 'wrap' }}>
+          {CATEGORIES.map(c => (
+            <button key={c.value} type="button"
+              onClick={() => setSelectedCat(c.value)}
+              className="font-rounded uppercase tracking-widest"
+              style={{
+                fontSize: 9, padding: '5px 14px', borderRadius: 8, border: '1px solid', cursor: 'pointer', transition: 'all 150ms',
+                borderColor: selectedCat === c.value ? c.color : 'var(--bg-tertiary)',
+                background: selectedCat === c.value ? c.color + '18' : 'transparent',
+                color: selectedCat === c.value ? c.color : 'var(--text-tertiary)',
+              }}>
+              {c.label}
+            </button>
+          ))}
         </div>
-      ) : (
-        <>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {traits.map((trait, i) => (
-              <div key={trait.id}>
-                <TraitItem
-                  trait={trait}
-                  onEdit={() => { setEditing(trait); setModalOpen(true); }}
-                  onDelete={() => setDeleting(trait)}
-                />
-                {i < traits.length - 1 && <DottedDivider style={{ marginLeft: 12, marginTop: 16, marginBottom: 16 }} />}
-              </div>
-            ))}
-          </div>
 
-          <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
+        {/* Category header */}
+        <div style={{ marginBottom: 20 }}>
+          <p className="font-serif" style={{ fontSize: 13, color: 'var(--text-tertiary)', fontStyle: 'italic' }}>{cat.description}</p>
+        </div>
+
+        {isLoading ? (
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', paddingTop: 20 }}>Loading…</p>
+        ) : isError ? (
+          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', paddingTop: 20 }}>Could not load traits. Please try again.</p>
+        ) : traits.length === 0 ? (
+          <div style={{ paddingTop: 32, textAlign: 'center' }}>
+            <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No {cat.label.toLowerCase()}s logged yet</p>
+            <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>{cat.description}.</p>
             <button onClick={() => { setEditing(null); setModalOpen(true); }}
               className="font-rounded uppercase tracking-widest"
-              style={{ fontSize: 10, padding: '8px 18px', borderRadius: 8, border: `1px solid ${cat.color}`, background: 'transparent', color: cat.color, cursor: 'pointer' }}>
-              + Add {cat.label}
+              style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: `1px solid ${cat.color}`, background: 'transparent', color: cat.color, cursor: 'pointer' }}>
+              Log First {cat.label}
             </button>
           </div>
-        </>
-      )}
+        ) : (
+          <>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {traits.map((trait, i) => (
+                <div key={trait.id}>
+                  <TraitItem
+                    trait={trait}
+                    onEdit={() => { setEditing(trait); setModalOpen(true); }}
+                    onDelete={() => setDeleting(trait)}
+                  />
+                  {i < traits.length - 1 && <DottedDivider style={{ marginLeft: 12, marginTop: 16, marginBottom: 16 }} />}
+                </div>
+              ))}
+            </div>
+
+            <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
+              <button onClick={() => { setEditing(null); setModalOpen(true); }}
+                className="font-rounded uppercase tracking-widest"
+                style={{ fontSize: 10, padding: '8px 18px', borderRadius: 8, border: `1px solid ${cat.color}`, background: 'transparent', color: cat.color, cursor: 'pointer' }}>
+                + Add {cat.label}
+              </button>
+            </div>
+          </>
+        )}
+      </div>
+
+      <TabFooter
+        stats={footerStats}
+        tagline="Self-knowledge is the beginning of all wisdom."
+      />
     </div>
   );
 }
