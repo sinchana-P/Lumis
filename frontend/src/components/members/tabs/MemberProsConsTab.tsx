@@ -134,7 +134,7 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
 
         {/* Header */}
         <div style={{ marginBottom: 20 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4 }}>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4 }}>
             {isEditing ? 'Edit Relationship Trait' : 'Add Relationship Trait'}
           </p>
           {/* Nature toggle — locked when editing to avoid accidental category swap */}
@@ -142,7 +142,7 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
             {(['pro', 'con'] as const).map(t => (
               <button key={t} type="button"
                 onClick={() => !isEditing && setForm(f => ({ ...f, type: t }))}
-                className="font-mono uppercase tracking-widest"
+                className="font-rounded uppercase tracking-widest"
                 style={{
                   fontSize: 10, padding: '5px 14px', borderRadius: 6, border: 'none',
                   cursor: isEditing ? 'default' : 'pointer',
@@ -161,7 +161,7 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
 
         {/* Description */}
         <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Description</p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>Description</p>
           <div style={{ position: 'relative' }}>
             <textarea value={form.text} onChange={e => setForm(f => ({ ...f, text: e.target.value }))}
               placeholder={isStrength ? 'What do you appreciate about them…' : 'What creates friction or tension…'}
@@ -174,11 +174,11 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
 
         {/* Emotion tag */}
         <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Emotion</p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>Emotion</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {EMOTION_TAGS.map(tag => (
               <button key={tag} type="button" onClick={() => setForm(f => ({ ...f, emotionTag: f.emotionTag === tag ? '' : tag }))}
-                className="font-mono uppercase tracking-widest"
+                className="font-rounded uppercase tracking-widest"
                 style={{
                   fontSize: 9, padding: '4px 10px', borderRadius: 999, border: '1px solid',
                   borderColor: form.emotionTag === tag ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
@@ -194,7 +194,7 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
 
         {/* Tags */}
         <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 6 }}>
             Tags <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>— comma separated, e.g. theme:trust, context:work</span>
           </p>
           <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
@@ -206,7 +206,7 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
         {/* Intensity */}
         <div style={{ marginBottom: 20 }}>
           <div className="flex items-center justify-between" style={{ marginBottom: 6 }}>
-            <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Intensity</p>
+            <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Intensity</p>
             <p className="font-mono" style={{ fontSize: 11, color: 'var(--text-primary)' }}>{INTENSITY_LABELS[form.intensity]}</p>
           </div>
           <input type="range" min="1" max="3" value={form.intensity}
@@ -220,11 +220,11 @@ function TraitModal({ isOpen, editingTrait, defaultType, onClose, onSave, saving
 
         {/* Actions — Cancel LEFT, Save RIGHT */}
         <div className="flex gap-2">
-          <button type="button" onClick={onClose} className="font-mono uppercase tracking-widest"
+          <button type="button" onClick={onClose} className="font-rounded uppercase tracking-widest"
             style={{ flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
             Cancel
           </button>
-          <button type="button" onClick={handleSave} disabled={!canSave} className="font-mono uppercase tracking-widest"
+          <button type="button" onClick={handleSave} disabled={!canSave} className="font-rounded uppercase tracking-widest"
             style={{
               flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: 'none',
               cursor: canSave ? 'pointer' : 'default',

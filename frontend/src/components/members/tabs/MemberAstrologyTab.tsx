@@ -93,7 +93,7 @@ function SectionLabel({ text }: { text: string }) {
   return (
     <div className="flex items-center gap-3 mb-4">
       <div className="w-5 h-px bg-tertiary" />
-      <span className="font-mono text-xs uppercase tracking-widest text-tertiary">{text}</span>
+      <span className="font-rounded text-xs uppercase tracking-widest text-tertiary">{text}</span>
     </div>
   );
 }
@@ -165,7 +165,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
         <div className="bg-accent-ai/8 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-2">
           <div className="flex items-center gap-2">
             <div className="w-4 h-px bg-accent-ai/50" />
-            <span className="font-mono text-xs uppercase tracking-widest text-accent-ai">Moon Sign</span>
+            <span className="font-rounded text-xs uppercase tracking-widest text-accent-ai">Moon Sign</span>
           </div>
           <p className="font-serif text-2xl text-primary">{computed.moonSign}</p>
           <p className="font-mono text-xs text-tertiary tracking-wider">
@@ -175,7 +175,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
         <div className="bg-accent-ai/8 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-2">
           <div className="flex items-center gap-2">
             <div className="w-4 h-px bg-accent-ai/50" />
-            <span className="font-mono text-xs uppercase tracking-widest text-accent-ai">Moon Nakshatra</span>
+            <span className="font-rounded text-xs uppercase tracking-widest text-accent-ai">Moon Nakshatra</span>
           </div>
           <p className="font-serif text-2xl text-primary">{computed.nakshatra}</p>
           <p className="font-mono text-xs text-tertiary tracking-wider">
@@ -199,7 +199,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-accent-primary/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
-            <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
+            <p className="font-rounded text-xs uppercase tracking-widest text-accent-primary">
               What Makes Them Feel Safe
             </p>
             <p className="font-serif text-base text-primary leading-relaxed">
@@ -207,7 +207,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
             </p>
           </div>
           <div className="bg-error/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
-            <p className="font-mono text-xs uppercase tracking-widest text-error">
+            <p className="font-rounded text-xs uppercase tracking-widest text-error">
               What Triggers Withdrawal
             </p>
             <p className="font-serif text-base text-primary leading-relaxed">
@@ -216,7 +216,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
           </div>
         </div>
         <div className="bg-accent-gold/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
-          <p className="font-mono text-xs uppercase tracking-widest text-accent-gold">
+          <p className="font-rounded text-xs uppercase tracking-widest text-accent-gold">
             Their Emotional Gift
           </p>
           <p className="font-serif text-base text-primary leading-relaxed">
@@ -231,7 +231,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
       <div className="bg-accent-secondary/8 border border-primary/30 border-l-4 border-l-accent-secondary rounded-2xl px-5 py-4 space-y-3">
         <div className="flex items-center gap-2">
           <div className="w-4 h-px bg-accent-secondary/50" />
-          <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+          <span className="font-rounded text-xs uppercase tracking-widest text-tertiary">
             When Things Go Wrong
           </span>
         </div>
@@ -246,7 +246,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
       <div className="bg-surface border border-primary/30 rounded-2xl px-5 py-4 space-y-4">
         <div className="flex items-center gap-2">
           <div className="w-4 h-px bg-tertiary" />
-          <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+          <span className="font-rounded text-xs uppercase tracking-widest text-tertiary">
             Emotional Availability — Right Now
           </span>
         </div>
@@ -260,7 +260,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
           {insights.emotionalAvailabilityDetail}
         </p>
         <div className="bg-secondary border border-primary/15 rounded-xl px-4 py-3 space-y-1.5">
-          <p className="font-mono text-xs uppercase tracking-widest text-tertiary">
+          <p className="font-rounded text-xs uppercase tracking-widest text-tertiary">
             For Your Interactions
           </p>
           <p className="font-serif text-base italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
@@ -275,7 +275,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
       <div className="bg-accent-ai/5 border border-primary/30 border-l-4 border-l-accent-ai rounded-2xl px-5 py-4 space-y-4">
         <div className="flex items-center gap-2">
           <div className="w-4 h-px bg-accent-ai/50" />
-          <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+          <span className="font-rounded text-xs uppercase tracking-widest text-tertiary">
             What This Relationship Asks of You
           </span>
         </div>
@@ -283,7 +283,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
           <div className="flex items-start gap-3">
             <TipIconBox icon="circle" />
             <div className="space-y-1">
-              <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
+              <p className="font-rounded text-xs uppercase tracking-widest text-accent-primary">
                 What Lands Well
               </p>
               <p className="font-serif text-base text-primary leading-relaxed">
@@ -294,7 +294,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
           <div className="flex items-start gap-3">
             <TipIconBox icon="half-moon" />
             <div className="space-y-1">
-              <p className="font-mono text-xs uppercase tracking-widest text-accent-secondary">
+              <p className="font-rounded text-xs uppercase tracking-widest text-accent-secondary">
                 Where Friction Lives
               </p>
               <p className="font-serif text-base text-primary leading-relaxed">
@@ -304,7 +304,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
           </div>
         </div>
         <div className="bg-secondary border border-primary/15 rounded-xl px-4 py-3 space-y-1.5">
-          <p className="font-mono text-xs uppercase tracking-widest text-tertiary">
+          <p className="font-rounded text-xs uppercase tracking-widest text-tertiary">
             The Adjustment — with {firstName}
           </p>
           <p className="font-serif text-base italic leading-relaxed" style={{ color: 'var(--text-tertiary)' }}>
@@ -339,7 +339,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-accent-primary/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
-            <p className="font-mono text-xs uppercase tracking-widest text-accent-primary">
+            <p className="font-rounded text-xs uppercase tracking-widest text-accent-primary">
               Ascendant
             </p>
             <p className="font-serif text-base text-primary leading-relaxed">
@@ -347,7 +347,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
             </p>
           </div>
           <div className="bg-accent-gold/8 border border-primary/30 rounded-2xl px-5 py-4 space-y-2">
-            <p className="font-mono text-xs uppercase tracking-widest text-accent-gold">
+            <p className="font-rounded text-xs uppercase tracking-widest text-accent-gold">
               Sun Sign
             </p>
             <p className="font-serif text-base text-primary leading-relaxed">
@@ -363,7 +363,7 @@ function AstrologyDataView({ profile, firstName }: { profile: AstrologyProfile; 
       <div className="bg-surface border border-primary/30 rounded-2xl px-5 py-4 space-y-3">
         <div className="flex items-center gap-2">
           <div className="w-4 h-px bg-tertiary" />
-          <span className="font-mono text-xs uppercase tracking-widest text-tertiary">
+          <span className="font-rounded text-xs uppercase tracking-widest text-tertiary">
             Current Dasha · {computed.dasha.currentMahadasha.planet} / {computed.dasha.currentAntardasha.planet}
           </span>
         </div>

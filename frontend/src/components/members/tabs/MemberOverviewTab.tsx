@@ -198,7 +198,7 @@ export function MemberOverviewTab({ member }: MemberOverviewTabProps) {
                 <div className="absolute left-0 top-0" style={{ height: 1, width: `${fill}%`, background: color }} />
               </div>
               <span className="font-serif flex-shrink-0 text-right" style={{ fontSize: 15, fontWeight: 600, color, width: 40 }}>{value}</span>
-              <span className="font-mono uppercase tracking-widest flex-shrink-0" style={{ fontSize: 11, color, width: 88 }}>{status}</span>
+              <span className="font-rounded uppercase tracking-widest flex-shrink-0" style={{ fontSize: 11, color, width: 88 }}>{status}</span>
             </div>
           ))}
         </div>

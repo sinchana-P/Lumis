@@ -61,7 +61,7 @@ export function TwoColumnModal({
       >
         {/* Header */}
         <div style={{ padding: '16px 24px', borderBottom: '1px solid var(--bg-tertiary)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', margin: 0 }}>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', margin: 0 }}>
             {header}
           </p>
           <button
@@ -112,14 +112,14 @@ export function TwoColumnModal({
         <div style={{ padding: '12px 20px', borderTop: '1px solid var(--bg-tertiary)', display: 'flex', gap: 8, flexShrink: 0 }}>
           <button
             type="button" onClick={onClose}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{ flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}
           >
             Cancel
           </button>
           <button
             type="button" onClick={onSave} disabled={!canSave}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{
               flex: 2, padding: '9px 0', fontSize: 10, borderRadius: 8, border: 'none',
               cursor: canSave ? 'pointer' : 'default',

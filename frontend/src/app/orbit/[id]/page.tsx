@@ -236,7 +236,7 @@ export default function MemberDetailPage() {
           </p>
           <button 
             onClick={() => router.push('/orbit')}
-            className="px-8 py-3 bg-lumis-accent-primary text-lumis-text-inverse rounded-xl font-mono text-xs uppercase tracking-widest font-medium hover:bg-lumis-accent-primary-hover transition-all shadow-lg"
+            className="px-8 py-3 bg-lumis-accent-primary text-lumis-text-inverse rounded-xl font-rounded text-xs uppercase tracking-widest font-medium hover:bg-lumis-accent-primary-hover transition-all shadow-lg"
           >
             Return to Luminaries
           </button>

@@ -101,7 +101,7 @@ export function AnalysisDepthSelector({
         }}
       >
         {currentMode.icon}
-        <span className="font-mono uppercase tracking-wider" style={{ fontSize: 'clamp(9px, 0.9vw, 11px)', color: 'var(--text-secondary)' }}>
+        <span className="font-rounded uppercase tracking-wider" style={{ fontSize: 'clamp(9px, 0.9vw, 11px)', color: 'var(--text-secondary)' }}>
           {currentMode.label}
         </span>
         <svg
@@ -118,7 +118,7 @@ export function AnalysisDepthSelector({
           style={{ width: 280, background: 'var(--bg-primary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10 }}
         >
           <div className="px-4 pt-3 pb-1">
-            <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+            <p className="font-rounded text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
               Analysis Depth
             </p>
           </div>
@@ -144,7 +144,7 @@ export function AnalysisDepthSelector({
                       {mode.label}
                     </span>
                     {mode.id === 'full-spectrum' && (
-                      <span className="font-mono uppercase tracking-wider" style={{ fontSize: 12, color: 'var(--accent-gold)' }}>
+                      <span className="font-rounded uppercase tracking-wider" style={{ fontSize: 12, color: 'var(--accent-gold)' }}>
                         Recommended
                       </span>
                     )}

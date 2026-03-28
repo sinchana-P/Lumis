@@ -64,7 +64,7 @@ const getFallbackHealth = (member: any) => {
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono uppercase tracking-widest"
+    <p className="font-rounded uppercase tracking-widest"
       style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 12 }}>
       {children}
     </p>
@@ -120,7 +120,7 @@ export default function DashboardPage() {
 
             {/* Left — greeting */}
             <div>
-              <p className="font-mono uppercase tracking-widest"
+              <p className="font-rounded uppercase tracking-widest"
                 style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 6 }}>
                 {dateStr}
               </p>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
                         style={{ fontSize: 26, color: 'var(--text-primary)', lineHeight: 1 }}>
                         {value}
                       </p>
-                      <p className="font-mono uppercase tracking-widest"
+                      <p className="font-rounded uppercase tracking-widest"
                         style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
                         {label}
                       </p>
@@ -172,7 +172,7 @@ export default function DashboardPage() {
               {/* Emotional Weather */}
               <section data-tour="emotional-weather">
                 <div className="flex items-center justify-between" style={{ marginBottom: 12 }}>
-                  <p className="font-mono uppercase tracking-widest"
+                  <p className="font-rounded uppercase tracking-widest"
                     style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                     Emotional Weather
                   </p>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
                   </p>
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 rounded-full" style={{ background: 'var(--accent-primary)' }} />
-                    <span className="font-mono uppercase tracking-widest"
+                    <span className="font-rounded uppercase tracking-widest"
                       style={{ fontSize: 11, color: 'var(--accent-primary)' }}>
                       Current vibe: {dashSummary?.emotionalWeather.vibe ?? '—'}
                     </span>
@@ -246,7 +246,7 @@ export default function DashboardPage() {
                       display: 'flex', alignItems: 'center', gap: 6,
                     }}>
                       <span className="font-serif" style={{ fontSize: 13, color: 'var(--text-primary)' }}>{value}</span>
-                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{label}</span>
+                      <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>{label}</span>
                     </div>
                   ))}
                   <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginLeft: 4 }}>last 7 days</span>
@@ -283,7 +283,7 @@ export default function DashboardPage() {
                             <div style={{ width: 6, height: 6, borderRadius: '50%', background: color, marginTop: 6, flexShrink: 0 }} />
                             <div className="flex-1">
                               <div className="flex items-center gap-2" style={{ marginBottom: 5 }}>
-                                <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color }}>
+                                <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color }}>
                                   {label}
                                 </p>
                                 {signal.memberName && (
@@ -334,7 +334,7 @@ export default function DashboardPage() {
                     { label: 'Ask Lumen',         path: '/lumen'               },
                   ].map(({ label, path }) => (
                     <button key={label} onClick={() => router.push(path)}
-                      className="font-mono uppercase tracking-widest transition-all"
+                      className="font-rounded uppercase tracking-widest transition-all"
                       style={{ fontSize: 11, padding: '7px 16px', borderRadius: 20, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}
                       onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-secondary)'; e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.borderColor = 'var(--text-tertiary)'; }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--bg-tertiary)'; }}>
@@ -453,7 +453,7 @@ export default function DashboardPage() {
                         Your orbit is empty
                       </p>
                       <button onClick={() => router.push('/orbit/add')}
-                        className="font-mono uppercase tracking-widest"
+                        className="font-rounded uppercase tracking-widest"
                         style={{ fontSize: 11, padding: '5px 12px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                         Add Luminary
                       </button>
@@ -463,7 +463,7 @@ export default function DashboardPage() {
 
                 {members.length > 0 && (
                   <button onClick={() => router.push('/orbit')}
-                    className="font-mono uppercase tracking-widest w-full transition-colors"
+                    className="font-rounded uppercase tracking-widest w-full transition-colors"
                     style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', padding: '8px 0 0', cursor: 'pointer', textAlign: 'right' }}
                     onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
                     onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
@@ -505,7 +505,7 @@ export default function DashboardPage() {
                       <div key={label} className="flex items-center justify-between"
                         style={{ padding: '12px 16px', borderBottom: i < arr.length - 1 ? '1px solid var(--bg-tertiary)' : 'none', background: 'var(--bg-primary)' }}>
                         <div>
-                          <p className="font-mono uppercase tracking-widest"
+                          <p className="font-rounded uppercase tracking-widest"
                             style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 3 }}>
                             {label}
                           </p>
@@ -520,7 +520,7 @@ export default function DashboardPage() {
                         Generate your numerology & astrology to unlock your blueprint.
                       </p>
                       <button onClick={() => router.push('/profile?tab=numerology')}
-                        className="font-mono uppercase tracking-widest"
+                        className="font-rounded uppercase tracking-widest"
                         style={{ fontSize: 11, padding: '6px 14px', borderRadius: 12, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
                         Generate Now
                       </button>

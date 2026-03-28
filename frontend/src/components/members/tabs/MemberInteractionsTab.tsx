@@ -75,7 +75,7 @@ function MoodSelect({ value, onChange, label }: { value: string; onChange: (v: s
 
   return (
     <div ref={ref} style={{ position: 'relative' }}>
-      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>{label}</p>
+      <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>{label}</p>
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
@@ -106,7 +106,7 @@ function MoodSelect({ value, onChange, label }: { value: string; onChange: (v: s
           {/* Scrollable list — short height */}
           <div style={{ maxHeight: 180, overflowY: 'auto' }}>
             <button type="button" onClick={() => { onChange(''); setOpen(false); }}
-              className="w-full font-mono uppercase tracking-widest"
+              className="w-full font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 9, padding: '8px 10px', textAlign: 'left', background: 'none', border: 'none',
                 cursor: 'pointer', display: 'block', width: '100%',
@@ -215,7 +215,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Date */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>When</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>When</p>
         <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
           className="w-full font-mono"
           style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
@@ -224,7 +224,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Duration */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Duration <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>opt</span>
         </p>
         <input type="text" value={form.duration} onChange={e => setForm(f => ({ ...f, duration: e.target.value }))}
@@ -235,11 +235,11 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Type */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Type</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Type</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {TYPES.map(t => (
             <button key={t.value} type="button" onClick={() => setForm(f => ({ ...f, type: t.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 8, padding: '3px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
                 borderColor: form.type === t.value ? t.color : 'var(--bg-tertiary)',
@@ -253,11 +253,11 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Quality */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Quality</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Quality</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
           {QUALITIES.map(q => (
             <button key={q.value} type="button" onClick={() => setForm(f => ({ ...f, quality: q.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
                 background: form.quality === q.value ? 'var(--bg-primary)' : 'transparent',
@@ -271,7 +271,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Energy */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 8 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 8 }}>
           Energy <span style={{ color: energyColor(form.energyLevel) }}>{form.energyLevel}/10</span>
         </p>
         <input type="range" min={1} max={10} value={form.energyLevel}
@@ -289,7 +289,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Topics */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Topics <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>comma sep</span>
         </p>
         <input type="text" value={form.topics} onChange={e => setForm(f => ({ ...f, topics: e.target.value }))}
@@ -300,7 +300,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Tags */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>e.g. theme:trust</span>
         </p>
         <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
@@ -315,7 +315,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Title */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Title</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Title</p>
         <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
           placeholder="Coffee catch-up, Quick check-in…" className="w-full font-serif"
           style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
@@ -324,7 +324,7 @@ function InteractionModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Description */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What Happened</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What Happened</p>
         <SpeechTextarea
           value={form.description}
           onChange={v => setForm(f => ({ ...f, description: v }))}
@@ -404,7 +404,7 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
 
   if (isLoading) return (
     <div className="flex items-center justify-center px-8 pt-8">
-      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading interactions…</p>
+      <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading interactions…</p>
     </div>
   );
 
@@ -435,7 +435,7 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
             <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
               Start tracking your communications with {member.fullName} and how they affect your energy.
             </p>
-            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+            <button onClick={openAdd} className="font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
               Log First Interaction
             </button>
@@ -514,13 +514,13 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
                         <div className="grid grid-cols-2 gap-4" style={{ marginBottom: 12 }}>
                           {interaction.moodBefore && (
                             <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--accent-secondary)' }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-secondary)', marginBottom: 3 }}>Mood Before</p>
+                              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-secondary)', marginBottom: 3 }}>Mood Before</p>
                               <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', textTransform: 'capitalize' }}>{interaction.moodBefore}</p>
                             </div>
                           )}
                           {interaction.moodAfter && (
                             <div style={{ paddingLeft: 10, borderLeft: '2px solid var(--accent-ai)' }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 3 }}>Mood After</p>
+                              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 3 }}>Mood After</p>
                               <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', textTransform: 'capitalize' }}>{interaction.moodAfter}</p>
                             </div>
                           )}

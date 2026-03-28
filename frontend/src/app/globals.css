@@ -95,6 +95,15 @@
 }
 
 @layer components {
+  /* ── Uppercase labels (Nunito soft style) ── */
+  /* Applied to any element with both font-rounded + uppercase — covers all 36 files */
+  .font-rounded.uppercase {
+    font-family: 'Nunito', var(--font-rounded), sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    font-size: 11px;
+  }
+
   /* ── Buttons ── */
   .btn {
     font-family: var(--font-sans);

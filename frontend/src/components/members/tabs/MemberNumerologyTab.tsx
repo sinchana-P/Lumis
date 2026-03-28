@@ -418,18 +418,18 @@ function InfoTooltip({ id, member, profile, accent }: {
       className="w-[260px] bg-secondary border border-primary/40 rounded-lg shadow-lg pointer-events-none"
     >
       <div className="px-3 pt-2.5 pb-2 border-b border-primary/60">
-        <p className="font-mono text-[9px] uppercase tracking-widest font-semibold" style={{ color: 'var(--text-tertiary)' }}>
+        <p className="font-rounded text-[9px] uppercase tracking-widest font-semibold" style={{ color: 'var(--text-tertiary)' }}>
           {info.label}
         </p>
       </div>
       <div className="px-3 py-2 space-y-1.5">
         <p className="font-serif text-xs leading-snug text-primary">{info.description}</p>
         <div className="border-t border-primary/60 pt-1.5 space-y-0.5">
-          <p className="font-mono text-[8px] uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Formula</p>
+          <p className="font-rounded text-[8px] uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>Formula</p>
           <p className="font-serif text-[11px] leading-snug italic" style={{ color: 'var(--text-tertiary)' }}>{info.formula}</p>
         </div>
         <div className="border-t border-primary/60 pt-1.5 space-y-0.5">
-          <p className="font-mono text-[8px] uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+          <p className="font-rounded text-[8px] uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
             {info.inputLabel(member)}
           </p>
           {(() => {
@@ -584,7 +584,7 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
       <div className="bg-accent-gold/12 border border-accent-gold/30 rounded-xl px-5 py-3 flex items-center gap-3 mb-2">
         <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse flex-shrink-0" />
         <div>
-          <span className="font-mono text-xs uppercase tracking-widest font-medium mr-2" style={{ color: '#8B6A3E' }}>
+          <span className="font-rounded text-xs uppercase tracking-widest font-medium mr-2" style={{ color: '#8B6A3E' }}>
             Current Year Energy: {currentYear}
           </span>
           <span className="font-serif text-sm text-primary">
@@ -624,12 +624,12 @@ function TimingNumbersContent({ timingNumbers, onToggle, member }: {
                       </span>
                     )}
                     {n.period === 'Personal Month' && (
-                      <span className="px-2 py-0.5 bg-accent-ai/15 text-accent-ai border border-accent-ai/25 rounded-full font-mono text-xs uppercase tracking-wider font-medium">
+                      <span className="px-2 py-0.5 bg-accent-ai/15 text-accent-ai border border-accent-ai/25 rounded-full font-rounded text-xs uppercase tracking-wider font-medium">
                         This Month
                       </span>
                     )}
                     {n.period === 'Life Cycles' && (
-                      <span className="px-2 py-0.5 bg-accent-primary/15 text-accent-primary border border-accent-primary/25 rounded-full font-mono text-xs uppercase tracking-wider font-medium">
+                      <span className="px-2 py-0.5 bg-accent-primary/15 text-accent-primary border border-accent-primary/25 rounded-full font-rounded text-xs uppercase tracking-wider font-medium">
                         Current Phase
                       </span>
                     )}
@@ -696,12 +696,12 @@ function CompatibilityContent({ compatibility, member }: {
           <span className={`text-5xl font-serif italic font-light leading-none ${overallTheme.number}`}>
             {compatibility.overallScore}
           </span>
-          <span className="font-mono text-xs uppercase tracking-widest text-tertiary mt-1">Overall</span>
+          <span className="font-rounded text-xs uppercase tracking-widest text-tertiary mt-1">Overall</span>
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-serif text-base text-primary leading-snug mb-2">{getCompatibilityDescription(compatibility.overallScore)}</p>
           <div className="h-[2px] w-full rounded-full mb-1" style={{ background: 'linear-gradient(to right, #9CAF9E, #C9A58F)' }} />
-          <div className="flex justify-between font-mono text-xs uppercase tracking-widest text-tertiary">
+          <div className="flex justify-between font-rounded text-xs uppercase tracking-widest text-tertiary">
             <span>You — LP {compatibility.lifePath.yourNumber || '—'}</span>
             <span>{member.fullName} — LP {compatibility.lifePath.theirNumber}</span>
           </div>
@@ -734,7 +734,7 @@ function CompatibilityContent({ compatibility, member }: {
                     <div className={`flex-1 h-1.5 ${theme.progressBg} rounded-full overflow-hidden`}>
                       <div className={`h-full ${theme.number.replace('text-', 'bg-')} transition-all duration-700`} style={{ width: `${card.score}%` }} />
                     </div>
-                    <span className={`font-mono text-xs uppercase tracking-wider ${theme.accent} font-medium flex-shrink-0`}>
+                    <span className={`font-rounded text-xs uppercase tracking-wider ${theme.accent} font-medium flex-shrink-0`}>
                       {card.score}% · {theme.label}
                     </span>
                   </div>
@@ -843,7 +843,7 @@ export function MemberNumerologyTab({ member, isUser = false, isExternalLoading 
     setTimingNumbers(prev => prev.map(n => n.id === id ? { ...n, expanded: !n.expanded } : n));
 
   const tabStyle = (id: TabId, color: string) =>
-    `group flex items-center gap-2 pb-4 whitespace-nowrap transition-all duration-300 font-mono text-xs uppercase tracking-widest font-medium outline-none focus:outline-none ${
+    `group flex items-center gap-2 pb-4 whitespace-nowrap transition-all duration-300 font-rounded text-xs uppercase tracking-widest font-medium outline-none focus:outline-none ${
       activeTab === id ? `${color} border-b border-current` : 'text-tertiary hover:text-primary'
     }`;
 

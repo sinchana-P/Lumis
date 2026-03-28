@@ -68,7 +68,7 @@ export function DeleteMemberModal({ member, isOpen, onClose, onSuccess }: Delete
 
         {/* Confirm input */}
         <div style={{ marginBottom: 20 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>
             Type "{member.fullName}" to confirm
           </p>
           <input
@@ -96,7 +96,7 @@ export function DeleteMemberModal({ member, isOpen, onClose, onSuccess }: Delete
           <button
             onClick={handleClose}
             disabled={isLoading}
-            className="font-mono uppercase tracking-widest transition-colors"
+            className="font-rounded uppercase tracking-widest transition-colors"
             style={{
               flex: 1,
               padding: '8px 0',
@@ -113,7 +113,7 @@ export function DeleteMemberModal({ member, isOpen, onClose, onSuccess }: Delete
           <button
             onClick={handleDelete}
             disabled={!isConfirmed || isLoading}
-            className="font-mono uppercase tracking-widest transition-all"
+            className="font-rounded uppercase tracking-widest transition-all"
             style={{
               flex: 1,
               padding: '8px 0',

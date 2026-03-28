@@ -49,7 +49,7 @@ export function ActiveMemberContexts({
               </svg>
             </div>
             <div className="text-left">
-              <h3 className="font-mono text-xs uppercase tracking-wider text-lumis-text-primary font-medium">
+              <h3 className="font-rounded text-xs uppercase tracking-wider text-lumis-text-primary font-medium">
                 Add Member to Context
               </h3>
               <p className="font-serif text-sm text-lumis-text-secondary italic">
@@ -65,7 +65,7 @@ export function ActiveMemberContexts({
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-mono text-xs uppercase tracking-wider text-lumis-text-tertiary">
+        <h3 className="font-rounded text-xs uppercase tracking-wider text-lumis-text-tertiary">
           Lumen reads all logged data for selected members
         </h3>
         <button
@@ -97,7 +97,7 @@ export function ActiveMemberContexts({
                     <h4 className="font-serif text-sm font-medium text-lumis-text-primary">
                       {context.member.fullName}
                     </h4>
-                    <span className="px-2 py-0.5 bg-lumis-accent-gold/20 text-lumis-accent-gold rounded-full font-mono text-xs uppercase tracking-wider">
+                    <span className="px-2 py-0.5 bg-lumis-accent-gold/20 text-lumis-accent-gold rounded-full font-rounded text-xs uppercase tracking-wider">
                       {getDisplayRelationType(context.member)}
                     </span>
                   </div>

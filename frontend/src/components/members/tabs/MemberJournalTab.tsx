@@ -121,7 +121,7 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Date */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Date</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Date</p>
         <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
           className="w-full font-mono"
           style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
@@ -130,14 +130,14 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Emotions */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotions</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotions</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {EMOTION_OPTIONS.map(e => {
             const active = form.emotions.includes(e);
             const color  = emotionColor(e);
             return (
               <button key={e} type="button" onClick={() => toggleEmotion(e)}
-                className="font-mono uppercase tracking-widest"
+                className="font-rounded uppercase tracking-widest"
                 style={{
                   fontSize: 8, padding: '3px 9px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
                   borderColor: active ? color : 'var(--bg-tertiary)',
@@ -152,7 +152,7 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Tags */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>comma sep</span>
         </p>
         <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
@@ -179,7 +179,7 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
               borderRadius: '50%', background: '#fff', transition: 'left 200ms',
             }} />
           </div>
-          <span className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: form.isPrivate ? 'var(--accent-primary)' : 'var(--text-tertiary)' }}>
+          <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: form.isPrivate ? 'var(--accent-primary)' : 'var(--text-tertiary)' }}>
             Private
           </span>
         </button>
@@ -196,7 +196,7 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Title */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Title <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>optional</span>
         </p>
         <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
@@ -207,7 +207,7 @@ function JournalModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Content */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What's on your mind</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What's on your mind</p>
         <SpeechTextarea
           value={form.content}
           onChange={v => setForm(f => ({ ...f, content: v }))}
@@ -320,13 +320,13 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
 
       {isLoading && (
         <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading journal…</p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading journal…</p>
         </div>
       )}
       {isError && !isLoading && (
         <div style={{ paddingTop: 40, textAlign: 'center' }}>
           <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 20 }}>Could not load journal. Please try again.</p>
-          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+          <button onClick={openAdd} className="font-rounded uppercase tracking-widest"
             style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
             Write Anyway
           </button>
@@ -351,7 +351,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
           <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
             Start writing private reflections about your relationship with {member.fullName}.
           </p>
-          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+          <button onClick={openAdd} className="font-rounded uppercase tracking-widest"
             style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
             Write First Entry
           </button>
@@ -395,7 +395,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
               background: 'linear-gradient(180deg, var(--accent-secondary) 0%, var(--accent-primary) 100%)',
               boxShadow: 'inset -3px 0 6px rgba(0,0,0,0.15)',
             }}>
-              <span className="font-mono uppercase tracking-widest whitespace-nowrap" style={{
+              <span className="font-rounded uppercase tracking-widest whitespace-nowrap" style={{
                 transform: 'rotate(-90deg)', color: 'rgba(255,255,255,0.85)', fontSize: 8,
                 letterSpacing: '0.2em', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis',
               }}>
@@ -439,7 +439,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
                       onMouseLeave={e => { if (selectedId !== entry.id) e.currentTarget.style.background = 'transparent'; }}
                     >
                       <div style={{ display: 'flex', alignItems: 'center', gap: 4, marginBottom: 2 }}>
-                        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: selectedId === entry.id ? 'var(--accent-primary)' : 'var(--text-primary)', flex: 1 }}>
+                        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: selectedId === entry.id ? 'var(--accent-primary)' : 'var(--text-primary)', flex: 1 }}>
                           {new Date(entry.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                         </p>
                         {entry.isPrivate && (
@@ -471,7 +471,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
 
               {/* Pinned new entry button */}
               <div style={{ padding: '6px 8px 10px', flexShrink: 0 }}>
-                <button onClick={openAdd} className="w-full font-mono uppercase tracking-widest"
+                <button onClick={openAdd} className="w-full font-rounded uppercase tracking-widest"
                   style={{ padding: '6px 0', fontSize: 8, borderRadius: 7, border: '1px dashed var(--bg-tertiary)', background: 'transparent', color: 'var(--text-tertiary)', cursor: 'pointer', transition: 'all 150ms', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent-primary)'; e.currentTarget.style.color = 'var(--accent-primary)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--bg-tertiary)'; e.currentTarget.style.color = 'var(--text-tertiary)'; }}>
@@ -531,7 +531,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
                         <div className="relative z-10" style={{ flexShrink: 0, height: 78, padding: '0 40px 0 32px', background: 'var(--bg-primary)', display: 'flex', flexDirection: 'column', justifyContent: 'center', borderBottom: '1px solid var(--bg-tertiary)' }}>
                           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', width: '100%' }}>
                             <div>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+                              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 5 }}>
                                 {new Date(selected.date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}
                               </p>
                               {selected.title && (
@@ -575,7 +575,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
 
                           {selected.emotions.length > 0 && (
                             <div style={{ marginBottom: 10 }}>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 5 }}>Emotional State</p>
+                              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 5 }}>Emotional State</p>
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                                 {selected.emotions.map(e => (
                                   <span key={e} className="font-serif" style={{ fontSize: 12, padding: '1px 8px', borderRadius: 999, border: `1px solid ${emotionColor(e)}`, color: emotionColor(e) }}>{e}</span>
@@ -586,7 +586,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
 
                           {selected.tags.length > 0 && (
                             <div>
-                              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 5 }}>Themes</p>
+                              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 8, color: 'var(--text-tertiary)', marginBottom: 5 }}>Themes</p>
                               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                                 {selected.tags.map(tag => (
                                   <span key={tag} className="font-serif"

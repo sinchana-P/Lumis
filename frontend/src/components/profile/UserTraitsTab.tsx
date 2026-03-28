@@ -88,7 +88,7 @@ function TraitModal({ isOpen, editingTrait, defaultCategory, onClose, onSave, sa
 
         {/* Header */}
         <div style={{ marginBottom: 20 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 8 }}>
             {editingTrait ? 'Edit' : 'Log'} Self Trait
           </p>
           {/* Category selector — locked when editing */}
@@ -96,7 +96,7 @@ function TraitModal({ isOpen, editingTrait, defaultCategory, onClose, onSave, sa
             {CATEGORIES.map(c => (
               <button key={c.value} type="button"
                 onClick={() => !editingTrait && setForm(f => ({ ...f, category: c.value }))}
-                className="font-mono uppercase tracking-widest"
+                className="font-rounded uppercase tracking-widest"
                 style={{
                   fontSize: 9, padding: '4px 12px', borderRadius: 6, border: '1px solid',
                   cursor: editingTrait ? 'default' : 'pointer',
@@ -113,7 +113,7 @@ function TraitModal({ isOpen, editingTrait, defaultCategory, onClose, onSave, sa
 
         {/* Description */}
         <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Description</p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Description</p>
           <textarea
             value={form.text} onChange={e => setForm(f => ({ ...f, text: e.target.value }))}
             placeholder={`Describe this ${cat.label.toLowerCase()}...`}
@@ -125,11 +125,11 @@ function TraitModal({ isOpen, editingTrait, defaultCategory, onClose, onSave, sa
 
         {/* Intensity */}
         <div style={{ marginBottom: 16 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Intensity</p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Intensity</p>
           <div style={{ display: 'inline-flex', gap: 4, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
             {([1, 2, 3] as const).map(level => (
               <button key={level} type="button" onClick={() => setForm(f => ({ ...f, intensity: level }))}
-                className="font-mono uppercase tracking-widest"
+                className="font-rounded uppercase tracking-widest"
                 style={{
                   fontSize: 9, padding: '5px 12px', borderRadius: 6, border: 'none', cursor: 'pointer',
                   background: form.intensity === level ? 'var(--bg-primary)' : 'transparent',
@@ -145,7 +145,7 @@ function TraitModal({ isOpen, editingTrait, defaultCategory, onClose, onSave, sa
 
         {/* Emotion tag */}
         <div style={{ marginBottom: 20 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotion <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>optional</span></p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotion <span style={{ opacity: 0.5, textTransform: 'none', letterSpacing: 0 }}>optional</span></p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
             {EMOTION_TAGS.map(tag => (
               <button key={tag} type="button"
@@ -168,12 +168,12 @@ function TraitModal({ isOpen, editingTrait, defaultCategory, onClose, onSave, sa
         {/* Actions */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
           <button type="button" onClick={onClose}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{ fontSize: 10, padding: '7px 16px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-tertiary)', cursor: 'pointer' }}>
             Cancel
           </button>
           <button type="button" onClick={handleSave} disabled={!canSave}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{
               fontSize: 10, padding: '7px 20px', borderRadius: 8, border: 'none', cursor: canSave ? 'pointer' : 'default',
               background: canSave ? cat.color : 'var(--bg-tertiary)',
@@ -313,7 +313,7 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
         {CATEGORIES.map(c => (
           <button key={c.value} type="button"
             onClick={() => setSelectedCat(c.value)}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{
               fontSize: 9, padding: '5px 14px', borderRadius: 8, border: '1px solid', cursor: 'pointer', transition: 'all 150ms',
               borderColor: selectedCat === c.value ? c.color : 'var(--bg-tertiary)',
@@ -331,7 +331,7 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
       </div>
 
       {isLoading ? (
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', paddingTop: 20 }}>Loading…</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', paddingTop: 20 }}>Loading…</p>
       ) : isError ? (
         <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', paddingTop: 20 }}>Could not load traits. Please try again.</p>
       ) : traits.length === 0 ? (
@@ -339,7 +339,7 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
           <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No {cat.label.toLowerCase()}s logged yet</p>
           <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>{cat.description}.</p>
           <button onClick={() => { setEditing(null); setModalOpen(true); }}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: `1px solid ${cat.color}`, background: 'transparent', color: cat.color, cursor: 'pointer' }}>
             Log First {cat.label}
           </button>
@@ -361,7 +361,7 @@ export function UserTraitsTab({ activeCategory, externalAddOpen, onExternalAddCl
 
           <div style={{ marginTop: 28, paddingTop: 20, borderTop: '1px solid var(--bg-tertiary)' }}>
             <button onClick={() => { setEditing(null); setModalOpen(true); }}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, padding: '8px 18px', borderRadius: 8, border: `1px solid ${cat.color}`, background: 'transparent', color: cat.color, cursor: 'pointer' }}>
               + Add {cat.label}
             </button>

@@ -16,7 +16,7 @@ function ParagraphBlock({ text }: { text: string }) {
 
 function HeadingBlock({ text }: { text: string }) {
   return (
-    <p className="font-mono uppercase" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.14em', marginTop: 28, marginBottom: 12 }}>
+    <p className="font-rounded uppercase" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.14em', marginTop: 28, marginBottom: 12 }}>
       {text}
     </p>
   );
@@ -35,7 +35,7 @@ function NoteBlock({ text }: { text: string }) {
 function FormulaBlock({ label, expression, note }: { label: string; expression: string; note?: string }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <p className="font-mono" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.13em', textTransform: 'uppercase', marginBottom: 6 }}>
+      <p className="font-rounded" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.13em', textTransform: 'uppercase', marginBottom: 6 }}>
         {label}
       </p>
       <div
@@ -246,7 +246,7 @@ function ToC({ sections, activeId }: { sections: MethodologySection[]; activeId:
 
   return (
     <nav style={{ position: 'sticky', top: 80 }}>
-      <p className="font-mono uppercase" style={{ fontSize: 9, letterSpacing: '0.16em', color: 'var(--text-tertiary)', marginBottom: 16 }}>
+      <p className="font-rounded uppercase" style={{ fontSize: 9, letterSpacing: '0.16em', color: 'var(--text-tertiary)', marginBottom: 16 }}>
         Contents
       </p>
       {sections.map(s => (
@@ -356,7 +356,7 @@ export default function MethodologyPage() {
           <div style={{ width: 1, height: 16, background: 'var(--bg-tertiary)' }} />
 
           <div>
-            <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            <span className="font-rounded" style={{ fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
               Lumis · Methodology
             </span>
           </div>
@@ -376,7 +376,7 @@ export default function MethodologyPage() {
 
       {/* ── Hero ────────────────────────────────────────────────── */}
       <div style={{ padding: '56px 48px 32px', maxWidth: 1100, margin: '0 auto' }}>
-        <p className="font-mono uppercase" style={{ fontSize: 10, color: 'var(--accent-ai)', letterSpacing: '0.16em', marginBottom: 12 }}>
+        <p className="font-rounded uppercase" style={{ fontSize: 10, color: 'var(--accent-ai)', letterSpacing: '0.16em', marginBottom: 12 }}>
           Intelligence · Transparency
         </p>
         <h1 className="font-serif" style={{ fontSize: 44, fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: 16, maxWidth: 640 }}>
@@ -444,7 +444,7 @@ export default function MethodologyPage() {
             {/* Footer */}
             <div className="flex items-center justify-center gap-3" style={{ paddingTop: 40 }}>
               <div style={{ height: 1, flex: 1, background: 'var(--bg-tertiary)' }} />
-              <p className="font-mono" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+              <p className="font-rounded" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
                 Lumis · Methodology v{data.version} · Built with transparency
               </p>
               <div style={{ height: 1, flex: 1, background: 'var(--bg-tertiary)' }} />

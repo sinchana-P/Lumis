@@ -50,7 +50,7 @@ export function ConfirmDeleteModal({
           padding: '24px 24px 20px',
         }}
       >
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 12 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 12 }}>
           {title}
         </p>
 
@@ -68,7 +68,7 @@ export function ConfirmDeleteModal({
           <button
             type="button"
             onClick={onCancel}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{
               flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8,
               border: '1px solid var(--bg-tertiary)', background: 'transparent',
@@ -81,7 +81,7 @@ export function ConfirmDeleteModal({
             type="button"
             onClick={onConfirm}
             disabled={deleting}
-            className="font-mono uppercase tracking-widest"
+            className="font-rounded uppercase tracking-widest"
             style={{
               flex: 1, padding: '9px 0', fontSize: 10, borderRadius: 8,
               border: 'none', cursor: deleting ? 'default' : 'pointer',

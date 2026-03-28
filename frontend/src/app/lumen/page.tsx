@@ -179,7 +179,7 @@ function MessageBubble({ msg }: { msg: Message }) {
                   {mode?.icon}
                 </span>
                 <span
-                  className="font-mono uppercase tracking-wider"
+                  className="font-rounded uppercase tracking-wider"
                   style={{ fontSize: 'clamp(11px, 0.85vw, 11px)', color: 'var(--text-tertiary)' }}
                 >
                   {mode?.label}
@@ -457,10 +457,10 @@ export default function LumenPage() {
                   padding: '0',
                   cursor: 'pointer',
                   color: mode === m.id ? m.color : 'var(--text-secondary)',
-                  fontFamily: 'var(--font-mono, monospace)',
+                  fontFamily: "'Nunito', sans-serif",
                   fontSize: 'clamp(11px, 0.9vw, 13px)',
-                  fontWeight: mode === m.id ? 700 : 400,
-                  letterSpacing: '0.18em',
+                  fontWeight: mode === m.id ? 700 : 500,
+                  letterSpacing: '0.08em',
                   textTransform: 'uppercase',
                   whiteSpace: 'nowrap',
                   transition: 'color 0.2s, border-color 0.2s, font-weight 0.1s',
@@ -545,7 +545,7 @@ export default function LumenPage() {
                     }}
                   >
                     <span
-                      className="font-mono uppercase tracking-wider block mb-1"
+                      className="font-rounded uppercase tracking-wider block mb-1"
                       style={{ fontSize: 12, color: 'var(--text-secondary)' }}
                     >
                       {d.label}
@@ -567,7 +567,7 @@ export default function LumenPage() {
               return (
                 <span
                   key={analysisDepth}
-                  className="font-mono uppercase tracking-wider hidden sm:block"
+                  className="font-rounded uppercase tracking-wider hidden sm:block"
                   style={{
                     fontSize: 'clamp(11px, 0.9vw, 12px)',
                     color: activeDepth.color,
@@ -583,7 +583,7 @@ export default function LumenPage() {
 
             <div style={{ width: 1, height: 12, background: 'var(--bg-tertiary)', flexShrink: 0 }} />
             <span
-              className="font-mono uppercase tracking-widest hidden sm:block"
+              className="font-rounded uppercase tracking-widest hidden sm:block"
               style={{ fontSize: 'clamp(11px, 0.9vw, 12px)', color: 'var(--text-tertiary)' }}
             >
               {currentMode.model}
@@ -620,7 +620,7 @@ export default function LumenPage() {
             {memberContexts.length > 0 && (
               <div className="mb-4 flex items-center gap-2 flex-wrap">
                 <span
-                  className="font-mono uppercase tracking-widest"
+                  className="font-rounded uppercase tracking-widest"
                   style={{ fontSize: 'clamp(11px, 0.9vw, 13px)', color: 'var(--text-tertiary)' }}
                 >
                   Context:
@@ -746,7 +746,7 @@ export default function LumenPage() {
             </div>
 
             <p
-              className="font-mono uppercase tracking-widest text-center mt-2"
+              className="font-rounded uppercase tracking-widest text-center mt-2"
               style={{ fontSize: 'clamp(11px, 0.85vw, 13px)', color: 'var(--text-tertiary)' }}
             >
               {memberContexts.length > 0

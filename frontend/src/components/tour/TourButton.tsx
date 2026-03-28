@@ -14,7 +14,7 @@ export function TourButton({ variant = 'default', className = '' }: TourButtonPr
     return (
       <button
         onClick={() => start()}
-        className={`font-mono uppercase tracking-widest flex items-center gap-1.5 transition-all hover:opacity-100 ${className}`}
+        className={`font-rounded uppercase tracking-widest flex items-center gap-1.5 transition-all hover:opacity-100 ${className}`}
         style={{
           fontSize: 10,
           color: 'var(--text-secondary)',
@@ -38,7 +38,7 @@ export function TourButton({ variant = 'default', className = '' }: TourButtonPr
   return (
     <button
       onClick={() => start()}
-      className={`flex items-center gap-2 font-mono uppercase tracking-widest transition-all ${className}`}
+      className={`flex items-center gap-2 font-rounded uppercase tracking-widest transition-all ${className}`}
       style={{
         fontSize: 11,
         color: 'var(--text-secondary)',

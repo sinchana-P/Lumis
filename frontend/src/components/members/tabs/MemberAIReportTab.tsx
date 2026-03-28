@@ -147,7 +147,7 @@ function LoadingSkeleton() {
           <div key={delay} className="rounded-full animate-bounce" style={{ width: 5, height: 5, background: 'var(--accent-ai)', animationDelay: `${delay}ms` }} />
         ))}
       </div>
-      <p className="font-mono text-center" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 10 }}>
+      <p className="font-rounded text-center" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.12em', textTransform: 'uppercase', marginTop: 10 }}>
         Lumen is synthesizing…
       </p>
     </div>
@@ -317,7 +317,7 @@ function ReportView({ reportText, member, healthScore }: { reportText: string; m
               </div>
 
               <div>
-                <p className="font-mono uppercase" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.16em', marginBottom: 4 }}>
+                <p className="font-rounded uppercase" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.16em', marginBottom: 4 }}>
                   Lumen · Relationship Intelligence
                 </p>
                 <h2 className="font-serif" style={{ fontSize: 26, fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.15, letterSpacing: '-0.01em' }}>
@@ -334,7 +334,7 @@ function ReportView({ reportText, member, healthScore }: { reportText: string; m
             {healthScore !== undefined && (
               <div className="flex flex-col items-center gap-1 flex-shrink-0" style={{ zIndex: 1 }}>
                 <ScoreArc score={healthScore} />
-                <p className="font-mono" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                <p className="font-rounded" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                   Bond Score
                 </p>
               </div>
@@ -354,7 +354,7 @@ function ReportView({ reportText, member, healthScore }: { reportText: string; m
               borderLeft: '3px solid var(--accent-ai)',
             }}
           >
-            <p className="font-mono uppercase" style={{ fontSize: 9, color: 'var(--accent-ai)', letterSpacing: '0.14em', marginBottom: 14 }}>
+            <p className="font-rounded uppercase" style={{ fontSize: 9, color: 'var(--accent-ai)', letterSpacing: '0.14em', marginBottom: 14 }}>
               Overview
             </p>
             {intro.split('\n\n').map((para, i) => (
@@ -390,7 +390,7 @@ function ReportView({ reportText, member, healthScore }: { reportText: string; m
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.4} d={cfg.iconPath} />
                   </svg>
                 </div>
-                <span className="font-mono uppercase" style={{ fontSize: 10, color: cfg.accent, letterSpacing: '0.13em' }}>
+                <span className="font-rounded uppercase" style={{ fontSize: 10, color: cfg.accent, letterSpacing: '0.13em' }}>
                   {section.title}
                 </span>
               </div>
@@ -408,7 +408,7 @@ function ReportView({ reportText, member, healthScore }: { reportText: string; m
         {/* Footer */}
         <div className="flex items-center justify-center gap-3" style={{ padding: '20px 0 4px' }}>
           <div style={{ height: 1, flex: 1, background: 'var(--bg-tertiary)' }} />
-          <p className="font-mono uppercase" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.14em' }}>
+          <p className="font-rounded uppercase" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.14em' }}>
             Lumen · Lumis · {generatedAt}
           </p>
           <div style={{ height: 1, flex: 1, background: 'var(--bg-tertiary)' }} />

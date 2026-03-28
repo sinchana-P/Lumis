@@ -230,7 +230,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
                   className="px-4 pt-4 pb-1"
                   style={{ position: 'sticky', top: 0, background: 'var(--bg-secondary)', zIndex: 1 }}
                 >
-                  <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                  <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
                     {group}
                   </span>
                 </div>
@@ -263,7 +263,7 @@ export function LumenHistory({ open, activeConversationId, onSelectConversation,
                       {/* Mode + depth + time row */}
                       <div className="flex items-center gap-2 mb-1.5">
                         <span className="flex-shrink-0 rounded-full" style={{ width: 6, height: 6, background: meta.color }} />
-                        <span className="font-mono uppercase tracking-widest flex-shrink-0" style={{ fontSize: 10, color: meta.color }}>
+                        <span className="font-rounded uppercase tracking-widest flex-shrink-0" style={{ fontSize: 10, color: meta.color }}>
                           {meta.label}
                         </span>
                         <span style={{ fontSize: 10, flexShrink: 0 }}>{DEPTH_ICONS[conv.analysisDepth]}</span>

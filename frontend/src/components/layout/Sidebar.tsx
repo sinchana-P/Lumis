@@ -112,7 +112,7 @@ export function Sidebar() {
               {isSigningOut ? 'Signing out...' : 'Sign Out'}
             </button>
             
-            <p className="font-mono text-xs uppercase tracking-widest text-tertiary opacity-50">
+            <p className="font-rounded text-xs uppercase tracking-widest text-tertiary opacity-50">
               Designed for clarity & connection
             </p>
           </div>

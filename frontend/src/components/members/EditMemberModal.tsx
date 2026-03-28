@@ -239,7 +239,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
         >
           <div>
             <div
-              className="font-mono uppercase tracking-widest mb-0.5"
+              className="font-rounded uppercase tracking-widest mb-0.5"
               style={{ fontSize: 10, color: 'var(--text-tertiary)' }}
             >
               Edit Luminary
@@ -305,7 +305,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
             {/* Name field */}
             <div className="flex-1 space-y-1">
               <label
-                className="block font-mono uppercase tracking-widest"
+                className="block font-rounded uppercase tracking-widest"
                 style={{ fontSize: 10, color: 'var(--text-secondary)' }}
               >
                 FULL NAME
@@ -332,7 +332,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="font-mono uppercase tracking-widest transition-colors"
+                className="font-rounded uppercase tracking-widest transition-colors"
                 style={{
                   fontSize: 10,
                   color: 'var(--text-tertiary)',
@@ -352,7 +352,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
           {/* Nickname */}
           <div className="space-y-1">
             <label
-              className="block font-mono uppercase tracking-widest"
+              className="block font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, color: 'var(--text-secondary)' }}
             >
               NICKNAME <span style={{ color: 'var(--text-tertiary)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
@@ -376,7 +376,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
           {/* Connection */}
           <div className="space-y-2">
             <label
-              className="block font-mono uppercase tracking-widest"
+              className="block font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, color: 'var(--text-secondary)' }}
             >
               CONNECTION
@@ -389,7 +389,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
                     key={type.value}
                     type="button"
                     onClick={() => setField('relationType', type.value)}
-                    className="font-mono uppercase tracking-widest transition-all"
+                    className="font-rounded uppercase tracking-widest transition-all"
                     style={{
                       fontSize: 10,
                       padding: '5px 12px',
@@ -407,7 +407,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
               <button
                 type="button"
                 onClick={() => setField('relationType', 'other')}
-                className="font-mono uppercase tracking-widest transition-all"
+                className="font-rounded uppercase tracking-widest transition-all"
                 style={{
                   fontSize: 10,
                   padding: '5px 12px',
@@ -456,7 +456,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
           {/* Place of Birth */}
           <div className="space-y-1">
             <label
-              className="block font-mono uppercase tracking-widest"
+              className="block font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, color: 'var(--text-secondary)' }}
             >
               PLACE OF ARRIVAL
@@ -551,7 +551,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
           {/* Notes */}
           <div className="space-y-1">
             <label
-              className="block font-mono uppercase tracking-widest"
+              className="block font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, color: 'var(--text-secondary)' }}
             >
               NOTES <span style={{ color: 'var(--text-tertiary)', textTransform: 'none', letterSpacing: 0 }}>(optional)</span>
@@ -601,7 +601,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
           <button
             type="button"
             onClick={onClose}
-            className="font-mono uppercase tracking-widest transition-colors"
+            className="font-rounded uppercase tracking-widest transition-colors"
             style={{ fontSize: 11, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-tertiary)')}
@@ -614,7 +614,7 @@ export function EditMemberModal({ member, open, onClose, onSuccess }: Props) {
             form="edit-member-form"
             disabled={isSaving || success}
             onClick={handleSubmit}
-            className="flex items-center gap-2 font-mono uppercase tracking-widest transition-all"
+            className="flex items-center gap-2 font-rounded uppercase tracking-widest transition-all"
             style={{
               fontSize: 11,
               padding: '8px 20px',

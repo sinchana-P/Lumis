@@ -273,7 +273,7 @@ export default function MembersPage() {
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
-                <span className="text-[10px] uppercase tracking-widest font-mono">tips</span>
+                <span className="text-[10px] uppercase tracking-widest font-rounded">tips</span>
               </button>
               <div className="absolute left-0 top-full mt-1.5 z-50 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-opacity duration-150">
                 <div className="bg-surface-elevated border border-primary rounded-lg shadow-lg px-3 py-2.5 whitespace-nowrap">
@@ -558,7 +558,7 @@ export default function MembersPage() {
                       {member.fullName}
                     </span>
                     <div className="flex items-center gap-2 mt-0.5">
-                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+                      <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                         {getRelationshipType(member)}
                       </span>
                       <span style={{ color: 'var(--text-tertiary)', fontSize: 11 }}>•</span>
@@ -571,13 +571,13 @@ export default function MembersPage() {
                   {/* Health */}
                   <div className="text-right flex-shrink-0" style={{ width: 48 }}>
                     <span className="font-serif font-medium" style={{ fontSize: 16, color: 'var(--text-primary)' }}>{health}</span>
-                    <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>Health</p>
+                    <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>Health</p>
                   </div>
 
                   {/* Energy */}
                   <div className="flex flex-col items-center flex-shrink-0" style={{ width: 64 }}>
                     <div className="w-2 h-2 rounded-full" style={{ background: energyColor }} />
-                    <span className="font-mono uppercase tracking-widest mt-1" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
+                    <span className="font-rounded uppercase tracking-widest mt-1" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                       {energyLabel}
                     </span>
                   </div>
@@ -618,7 +618,7 @@ export default function MembersPage() {
                   {sortedMembers.length === 0 ? '0' : `${(page - 1) * pageSize + 1}–${Math.min(page * pageSize, sortedMembers.length)}`} of {sortedMembers.length}
                 </span>
                 <div className="flex items-center gap-1.5">
-                  <span className="font-mono" style={{ fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Per page</span>
+                  <span className="font-rounded" style={{ fontSize: 11, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Per page</span>
                   <select
                     value={pageSize}
                     onChange={e => { setPageSize(Number(e.target.value)); setPage(1); }}

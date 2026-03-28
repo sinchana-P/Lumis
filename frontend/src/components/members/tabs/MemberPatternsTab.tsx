@@ -136,11 +136,11 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Category */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Category</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Category</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {CATEGORIES.map(c => (
             <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 8, padding: '3px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
                 borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
@@ -154,11 +154,11 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Frequency */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Frequency</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Frequency</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
           {FREQUENCIES.map(f => (
             <button key={f.value} type="button" onClick={() => setForm(fm => ({ ...fm, frequency: f.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
                 background: form.frequency === f.value ? 'var(--bg-primary)' : 'transparent',
@@ -172,11 +172,11 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Impact */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Impact</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Impact</p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 2, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
           {IMPACTS.map(i => (
             <button key={i.value} type="button" onClick={() => setForm(fm => ({ ...fm, impact: i.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 9, padding: '5px 8px', borderRadius: 6, border: 'none', cursor: 'pointer', textAlign: 'left',
                 background: form.impact === i.value ? 'var(--bg-primary)' : 'transparent',
@@ -190,7 +190,7 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Triggers */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Triggers <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>comma sep</span>
         </p>
         <input type="text" value={form.triggers} onChange={e => setForm(f => ({ ...f, triggers: e.target.value }))}
@@ -201,7 +201,7 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Tags */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>e.g. theme:trust</span>
         </p>
         <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
@@ -216,7 +216,7 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Pattern Name */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Pattern Name</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Pattern Name</p>
         <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
           placeholder="What recurring dynamic have you noticed?" className="w-full font-serif"
           style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
@@ -225,7 +225,7 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Description */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Description</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Description</p>
         <SpeechTextarea
           value={form.description}
           onChange={v => setForm(f => ({ ...f, description: v }))}
@@ -237,7 +237,7 @@ function PatternModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Examples */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Examples <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>one per line</span>
         </p>
         <SpeechTextarea
@@ -319,7 +319,7 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
 
   if (isLoading) return (
     <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-      <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading patterns…</p>
+      <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading patterns…</p>
     </div>
   );
 
@@ -350,7 +350,7 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
           <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
             Start noticing recurring dynamics in your relationship with {member.fullName}.
           </p>
-          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+          <button onClick={openAdd} className="font-rounded uppercase tracking-widest"
             style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
             Identify First Pattern
           </button>
@@ -422,14 +422,14 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
 
                       {pattern.triggers.length > 0 && (
                         <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 6 }}>
-                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--accent-secondary)', marginBottom: 4 }}>Triggers</p>
+                          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--accent-secondary)', marginBottom: 4 }}>Triggers</p>
                           <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>{pattern.triggers.join(', ')}</p>
                         </div>
                       )}
 
                       {pattern.examples.length > 0 && (
                         <div style={{ marginBottom: 10 }}>
-                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--accent-ai)', marginBottom: 6 }}>Examples</p>
+                          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--accent-ai)', marginBottom: 6 }}>Examples</p>
                           <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                             {pattern.examples
                               .flatMap(ex => ex.split('\n').map(s => s.trim().replace(/,+$/, '')).filter(Boolean))

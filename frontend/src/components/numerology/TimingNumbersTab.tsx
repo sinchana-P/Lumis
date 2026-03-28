@@ -57,7 +57,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
     <div className="space-y-8">
       {/* Section Header */}
       <div className="max-w-3xl">
-        <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-4">
+        <div className="font-rounded text-xs uppercase tracking-widest text-tertiary mb-4">
           Timing Numbers
         </div>
         <h2 className="text-2xl font-serif italic text-secondary leading-relaxed">
@@ -71,7 +71,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
           <svg className="w-5 h-5 text-accent-gold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
           </svg>
-          <div className="font-mono text-xs uppercase tracking-widest text-accent-gold font-medium">
+          <div className="font-rounded text-xs uppercase tracking-widest text-accent-gold font-medium">
             Current Year Energy: {currentYear}
           </div>
         </div>
@@ -94,7 +94,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
                   {timingNumber.number}
                 </div>
                 {timingNumber.year && (
-                  <div className="font-mono text-xs uppercase tracking-widest text-tertiary">
+                  <div className="font-rounded text-xs uppercase tracking-widest text-tertiary">
                     {timingNumber.year}
                   </div>
                 )}
@@ -107,7 +107,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
                     <h3 className="text-xl font-serif font-medium text-primary mb-1">
                       {timingNumber.title}
                     </h3>
-                    <div className="font-mono text-xs uppercase tracking-widest text-accent-secondary">
+                    <div className="font-rounded text-xs uppercase tracking-widest text-accent-secondary">
                       {timingNumber.period}
                     </div>
                   </div>
@@ -115,13 +115,13 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
                   {timingNumber.year === currentYear && (
                     <div className="flex items-center gap-2 px-3 py-1 bg-accent-gold/20 text-accent-gold border border-accent-gold/30 rounded-full">
                       <div className="w-2 h-2 bg-accent-gold rounded-full animate-pulse"></div>
-                      <span className="font-mono text-xs uppercase tracking-wider font-medium">Active</span>
+                      <span className="font-rounded text-xs uppercase tracking-wider font-medium">Active</span>
                     </div>
                   )}
                 </div>
 
                 <div className="mb-4">
-                  <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
+                  <div className="font-rounded text-xs uppercase tracking-widest text-tertiary mb-2">
                     Primary Influence
                   </div>
                   <p className="font-serif text-lg leading-relaxed text-secondary">
@@ -130,7 +130,7 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
                 </div>
 
                 <div>
-                  <div className="font-mono text-xs uppercase tracking-widest text-tertiary mb-2">
+                  <div className="font-rounded text-xs uppercase tracking-widest text-tertiary mb-2">
                     Guidance
                   </div>
                   <p className="font-serif text-secondary leading-relaxed">
@@ -147,15 +147,15 @@ export function TimingNumbersTab({ data }: TimingNumbersTabProps) {
       <div className="flex items-center justify-center gap-8 pt-8">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-accent-gold rounded-full"></div>
-          <span className="font-mono text-xs uppercase tracking-wider text-tertiary">Current Year</span>
+          <span className="font-rounded text-xs uppercase tracking-wider text-tertiary">Current Year</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-accent-primary rounded-full"></div>
-          <span className="font-mono text-xs uppercase tracking-wider text-tertiary">Next Year</span>
+          <span className="font-rounded text-xs uppercase tracking-wider text-tertiary">Next Year</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-accent-secondary rounded-full"></div>
-          <span className="font-mono text-xs uppercase tracking-wider text-tertiary">Future Years</span>
+          <span className="font-rounded text-xs uppercase tracking-wider text-tertiary">Future Years</span>
         </div>
       </div>
 

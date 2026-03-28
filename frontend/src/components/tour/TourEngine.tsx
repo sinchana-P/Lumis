@@ -156,7 +156,7 @@ export function TourEngine() {
     return (
       <div style={{ position: 'fixed', inset: 0, zIndex: 9990, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ background: 'var(--bg-secondary)', borderRadius: 12, padding: '16px 20px', border: '1px solid var(--bg-tertiary)' }}>
-          <p className="font-mono text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
+          <p className="font-rounded text-xs uppercase tracking-widest" style={{ color: 'var(--text-tertiary)' }}>
             Opening system node…
           </p>
         </div>

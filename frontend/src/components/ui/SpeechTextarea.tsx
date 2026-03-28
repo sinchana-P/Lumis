@@ -89,7 +89,7 @@ export function SpeechTextarea({
           borderTop: '1px solid var(--bg-tertiary)',
         }}
       >
-        <span className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>
+        <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>
           {listening ? `${speech.duration}s · listening` : 'tap mic to speak'}
         </span>
 

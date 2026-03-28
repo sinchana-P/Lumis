@@ -35,7 +35,7 @@ export function MinimalButtonGroupItem({
       onClick={onClick}
       disabled={disabled}
       className={`
-        inline-flex items-center gap-2 px-3 py-2 rounded-lg font-mono text-xs uppercase tracking-widest transition-all duration-200
+        inline-flex items-center gap-2 px-3 py-2 rounded-lg font-rounded text-xs uppercase tracking-widest transition-all duration-200
         ${active 
           ? 'bg-accent-primary text-white shadow-sm' 
           : 'text-tertiary hover:text-primary hover:bg-surface-hover'

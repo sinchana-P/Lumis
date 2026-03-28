@@ -59,7 +59,7 @@ function PencilIcon({ size = 12 }: { size?: number }) {
 function FieldRow({ label, value }: { label: string; value?: string | null }) {
   return (
     <div>
-      <p className="font-mono uppercase tracking-widest"
+      <p className="font-rounded uppercase tracking-widest"
         style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>
         {label}
       </p>
@@ -76,7 +76,7 @@ function EditRow({ label, value, onChange, placeholder }: {
 }) {
   return (
     <div>
-      <p className="font-mono uppercase tracking-widest"
+      <p className="font-rounded uppercase tracking-widest"
         style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>
         {label}
       </p>
@@ -148,17 +148,17 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
       <div className="grid grid-cols-2 gap-x-12 gap-y-3">
         {displayName && (
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Name</p>
+            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Name</p>
             <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{displayName}</p>
           </div>
         )}
         <div>
-          <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Email</p>
+          <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Email</p>
           <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{user.email}</p>
         </div>
         {user.date_of_birth && (
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Date of Birth</p>
+            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Date of Birth</p>
             <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>
               {new Date(user.date_of_birth + 'T00:00:00').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
               {user.time_of_birth && (
@@ -169,20 +169,20 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
         )}
         {user.place_of_birth && (
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Origin</p>
+            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Origin</p>
             <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{user.place_of_birth}</p>
           </div>
         )}
         {memberSince && (
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Member Since</p>
+            <p className="font-rounded text-xs uppercase tracking-widest mb-1" style={{ color: 'var(--text-tertiary)' }}>Member Since</p>
             <p className="font-serif text-base" style={{ color: 'var(--text-primary)' }}>{memberSince}</p>
           </div>
         )}
       </div>
 
       <button onClick={onEditClick}
-        className="flex items-center gap-2 font-mono uppercase tracking-widest self-start"
+        className="flex items-center gap-2 font-rounded uppercase tracking-widest self-start"
         style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 14px', cursor: 'pointer' }}
         onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
         onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
@@ -193,13 +193,13 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
 
       {/* ── Activity ───────────────────────────────────────── */}
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Activity</p>
+        <p className="font-rounded text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Activity</p>
         <div className="flex items-end gap-8">
           {activityStats.map(({ value, label }, i, arr) => (
             <div key={label} className="flex items-end gap-8">
               <div>
                 <span className="font-serif" style={{ fontSize: 32, lineHeight: 1, color: 'var(--text-primary)' }}>{value}</span>
-                <p className="font-mono text-xs uppercase tracking-widest mt-1" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
+                <p className="font-rounded text-xs uppercase tracking-widest mt-1" style={{ color: 'var(--text-tertiary)' }}>{label}</p>
               </div>
               {i < arr.length - 1 && (
                 <span className="font-serif text-lg pb-1.5" style={{ color: 'var(--bg-tertiary)' }}>&middot;</span>
@@ -214,9 +214,9 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
         <>
           <DottedDivider />
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-tertiary)' }}>Last Journal Signal</p>
+            <p className="font-rounded text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-tertiary)' }}>Last Journal Signal</p>
             <div className="flex items-start gap-3">
-              <span className="font-mono text-xs uppercase tracking-widest flex-shrink-0 mt-0.5 px-2 py-0.5 rounded"
+              <span className="font-rounded text-xs uppercase tracking-widest flex-shrink-0 mt-0.5 px-2 py-0.5 rounded"
                 style={{ background: 'var(--surface)', color: 'var(--text-tertiary)', border: '1px solid var(--bg-tertiary)' }}>
                 {lastJournalDate}
               </span>
@@ -232,7 +232,7 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
 
       {/* ── Self-Awareness ─────────────────────────────────── */}
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest mb-5" style={{ color: 'var(--text-tertiary)' }}>Self-Awareness Map</p>
+        <p className="font-rounded text-xs uppercase tracking-widest mb-5" style={{ color: 'var(--text-tertiary)' }}>Self-Awareness Map</p>
         {totalTraits === 0 ? (
           <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
             Start logging your traits to build self-awareness over time.
@@ -252,7 +252,7 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
                     <div style={{ width: 3, minHeight: 42, borderRadius: 2, backgroundColor: color, opacity: 0.6, alignSelf: 'stretch' }} />
                     <div className="flex flex-col justify-center">
                       <span className="font-serif" style={{ fontSize: 30, lineHeight: 1, color: 'var(--text-primary)' }}>{items.length}</span>
-                      <p className="font-mono uppercase" style={{ fontSize: 9, color, marginTop: 5, letterSpacing: '0.1em' }}>{label}</p>
+                      <p className="font-rounded uppercase" style={{ fontSize: 9, color, marginTop: 5, letterSpacing: '0.1em' }}>{label}</p>
                     </div>
                   </div>
                   {/* Pills */}
@@ -281,17 +281,17 @@ function OverviewTab({ user, onEditClick }: { user: any; onEditClick: () => void
         <>
           <DottedDivider />
           <div>
-            <p className="font-mono text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Numerology Snapshot</p>
+            <p className="font-rounded text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--text-tertiary)' }}>Numerology Snapshot</p>
             <div className="flex gap-4">
               {lifePath && (
                 <div style={{ padding: '12px 18px', borderRadius: 12, border: '1px solid var(--accent-primary)33', background: 'var(--accent-primary)0d', minWidth: 100 }}>
-                  <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-primary)', marginBottom: 4 }}>Life Path</p>
+                  <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-primary)', marginBottom: 4 }}>Life Path</p>
                   <p className="font-serif" style={{ fontSize: 28, color: 'var(--text-primary)', lineHeight: 1 }}>{lifePath}</p>
                 </div>
               )}
               {personalYear && (
                 <div style={{ padding: '12px 18px', borderRadius: 12, border: '1px solid var(--accent-ai)33', background: 'var(--accent-ai)0d', minWidth: 100 }}>
-                  <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 4 }}>Personal Year</p>
+                  <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-ai)', marginBottom: 4 }}>Personal Year</p>
                   <p className="font-serif" style={{ fontSize: 28, color: 'var(--text-primary)', lineHeight: 1 }}>{personalYear}</p>
                 </div>
               )}
@@ -446,16 +446,16 @@ function SettingsTab({ user }: { user: any }) {
           {saveMsg && <span className="font-serif italic" style={{ fontSize: 12, color: 'var(--accent-primary)' }}>{saveMsg}</span>}
           {editing ? (
             <>
-              <button onClick={cancelEdit} className="font-mono uppercase tracking-widest"
+              <button onClick={cancelEdit} className="font-rounded uppercase tracking-widest"
                 style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>Cancel</button>
-              <button onClick={handleSave} disabled={isSaving} className="font-mono uppercase tracking-widest"
+              <button onClick={handleSave} disabled={isSaving} className="font-rounded uppercase tracking-widest"
                 style={{ fontSize: 10, padding: '6px 16px', borderRadius: 999, background: 'var(--accent-primary)', color: '#fff', border: 'none', cursor: isSaving ? 'default' : 'pointer', opacity: isSaving ? 0.7 : 1 }}>
                 {isSaving ? 'Saving...' : 'Save'}
               </button>
             </>
           ) : (
             <button onClick={() => setEditing(true)}
-              className="flex items-center gap-1.5 font-mono uppercase tracking-widest"
+              className="flex items-center gap-1.5 font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
@@ -467,7 +467,7 @@ function SettingsTab({ user }: { user: any }) {
 
       {/* Identity fields */}
       <div style={{ marginBottom: 28 }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 16 }}>Identity</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 16 }}>Identity</p>
         {editing ? (
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0 32px' }}>
             {[
@@ -480,15 +480,15 @@ function SettingsTab({ user }: { user: any }) {
               </div>
             ))}
             <div style={{ paddingBottom: 16, borderBottom: '1px solid var(--bg-tertiary)', marginBottom: 16 }}>
-              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Date</p>
+              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Date</p>
               <DatePicker label="" value={form.date_of_birth} onChange={v => setForm(p => ({ ...p, date_of_birth: v }))} />
             </div>
             <div style={{ paddingBottom: 16, borderBottom: '1px solid var(--bg-tertiary)', marginBottom: 16 }}>
-              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Time</p>
+              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Birth Time</p>
               <TimePicker label="" value={form.time_of_birth} onChange={v => setForm(p => ({ ...p, time_of_birth: v }))} />
             </div>
             <div style={{ gridColumn: '1 / -1' }}>
-              <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Place of Birth</p>
+              <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>Place of Birth</p>
               <div className="relative" ref={placeRef}>
                 <input type="text" value={form.place_of_birth}
                   onChange={e => handlePlaceInput(e.target.value)}
@@ -545,7 +545,7 @@ function SettingsTab({ user }: { user: any }) {
 
       {/* Theme */}
       <div style={{ marginBottom: 28 }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 16 }}>Theme</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 16 }}>Theme</p>
         <ThemeSelector />
       </div>
 
@@ -554,10 +554,10 @@ function SettingsTab({ user }: { user: any }) {
       {/* Security */}
       <div style={{ marginBottom: 28 }}>
         <div className="flex items-center justify-between" style={{ marginBottom: showPwForm ? 16 : 8 }}>
-          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Security</p>
+          <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Security</p>
           {!showPwForm && (
             <button onClick={() => setShowPwForm(true)}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}
               onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent-primary)')}
               onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
@@ -574,7 +574,7 @@ function SettingsTab({ user }: { user: any }) {
               { key: 'confirm', label: 'Confirm',          placeholder: 'say it again' },
             ].map(({ key, label, placeholder }) => (
               <div key={key} style={{ paddingBottom: 12, borderBottom: '1px solid var(--bg-tertiary)', marginBottom: 12 }}>
-                <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>{label}</p>
+                <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)', marginBottom: 4, letterSpacing: '0.1em' }}>{label}</p>
                 <input type="password" value={pwForm[key as keyof typeof pwForm]}
                   onChange={e => { setPwForm(p => ({ ...p, [key]: e.target.value })); setPwError(''); }}
                   placeholder={placeholder}
@@ -585,11 +585,11 @@ function SettingsTab({ user }: { user: any }) {
             <div className="flex items-center gap-4 pt-1">
               <button type="button"
                 onClick={() => { setShowPwForm(false); setPwForm({ current: '', next: '', confirm: '' }); setPwError(''); }}
-                className="font-mono uppercase tracking-widest"
+                className="font-rounded uppercase tracking-widest"
                 style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer' }}>
                 Cancel
               </button>
-              <button type="submit" disabled={pwSaving} className="font-mono uppercase tracking-widest"
+              <button type="submit" disabled={pwSaving} className="font-rounded uppercase tracking-widest"
                 style={{ fontSize: 10, padding: '6px 16px', borderRadius: 999, background: 'var(--accent-primary)', color: '#fff', border: 'none', cursor: pwSaving ? 'default' : 'pointer', opacity: pwSaving ? 0.7 : 1 }}>
                 {pwSaving ? 'Updating...' : 'Update'}
               </button>
@@ -606,7 +606,7 @@ function SettingsTab({ user }: { user: any }) {
       <div className="flex items-center justify-between">
         <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Your theme travels with you.</p>
         <button onClick={handleSignOut} disabled={signingOut}
-          className="font-mono uppercase tracking-widest"
+          className="font-rounded uppercase tracking-widest"
           style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: signingOut ? 'default' : 'pointer', opacity: signingOut ? 0.5 : 1 }}
           onMouseEnter={e => { if (!signingOut) (e.currentTarget.style.color = '#ef4444'); }}
           onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
@@ -797,7 +797,7 @@ export default function ProfilePage() {
     if (addAction) {
       return (
         <button onClick={addAction}
-          className="font-mono uppercase tracking-widest"
+          className="font-rounded uppercase tracking-widest"
           style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, border: '1px solid var(--accent-primary)', background: 'transparent', color: 'var(--accent-primary)', cursor: 'pointer' }}>
           + {addLabel}
         </button>
@@ -806,7 +806,7 @@ export default function ProfilePage() {
     if (activeTab === 'numerology' && canGenerateNumerology) {
       return (
         <button onClick={handleGenerateNumerology} disabled={isGeneratingNumerology}
-          className="font-mono uppercase tracking-widest"
+          className="font-rounded uppercase tracking-widest"
           style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none', cursor: isGeneratingNumerology ? 'default' : 'pointer', opacity: isGeneratingNumerology ? 0.7 : 1 }}>
           {isGeneratingNumerology ? 'Generating…' : hasNumerologyData ? 'Regenerate Numerology' : 'Generate Numerology'}
         </button>
@@ -815,7 +815,7 @@ export default function ProfilePage() {
     if (activeTab === 'astrology' && canGenerateAstrology) {
       return (
         <button onClick={handleGenerateAstrology} disabled={isGeneratingAstrology}
-          className="font-mono uppercase tracking-widest"
+          className="font-rounded uppercase tracking-widest"
           style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none', cursor: isGeneratingAstrology ? 'default' : 'pointer', opacity: isGeneratingAstrology ? 0.7 : 1 }}>
           {isGeneratingAstrology ? 'Generating…' : hasAstrologyData ? 'Regenerate Astrology' : 'Generate Astrology'}
         </button>
@@ -827,7 +827,7 @@ export default function ProfilePage() {
         <button
           onClick={() => { if (selfReportTriggered) refetchSelfReport(); else setSelfReportTriggered(true); }}
           disabled={isGeneratingSelfReport}
-          className="font-mono uppercase tracking-widest"
+          className="font-rounded uppercase tracking-widest"
           style={{ fontSize: 10, padding: '7px 18px', borderRadius: 8, background: 'var(--accent-ai)', color: '#fff', border: 'none', cursor: isGeneratingSelfReport ? 'default' : 'pointer', opacity: isGeneratingSelfReport ? 0.7 : 1 }}>
           {isGeneratingSelfReport ? 'Generating…' : hasReport ? 'Regenerate Report' : 'Generate Report'}
         </button>

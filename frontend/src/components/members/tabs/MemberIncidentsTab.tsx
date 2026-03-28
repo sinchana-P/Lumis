@@ -124,7 +124,7 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Date */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>When</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>When</p>
         <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
           className="w-full font-mono"
           style={{ fontSize: 11, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 8, padding: '7px 10px', outline: 'none' }}
@@ -133,11 +133,11 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Severity */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Weight</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>Weight</p>
         <div style={{ display: 'flex', gap: 3, padding: 3, background: 'var(--bg-secondary)', borderRadius: 8 }}>
           {SEVERITIES.map(s => (
             <button key={s.value} type="button" onClick={() => setForm(f => ({ ...f, severity: s.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 flex: 1, fontSize: 9, padding: '5px 0', borderRadius: 6, border: 'none', cursor: 'pointer',
                 background: form.severity === s.value ? 'var(--bg-primary)' : 'transparent',
@@ -151,11 +151,11 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Category */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Nature</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Nature</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {CATEGORIES.map(c => (
             <button key={c.value} type="button" onClick={() => setForm(f => ({ ...f, category: c.value }))}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 8, padding: '3px 10px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
                 borderColor: form.category === c.value ? c.color : 'var(--bg-tertiary)',
@@ -169,11 +169,11 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Emotions */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotions</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 6 }}>Emotions</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
           {EMOTION_TAGS.map(tag => (
             <button key={tag} type="button" onClick={() => toggleEmotion(tag)}
-              className="font-mono uppercase tracking-widest"
+              className="font-rounded uppercase tracking-widest"
               style={{
                 fontSize: 8, padding: '3px 9px', borderRadius: 999, border: '1px solid', cursor: 'pointer',
                 borderColor: form.emotions.includes(tag) ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
@@ -187,7 +187,7 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Tags */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Tags <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>e.g. theme:trust</span>
         </p>
         <input type="text" value={form.tags} onChange={e => setForm(f => ({ ...f, tags: e.target.value }))}
@@ -202,7 +202,7 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
     <>
       {/* Title */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What Happened</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>What Happened</p>
         <input type="text" value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))}
           placeholder="A brief, honest title…" className="w-full font-serif"
           style={{ fontSize: 14, color: 'var(--text-primary)', background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderRadius: 10, padding: '9px 12px', outline: 'none' }}
@@ -211,7 +211,7 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Description */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>The Full Story</p>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>The Full Story</p>
         <SpeechTextarea
           value={form.description}
           onChange={v => setForm(f => ({ ...f, description: v }))}
@@ -223,7 +223,7 @@ function IncidentModal({ isOpen, editing, onClose, onSave, saving }: {
 
       {/* Resolution */}
       <div>
-        <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
+        <p className="font-rounded uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--text-tertiary)', marginBottom: 5 }}>
           Resolution <span style={{ opacity: 0.45, textTransform: 'none', letterSpacing: 0 }}>— optional</span>
         </p>
         <SpeechTextarea
@@ -324,7 +324,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
         {isError && !isLoading && (
           <div style={{ textAlign: 'center' }}>
             <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 20 }}>Could not load incidents. Please try again.</p>
-            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+            <button onClick={openAdd} className="font-rounded uppercase tracking-widest"
               style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
               Log Anyway
             </button>

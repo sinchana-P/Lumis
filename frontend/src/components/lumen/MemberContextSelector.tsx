@@ -100,13 +100,13 @@ export function MemberContextSelector({
         {/* Data layers legend */}
         <div className="flex-shrink-0 px-5 py-2.5" style={{ borderBottom: '1px solid var(--bg-tertiary)' }}>
           <div className="flex flex-wrap items-center gap-1">
-            <span className="font-mono uppercase tracking-widest mr-1" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>
+            <span className="font-rounded uppercase tracking-widest mr-1" style={{ fontSize: 9, color: 'var(--text-tertiary)' }}>
               Data layers:
             </span>
             {['Numerology', 'Astrology', 'Traits', 'Incidents', 'Interactions'].map((layer, i) => (
               <span key={layer} className="flex items-center gap-1">
                 {i > 0 && <span style={{ fontSize: 9, color: 'var(--text-disabled)', fontWeight: 700 }}>·</span>}
-                <span className="font-mono uppercase tracking-widest" style={{ fontSize: 7, color: 'var(--text-tertiary)' }}>{layer}</span>
+                <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 7, color: 'var(--text-tertiary)' }}>{layer}</span>
               </span>
             ))}
           </div>
@@ -147,7 +147,7 @@ export function MemberContextSelector({
                       <span className="font-serif" style={{ fontSize: 16, color: 'var(--text-primary)', lineHeight: 1.2 }}>
                         {member.fullName}
                       </span>
-                      <span className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
+                      <span className="font-rounded uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>
                         {getDisplayRelationType(member)}
                       </span>
                     </div>
@@ -161,7 +161,7 @@ export function MemberContextSelector({
                               <span style={{ fontSize: 9, color: 'var(--text-disabled)', fontWeight: 700 }}>·</span>
                             )}
                             <span
-                              className="font-mono uppercase tracking-widest"
+                              className="font-rounded uppercase tracking-widest"
                               style={{ fontSize: 7, color: 'var(--text-tertiary)' }}
                             >
                               {layer}
@@ -175,13 +175,13 @@ export function MemberContextSelector({
                     <div className="flex gap-2 mt-2.5">
                       <button
                         onClick={() => { onAddMember(member.id); setShowSelector(false); }}
-                        className="font-mono uppercase tracking-widest rounded"
+                        className="font-rounded uppercase tracking-widest rounded"
                         style={{ fontSize: 11, padding: '4px 12px', background: 'var(--accent-primary)', color: 'var(--text-inverse)', border: 'none', cursor: 'pointer' }}
                       >
                         + Add
                       </button>
                       <button
-                        className="font-mono uppercase tracking-widest rounded"
+                        className="font-rounded uppercase tracking-widest rounded"
                         style={{ fontSize: 11, padding: '4px 12px', background: 'transparent', color: 'var(--text-tertiary)', border: '1px solid var(--bg-tertiary)', cursor: 'pointer' }}
                       >
                         View

@@ -98,7 +98,7 @@ export function TimelineLog({
               <div className="bg-surface-elevated rounded-lg p-4 shadow-sm border border-primary hover:shadow-md transition-shadow duration-200">
                 {/* Date */}
                 <div className="flex items-center justify-between mb-2">
-                  <time className="font-mono text-xs text-tertiary uppercase tracking-wider">
+                  <time className="font-rounded text-xs text-tertiary uppercase tracking-wider">
                     {formatDate(entry.date)}
                   </time>
                   

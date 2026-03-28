@@ -19,7 +19,7 @@ export function MinimalButton({
   size = 'md',
   className = '' 
 }: MinimalButtonProps) {
-  const baseStyles = 'inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest transition-all duration-200 rounded-lg border';
+  const baseStyles = 'inline-flex items-center gap-2 font-rounded text-xs uppercase tracking-widest transition-all duration-200 rounded-lg border';
   
   const variants = {
     default: 'bg-surface-elevated text-primary border-primary hover:bg-surface-hover hover:shadow-sm',
