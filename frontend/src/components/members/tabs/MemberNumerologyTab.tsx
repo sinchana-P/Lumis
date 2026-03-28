@@ -830,7 +830,7 @@ export function MemberNumerologyTab({ member, isUser = false, isExternalLoading 
 
   useEffect(() => {
     if (!profile) return;
-    const display = transformToDisplayData(profile, member, isUser ? undefined : myProfile);
+    const display = transformToDisplayData(profile, member, isUser ? undefined : myProfile ?? undefined);
     setCoreNumbers(display.coreNumbers.map(n => ({ ...n, expanded: false })));
     setTimingNumbers(display.timingNumbers.map(n => ({ ...n, expanded: false })));
   }, [profile?.id]); // eslint-disable-line react-hooks/exhaustive-deps
