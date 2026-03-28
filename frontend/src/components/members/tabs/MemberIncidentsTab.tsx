@@ -28,12 +28,12 @@ interface MemberIncidentsTabProps {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const CATEGORIES: { value: IncidentCategory; label: string; color: string }[] = [
-  { value: 'milestone',    label: 'Milestone',    color: 'var(--accent-ai)' },
-  { value: 'celebration',  label: 'Celebration',  color: '#7FA87A' },
-  { value: 'breakthrough', label: 'Breakthrough', color: 'var(--accent-gold)' },
-  { value: 'challenge',    label: 'Challenge',    color: '#C4A87A' },
-  { value: 'conflict',     label: 'Conflict',     color: '#C47A7A' },
+const CATEGORIES: { value: IncidentCategory; label: string; color: string; bg: string }[] = [
+  { value: 'milestone',    label: 'Milestone',    color: 'var(--accent-ai)',        bg: 'var(--accent-ai-light)' },
+  { value: 'celebration',  label: 'Celebration',  color: 'var(--accent-primary)',   bg: 'var(--accent-primary-light)' },
+  { value: 'breakthrough', label: 'Breakthrough', color: 'var(--accent-gold)',      bg: 'var(--accent-gold-light)' },
+  { value: 'challenge',    label: 'Challenge',    color: 'var(--accent-secondary)', bg: 'var(--accent-secondary-light)' },
+  { value: 'conflict',     label: 'Conflict',     color: 'var(--accent-secondary)', bg: 'var(--accent-secondary-light)' },
 ];
 
 const SEVERITIES: { value: IncidentSeverity; label: string; sub: string }[] = [
@@ -44,8 +44,12 @@ const SEVERITIES: { value: IncidentSeverity; label: string; sub: string }[] = [
 
 const EMOTION_TAGS = ['joyful', 'safe', 'loved', 'energized', 'peaceful', 'anxious', 'frustrated', 'drained', 'confused', 'hurt'];
 
+function categoryMeta(cat?: string | null) {
+  return CATEGORIES.find(c => c.value === cat) ?? { color: 'var(--text-tertiary)', bg: 'var(--surface)' };
+}
+
 function categoryColor(cat?: string | null) {
-  return CATEGORIES.find(c => c.value === cat)?.color ?? 'var(--text-tertiary)';
+  return categoryMeta(cat).color;
 }
 
 // ── Incident modal (add + edit) ───────────────────────────────────────────────
@@ -342,7 +346,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
           {/* ── Timeline ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {incidents.map((incident, index) => {
-              const color = categoryColor(incident.category);
+              const { color, bg } = categoryMeta(incident.category);
               return (
                 <div key={incident.id}>
                   <div className="flex items-start gap-4">
@@ -378,17 +382,24 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
                       </div>
 
                       {/* Metadata row */}
-                      <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
-                        <span className="font-mono" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+                      <div className="flex items-center gap-4" style={{ marginBottom: 10 }}>
+                        <span className="font-mono flex items-center gap-1.5" style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
+                          <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                            <rect x="1" y="2" width="10" height="9" rx="1.5" />
+                            <path d="M1 5h10M4 1v2M8 1v2" />
+                          </svg>
                           {new Date(incident.date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                         </span>
                         {incident.category && (
-                          <span className="font-serif" style={{ fontSize: 14, color, textTransform: 'capitalize' }}>
+                          <span
+                            className="font-sans capitalize"
+                            style={{ fontSize: 13, color: 'var(--text-primary)', background: bg, padding: '2px 10px', borderRadius: 99, letterSpacing: '0.01em' }}
+                          >
                             {incident.category}
                           </span>
                         )}
                         {incident.severity && (
-                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
+                          <span className="font-sans capitalize" style={{ fontSize: 13, color: 'var(--text-primary)', background: 'var(--bg-tertiary)', padding: '2px 10px', borderRadius: 99, letterSpacing: '0.01em' }}>
                             {incident.severity}
                           </span>
                         )}

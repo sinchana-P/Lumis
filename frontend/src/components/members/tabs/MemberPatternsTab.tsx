@@ -28,13 +28,13 @@ interface MemberPatternsTabProps {
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
-const CATEGORIES: { value: PatternCategory; label: string; color: string }[] = [
-  { value: 'communication',  label: 'Communication',  color: 'var(--accent-primary)' },
-  { value: 'conflict',       label: 'Conflict',       color: '#C47A7A' },
-  { value: 'affection',      label: 'Affection',      color: '#7FA87A' },
-  { value: 'decision-making',label: 'Decisions',      color: 'var(--accent-ai)' },
-  { value: 'stress-response',label: 'Stress',         color: '#C4A87A' },
-  { value: 'social',         label: 'Social',         color: 'var(--accent-secondary)' },
+const CATEGORIES: { value: PatternCategory; label: string; color: string; bg: string }[] = [
+  { value: 'communication',  label: 'Communication',  color: 'var(--accent-primary)',   bg: 'var(--accent-primary-light)' },
+  { value: 'conflict',       label: 'Conflict',       color: 'var(--accent-secondary)', bg: 'var(--accent-secondary-light)' },
+  { value: 'affection',      label: 'Affection',      color: 'var(--accent-primary)',   bg: 'var(--accent-primary-light)' },
+  { value: 'decision-making',label: 'Decisions',      color: 'var(--accent-ai)',        bg: 'var(--accent-ai-light)' },
+  { value: 'stress-response',label: 'Stress',         color: 'var(--accent-gold)',      bg: 'var(--accent-gold-light)' },
+  { value: 'social',         label: 'Social',         color: 'var(--accent-secondary)', bg: 'var(--accent-secondary-light)' },
 ];
 
 const FREQUENCIES: { value: PatternFrequency; label: string; sub: string }[] = [
@@ -44,18 +44,26 @@ const FREQUENCIES: { value: PatternFrequency; label: string; sub: string }[] = [
   { value: 'constant',   label: 'Constant',   sub: 'always present' },
 ];
 
-const IMPACTS: { value: PatternImpact; label: string; color: string }[] = [
-  { value: 'positive', label: 'Positive', color: '#7FA87A' },
-  { value: 'neutral',  label: 'Neutral',  color: 'var(--text-tertiary)' },
-  { value: 'negative', label: 'Negative', color: '#C47A7A' },
+const IMPACTS: { value: PatternImpact; label: string; color: string; bg: string }[] = [
+  { value: 'positive', label: 'Positive', color: 'var(--accent-primary)',   bg: 'var(--accent-primary-light)' },
+  { value: 'neutral',  label: 'Neutral',  color: 'var(--text-secondary)',   bg: 'var(--bg-tertiary)' },
+  { value: 'negative', label: 'Negative', color: 'var(--accent-secondary)', bg: 'var(--accent-secondary-light)' },
 ];
 
+function categoryMeta(cat?: string | null) {
+  return CATEGORIES.find(c => c.value === cat) ?? { label: cat ?? '', color: 'var(--text-secondary)', bg: 'var(--bg-tertiary)' };
+}
+
+function impactMeta(impact?: string | null) {
+  return IMPACTS.find(i => i.value === impact) ?? { label: impact ?? '', color: 'var(--text-secondary)', bg: 'var(--bg-tertiary)' };
+}
+
 function categoryColor(cat?: string | null) {
-  return CATEGORIES.find(c => c.value === cat)?.color ?? 'var(--text-tertiary)';
+  return categoryMeta(cat).color;
 }
 
 function impactColor(impact?: string | null) {
-  return IMPACTS.find(i => i.value === impact)?.color ?? 'var(--text-tertiary)';
+  return impactMeta(impact).color;
 }
 
 // ── Pattern modal (add + edit) ────────────────────────────────────────────────
@@ -352,8 +360,8 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
           {/* ── List ── */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {patterns.map((pattern, index) => {
-              const color  = categoryColor(pattern.category);
-              const iColor = impactColor(pattern.impact);
+              const { color, bg }    = categoryMeta(pattern.category);
+              const { color: iColor, bg: iBg } = impactMeta(pattern.impact);
               return (
                 <div key={pattern.id}>
                   <div className="flex items-start gap-5">
@@ -391,17 +399,17 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
                       {/* Metadata row */}
                       <div className="flex items-center gap-3 flex-wrap" style={{ marginBottom: 10 }}>
                         {pattern.category && (
-                          <span className="font-serif" style={{ fontSize: 14, color, textTransform: 'capitalize' }}>
-                            {CATEGORIES.find(c => c.value === pattern.category)?.label ?? pattern.category}
+                          <span className="font-sans capitalize" style={{ fontSize: 13, color: 'var(--text-primary)', background: bg, padding: '2px 10px', borderRadius: 99, letterSpacing: '0.01em' }}>
+                            {categoryMeta(pattern.category).label}
                           </span>
                         )}
                         {pattern.frequency && (
-                          <span className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', textTransform: 'capitalize' }}>
+                          <span className="font-sans capitalize" style={{ fontSize: 13, color: 'var(--text-primary)', background: 'var(--bg-tertiary)', padding: '2px 10px', borderRadius: 99, letterSpacing: '0.01em' }}>
                             {pattern.frequency}
                           </span>
                         )}
                         {pattern.impact && (
-                          <span className="font-serif" style={{ fontSize: 14, color: iColor, textTransform: 'capitalize' }}>
+                          <span className="font-sans capitalize" style={{ fontSize: 13, color: 'var(--text-primary)', background: iBg, padding: '2px 10px', borderRadius: 99, letterSpacing: '0.01em' }}>
                             {pattern.impact}
                           </span>
                         )}
@@ -413,14 +421,14 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
 
                       {pattern.triggers.length > 0 && (
                         <div style={{ paddingLeft: 12, borderLeft: `2px solid ${color}`, marginBottom: 6 }}>
-                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color, marginBottom: 4 }}>Triggers</p>
+                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--accent-secondary)', marginBottom: 4 }}>Triggers</p>
                           <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', lineHeight: 1.6 }}>{pattern.triggers.join(', ')}</p>
                         </div>
                       )}
 
                       {pattern.examples.length > 0 && (
                         <div style={{ marginBottom: 10 }}>
-                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 9, color: 'var(--accent-gold)', marginBottom: 6 }}>Examples</p>
+                          <p className="font-mono uppercase tracking-widest" style={{ fontSize: 10, color: 'var(--accent-ai)', marginBottom: 6 }}>Examples</p>
                           <ul style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                             {pattern.examples
                               .flatMap(ex => ex.split('\n').map(s => s.trim().replace(/,+$/, '')).filter(Boolean))
