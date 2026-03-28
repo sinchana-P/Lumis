@@ -285,9 +285,9 @@ export class MethodologyService {
             ]},
             { type: 'heading', text: 'Analysis Depth Modes' },
             { type: 'list', items: [
-              { label: '✨ Full Spectrum', color: '#9B8DC4', text: 'All data layers: behavioral logs + numerology + astrology. Default mode.' },
-              { label: '📊 Behavioral',   color: '#7AC4A8', text: 'Traits, incidents, patterns, interactions, journal only. Cosmic data excluded.' },
-              { label: '🌙 Cosmic',        color: '#C4A87A', text: 'Numerology and astrology only. Behavioral observations excluded.' },
+              { label: 'Full Spectrum', color: '#9B8DC4', text: 'All data layers: behavioral logs + numerology + astrology. Default mode.' },
+              { label: 'Behavioral',    color: '#7AC4A8', text: 'Traits, incidents, patterns, interactions, journal only. Cosmic data excluded.' },
+              { label: 'Cosmic',        color: '#C4A87A', text: 'Numerology and astrology only. Behavioral observations excluded.' },
             ]},
             { type: 'heading', text: 'Context Assembly (per query)' },
             { type: 'list', items: [
@@ -298,7 +298,7 @@ export class MethodologyService {
             ]},
             { type: 'heading', text: 'Report Generation Flow' },
             { type: 'list', items: [
-              { label: '1. Load context', text: 'User + member data fetched from Supabase in parallel (numerology, astrology, traits, incidents, interactions, journals)' },
+              { label: '1. Load context', text: 'User + member data fetched in parallel (numerology, astrology, traits, incidents, interactions, journals)' },
               { label: '2. Build signals', text: 'ContextBuilderService derives emotional style, conflict mode, availability signal, cycle theme from raw numbers' },
               { label: '3. Assemble prompt', text: 'System prompt (psychology frameworks) + structured context string passed to AI model' },
               { label: '4. Generate',      text: 'Gemini 1.5 Flash generates up to 4096 tokens. Falls back to Groq on quota error.' },

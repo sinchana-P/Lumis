@@ -16,7 +16,7 @@ function ParagraphBlock({ text }: { text: string }) {
 
 function HeadingBlock({ text }: { text: string }) {
   return (
-    <p className="font-rounded uppercase" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.14em', marginTop: 28, marginBottom: 12 }}>
+    <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, color: 'var(--text-secondary)', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginTop: 28, marginBottom: 12 }}>
       {text}
     </p>
   );
@@ -35,7 +35,7 @@ function NoteBlock({ text }: { text: string }) {
 function FormulaBlock({ label, expression, note }: { label: string; expression: string; note?: string }) {
   return (
     <div style={{ marginBottom: 18 }}>
-      <p className="font-rounded" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.13em', textTransform: 'uppercase', marginBottom: 6 }}>
+      <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 9, fontWeight: 500, color: 'var(--text-secondary)', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginBottom: 6 }}>
         {label}
       </p>
       <div
@@ -70,20 +70,7 @@ function TableBlock({ headers, rows }: { headers: string[]; rows: string[][] }) 
         <thead>
           <tr>
             {headers.map((h, i) => (
-              <th
-                key={i}
-                style={{
-                  textAlign: 'left',
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 9,
-                  letterSpacing: '0.13em',
-                  textTransform: 'uppercase',
-                  color: 'var(--text-tertiary)',
-                  padding: '8px 14px',
-                  borderBottom: '1px solid var(--bg-tertiary)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
+              <th key={i} style={{ textAlign: 'left', fontFamily: "'Nunito', sans-serif", fontSize: 9, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: 'var(--text-secondary)', padding: '8px 14px', borderBottom: '1px solid var(--bg-tertiary)', whiteSpace: 'nowrap' as const }}>
                 {h}
               </th>
             ))}
@@ -91,23 +78,9 @@ function TableBlock({ headers, rows }: { headers: string[]; rows: string[][] }) 
         </thead>
         <tbody>
           {rows.map((row, ri) => (
-            <tr
-              key={ri}
-              style={{ background: ri % 2 === 0 ? 'transparent' : 'var(--bg-secondary)' }}
-            >
+            <tr key={ri} style={{ background: ri % 2 === 0 ? 'transparent' : 'var(--bg-secondary)' }}>
               {row.map((cell, ci) => (
-                <td
-                  key={ci}
-                  className="font-serif"
-                  style={{
-                    fontSize: 14,
-                    color: ci === 0 ? 'var(--text-primary)' : 'var(--text-secondary)',
-                    padding: '9px 14px',
-                    borderBottom: '1px solid var(--bg-tertiary)',
-                    lineHeight: 1.5,
-                    fontWeight: ci === 0 ? 500 : 400,
-                  }}
-                >
+                <td key={ci} className="font-serif" style={{ fontSize: 14, color: ci === 0 ? 'var(--text-primary)' : 'var(--text-secondary)', padding: '9px 14px', borderBottom: '1px solid var(--bg-tertiary)', lineHeight: 1.5, fontWeight: ci === 0 ? 500 : 400 }}>
                   {cell}
                 </td>
               ))}
@@ -123,30 +96,9 @@ function ListBlockComponent({ items }: { items: { label: string; text: string; c
   return (
     <div style={{ marginBottom: 18 }}>
       {items.map((item, i) => (
-        <div
-          key={i}
-          className="rounded-xl"
-          style={{
-            display: 'flex',
-            gap: 14,
-            padding: '14px 16px',
-            marginBottom: 8,
-            background: 'var(--bg-secondary)',
-            border: '1px solid var(--bg-tertiary)',
-            borderLeft: `3px solid ${item.color || 'var(--accent-primary)'}`,
-          }}
-        >
+        <div key={i} className="rounded-xl" style={{ display: 'flex', gap: 14, padding: '14px 16px', marginBottom: 8, background: 'var(--bg-secondary)', border: '1px solid var(--bg-tertiary)', borderLeft: `3px solid ${item.color || 'var(--accent-primary)'}` }}>
           <div style={{ flexShrink: 0, paddingTop: 2 }}>
-            <span
-              className="font-mono"
-              style={{
-                fontSize: 10,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                color: item.color || 'var(--accent-primary)',
-                whiteSpace: 'nowrap',
-              }}
-            >
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: item.color || 'var(--accent-primary)', whiteSpace: 'nowrap' as const }}>
               {item.label}
             </span>
           </div>
@@ -173,62 +125,75 @@ function renderBlock(block: ContentBlock, i: number) {
 
 // ─── Section card ─────────────────────────────────────────────────────────────
 
-function SectionCard({ section, isActive }: { section: MethodologySection; isActive: boolean }) {
-  const [open, setOpen] = useState(isActive);
+function SectionCard({ section, forceOpen }: { section: MethodologySection; forceOpen: boolean }) {
+  const [open, setOpen] = useState(forceOpen);
+  useEffect(() => { if (forceOpen) setOpen(true); }, [forceOpen]);
 
-  useEffect(() => { if (isActive) setOpen(true); }, [isActive]);
+  // Extract preview pills from the first list block (shown when collapsed)
+  const previewItems = section.blocks.find(b => b.type === 'list')?.items?.slice(0, 5) ?? [];
 
   return (
     <div
       id={section.id}
-      className="rounded-2xl"
       style={{
-        background: 'var(--bg-secondary)',
-        border: '1px solid var(--bg-tertiary)',
-        borderLeft: `3px solid ${section.accent}`,
-        marginBottom: 16,
+        background: `${section.accent}1C`,
+        border: `1px solid ${section.accent}45`,
+        borderRadius: 20,
         overflow: 'hidden',
+        transition: 'box-shadow 200ms ease',
+        boxShadow: open ? `0 6px 24px ${section.accent}1A` : '0 1px 4px rgba(0,0,0,0.03)',
       }}
     >
-      {/* Section header — always visible */}
       <button
         onClick={() => setOpen(v => !v)}
-        className="w-full flex items-start gap-4 text-left"
-        style={{ padding: '22px 28px', background: 'transparent', border: 'none', cursor: 'pointer' }}
+        className="w-full text-left"
+        style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '14px 18px', display: 'block', width: '100%' }}
       >
-        {/* Icon */}
-        <div
-          className="rounded-full flex items-center justify-center flex-shrink-0"
-          style={{ width: 36, height: 36, background: `${section.accent}1A`, marginTop: 2 }}
-        >
-          <svg className="w-4 h-4" style={{ color: section.accent }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.4} d={section.icon} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{ width: 38, height: 38, borderRadius: '50%', background: `${section.accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <svg width="16" height="16" style={{ color: section.accent }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.4} d={section.icon} />
+            </svg>
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <h2 className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', marginBottom: 2 }}>
+              {section.title}
+            </h2>
+            <p className="font-serif italic" style={{ fontSize: 13, color: 'var(--text-tertiary)', lineHeight: 1.4 }}>
+              {section.subtitle}
+            </p>
+          </div>
+          <svg width="14" height="14" style={{ color: 'var(--text-tertiary)', flexShrink: 0, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
 
-        <div style={{ flex: 1 }}>
-          <h2 className="font-serif" style={{ fontSize: 22, fontWeight: 400, color: 'var(--text-primary)', marginBottom: 4, letterSpacing: '-0.01em' }}>
-            {section.title}
-          </h2>
-          <p className="font-serif italic" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>
-            {section.subtitle}
-          </p>
-        </div>
-
-        {/* Chevron */}
-        <svg
-          className="w-4 h-4 flex-shrink-0"
-          style={{ color: 'var(--text-tertiary)', marginTop: 8, transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }}
-          fill="none" stroke="currentColor" viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        {/* Preview pills — visible when collapsed */}
+        {!open && previewItems.length > 0 && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 14, paddingLeft: 52 }}>
+            {previewItems.map(item => (
+              <span
+                key={item.label}
+                style={{
+                  padding: '3px 10px', borderRadius: 20,
+                  border: `1px solid ${item.color || section.accent}40`,
+                  color: item.color || section.accent,
+                  fontFamily: "'Nunito', sans-serif", fontSize: 9, fontWeight: 500,
+                  letterSpacing: '0.08em', textTransform: 'uppercase' as const,
+                  whiteSpace: 'nowrap' as const,
+                  background: `${item.color || section.accent}0A`,
+                }}
+              >
+                {item.label}
+              </span>
+            ))}
+          </div>
+        )}
       </button>
 
-      {/* Expandable body */}
       {open && (
-        <div style={{ padding: '0 28px 28px', borderTop: '1px solid var(--bg-tertiary)' }}>
-          <div style={{ paddingTop: 24 }}>
+        <div style={{ padding: '0 18px 18px', borderTop: `1px solid ${section.accent}30`, background: 'var(--bg-primary)' }}>
+          <div style={{ paddingTop: 16 }}>
             {section.blocks.map((block, i) => renderBlock(block, i))}
           </div>
         </div>
@@ -237,65 +202,45 @@ function SectionCard({ section, isActive }: { section: MethodologySection; isAct
   );
 }
 
-// ─── Table of contents ────────────────────────────────────────────────────────
+// ─── Sidebar ToC — styled like the Luminary orbit sidebar ─────────────────────
 
-function ToC({ sections, activeId }: { sections: MethodologySection[]; activeId: string }) {
-  const scrollTo = (id: string) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
+function ToC({ sections, activeId, onNavigate }: { sections: MethodologySection[]; activeId: string; onNavigate: (id: string) => void }) {
 
   return (
     <nav style={{ position: 'sticky', top: 80 }}>
-      <p className="font-rounded uppercase" style={{ fontSize: 9, letterSpacing: '0.16em', color: 'var(--text-tertiary)', marginBottom: 16 }}>
+      {/* Label */}
+      <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const, color: 'var(--text-secondary)', marginBottom: 16 }}>
         Contents
       </p>
-      {sections.map(s => (
-        <button
-          key={s.id}
-          onClick={() => scrollTo(s.id)}
-          className="w-full text-left flex items-center gap-2 transition-all"
-          style={{
-            padding: '7px 10px',
-            borderRadius: 8,
-            border: 'none',
-            background: activeId === s.id ? `${s.accent}15` : 'transparent',
-            cursor: 'pointer',
-            marginBottom: 2,
-          }}
-        >
-          <div
-            style={{
-              width: 6, height: 6, borderRadius: '50%', flexShrink: 0,
-              background: activeId === s.id ? s.accent : 'var(--bg-tertiary)',
-              transition: 'background 200ms ease',
-            }}
-          />
-          <span
-            className="font-mono"
-            style={{
-              fontSize: 11,
-              letterSpacing: '0.06em',
-              color: activeId === s.id ? s.accent : 'var(--text-tertiary)',
-              transition: 'color 200ms ease',
-            }}
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {sections.map(s => (
+          <button
+            key={s.id}
+            onClick={() => onNavigate(s.id)}
+            className="w-full text-left flex items-center gap-2.5 transition-all"
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', padding: '4px 0', color: activeId === s.id ? s.accent : 'var(--text-tertiary)' }}
+            onMouseEnter={e => { if (activeId !== s.id) e.currentTarget.style.color = 'var(--text-primary)'; }}
+            onMouseLeave={e => { if (activeId !== s.id) e.currentTarget.style.color = 'var(--text-tertiary)'; }}
           >
-            {s.title}
-          </span>
-        </button>
-      ))}
+            <div style={{ width: 5, height: 5, borderRadius: '50%', flexShrink: 0, backgroundColor: activeId === s.id ? s.accent : 'transparent', border: activeId === s.id ? 'none' : '1px solid var(--bg-tertiary)', transition: 'all 200ms ease' }} />
+            <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: activeId === s.id ? 600 : 500, letterSpacing: '0.08em', textTransform: 'uppercase' as const }}>
+              {s.title}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Bottom quote — mirrors orbit sidebar */}
+      <div style={{ marginTop: 40, paddingTop: 20, borderTop: '1px dashed var(--bg-tertiary)' }}>
+        <p className="font-serif italic" style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.6, opacity: 0.7 }}>
+          &ldquo;Every formula is a window into the invisible.&rdquo;
+        </p>
+        <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, color: 'var(--text-tertiary)', letterSpacing: '0.08em', textTransform: 'uppercase' as const, marginTop: 6, opacity: 0.6 }}>
+          Intelligence · Transparency
+        </p>
+      </div>
     </nav>
-  );
-}
-
-// ─── Loading skeleton ─────────────────────────────────────────────────────────
-
-function Skeleton() {
-  return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 24px' }}>
-      {[1, 2, 3].map(i => (
-        <div key={i} className="rounded-2xl" style={{ background: 'var(--bg-secondary)', marginBottom: 16, height: 100 }} />
-      ))}
-    </div>
   );
 }
 
@@ -305,45 +250,41 @@ export default function MethodologyPage() {
   const router = useRouter();
   const { data, isLoading } = useGetMethodologyQuery();
   const [activeId, setActiveId] = useState('');
+  const [expandedId, setExpandedId] = useState('');
   const mainRef = useRef<HTMLDivElement>(null);
 
-  // Scroll spy
+  const navigate = (id: string) => {
+    setActiveId(id);
+    setExpandedId(id);
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   useEffect(() => {
     if (!data) return;
     const observer = new IntersectionObserver(
-      entries => {
-        const visible = entries.filter(e => e.isIntersecting);
-        if (visible.length) setActiveId(visible[0].target.id);
-      },
+      entries => { const visible = entries.filter(e => e.isIntersecting); if (visible.length) setActiveId(visible[0].target.id); },
       { rootMargin: '-80px 0px -60% 0px', threshold: 0 },
     );
-    data.sections.forEach(s => {
-      const el = document.getElementById(s.id);
-      if (el) observer.observe(el);
-    });
+    data.sections.forEach(s => { const el = document.getElementById(s.id); if (el) observer.observe(el); });
     return () => observer.disconnect();
   }, [data]);
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)' }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', position: 'relative', overflow: 'hidden' }}>
+      {/* Soft background blobs */}
+      <div aria-hidden style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
+        <div style={{ position: 'absolute', top: '-10%', left: '-15%', width: 700, height: 700, borderRadius: '50%', background: 'var(--accent-secondary)', opacity: 0.07, filter: 'blur(110px)' }} />
+        <div style={{ position: 'absolute', top: '-6%', right: '-16%', width: 800, height: 800, borderRadius: '50%', background: 'var(--accent-primary)', opacity: 0.06, filter: 'blur(130px)' }} />
+      </div>
+      <div style={{ position: 'relative', zIndex: 1 }}>
 
-      {/* ── Top bar ─────────────────────────────────────────────── */}
-      <div
-        style={{
-          position: 'sticky', top: 0, zIndex: 50,
-          background: 'var(--bg-primary)',
-          borderBottom: '1px solid var(--bg-tertiary)',
-          padding: '14px 48px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
+      {/* ── Top bar ── */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 50, background: 'var(--bg-primary)', borderBottom: '1px solid var(--bg-tertiary)', padding: '14px 48px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-1.5 transition-colors"
-            style={{ color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'JetBrains Mono', monospace", fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase' }}
+            style={{ color: 'var(--text-tertiary)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase' }}
             onMouseEnter={e => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}
           >
@@ -352,21 +293,14 @@ export default function MethodologyPage() {
             </svg>
             Back
           </button>
-
           <div style={{ width: 1, height: 16, background: 'var(--bg-tertiary)' }} />
-
-          <div>
-            <span className="font-rounded" style={{ fontSize: 11, color: 'var(--text-tertiary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-              Lumis · Methodology
-            </span>
-          </div>
+          <span style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontWeight: 500, color: 'var(--text-tertiary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Lumis · The Alchemy
+          </span>
         </div>
-
         {data && (
           <div className="flex items-center gap-3">
-            <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.08em' }}>
-              v{data.version}
-            </span>
+            <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.08em' }}>v{data.version}</span>
             <span className="font-mono" style={{ fontSize: 10, color: 'var(--text-tertiary)', letterSpacing: '0.08em' }}>
               Updated {new Date(data.lastUpdated).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
             </span>
@@ -374,38 +308,26 @@ export default function MethodologyPage() {
         )}
       </div>
 
-      {/* ── Hero ────────────────────────────────────────────────── */}
-      <div style={{ padding: '56px 48px 32px', maxWidth: 1100, margin: '0 auto' }}>
-        <p className="font-rounded uppercase" style={{ fontSize: 10, color: 'var(--accent-ai)', letterSpacing: '0.16em', marginBottom: 12 }}>
+      {/* ── Page content wrapper ── */}
+      <div style={{ padding: '0 64px' }}>
+
+      {/* ── Hero ── */}
+      <div style={{ padding: '16px 0 20px' }}>
+        <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, color: 'var(--accent-ai)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 8 }}>
           Intelligence · Transparency
         </p>
-        <h1 className="font-serif" style={{ fontSize: 44, fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: 16, maxWidth: 640 }}>
+        <h1 className="font-serif" style={{ fontSize: 38, fontWeight: 300, color: 'var(--text-primary)', lineHeight: 1.15, letterSpacing: '-0.02em', marginBottom: 10 }}>
           How Lumis works
         </h1>
-        <p className="font-serif" style={{ fontSize: 18, color: 'var(--text-secondary)', lineHeight: 1.8, maxWidth: 580 }}>
+        <p className="font-serif" style={{ fontSize: 16, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
           Every formula, framework, and derivation used to build your relationship intelligence — fully documented, openly explained.
         </p>
-
-        {/* Divider */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 36, marginBottom: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginTop: 16 }}>
           {data?.sections.map(s => (
             <button
               key={s.id}
-              onClick={() => document.getElementById(s.id)?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-1.5 transition-all"
-              style={{
-                padding: '6px 14px',
-                borderRadius: 20,
-                border: `1px solid ${s.accent}40`,
-                background: `${s.accent}12`,
-                color: s.accent,
-                fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 10,
-                letterSpacing: '0.1em',
-                textTransform: 'uppercase',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-              }}
+              onClick={() => navigate(s.id)}
+              style={{ padding: '5px 14px', borderRadius: 20, border: `1px solid ${s.accent}40`, background: `${s.accent}12`, color: s.accent, fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', whiteSpace: 'nowrap' }}
             >
               {s.title}
             </button>
@@ -413,45 +335,37 @@ export default function MethodologyPage() {
         </div>
       </div>
 
-      {isLoading && <Skeleton />}
+      {isLoading && (
+        <div style={{ padding: '32px 0 80px' }}>
+          {[1, 2, 3].map(i => (
+            <div key={i} className="rounded-2xl" style={{ background: 'var(--bg-secondary)', marginBottom: 16, height: 100 }} />
+          ))}
+        </div>
+      )}
 
-      {/* ── Body ────────────────────────────────────────────────── */}
+      {/* ── Body ── */}
       {data && (
-        <div
-          style={{
-            maxWidth: 1100,
-            margin: '0 auto',
-            padding: '32px 48px 80px',
-            display: 'grid',
-            gridTemplateColumns: '180px 1fr',
-            gap: 48,
-            alignItems: 'start',
-          }}
-        >
-          {/* Left — sticky ToC */}
-          <ToC sections={data.sections} activeId={activeId} />
-
-          {/* Right — content */}
+        <div style={{ display: 'grid', gridTemplateColumns: '200px 1fr', gap: 40, alignItems: 'start', padding: '16px 0 48px' }}>
+          <ToC sections={data.sections} activeId={activeId} onNavigate={navigate} />
           <div ref={mainRef}>
-            {data.sections.map((section, i) => (
-              <SectionCard
-                key={section.id}
-                section={section}
-                isActive={i === 0}
-              />
-            ))}
-
-            {/* Footer */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {data.sections.map((section, i) => (
+                <SectionCard key={section.id} section={section} forceOpen={expandedId === section.id || i === 0} />
+              ))}
+            </div>
             <div className="flex items-center justify-center gap-3" style={{ paddingTop: 40 }}>
               <div style={{ height: 1, flex: 1, background: 'var(--bg-tertiary)' }} />
-              <p className="font-rounded" style={{ fontSize: 9, color: 'var(--text-tertiary)', letterSpacing: '0.14em', textTransform: 'uppercase' }}>
-                Lumis · Methodology v{data.version} · Built with transparency
+              <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 9, fontWeight: 500, color: 'var(--text-tertiary)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                Lumis · The Alchemy v{data.version} · Built with transparency
               </p>
               <div style={{ height: 1, flex: 1, background: 'var(--bg-tertiary)' }} />
             </div>
           </div>
         </div>
       )}
+
+      </div>{/* /page content wrapper */}
+      </div>{/* /position:relative zIndex:1 */}
     </div>
   );
 }
