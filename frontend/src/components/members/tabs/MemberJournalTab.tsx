@@ -298,7 +298,7 @@ export function MemberJournalTab({ member, externalAddOpen, onExternalAddClose, 
   };
 
   return (
-    <div className="w-full">
+    <div className="h-full overflow-y-auto w-full" style={{ padding: '32px' }}>
       {/* Modal always rendered so header button always works */}
       <JournalModal
         isOpen={modalOpen}

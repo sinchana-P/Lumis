@@ -323,19 +323,19 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
   );
 
   if (isLoading) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+    <div className="flex items-center justify-center px-8 pt-8">
       <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading traits…</p>
     </div>
   );
 
   if (isError) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+    <div className="flex items-center justify-center px-8 pt-8">
       <p className="font-serif italic" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Could not load traits. Please try again.</p>
     </div>
   );
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col h-full min-h-0">
       <TraitModal
         isOpen={modalOpen}
         editingTrait={editingTrait}
@@ -355,61 +355,63 @@ export function MemberProsConsTab({ member }: MemberProsConsTabProps) {
         />
       )}
 
-      {/* Traits grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
+        {/* Traits grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16">
 
-        {/* Strengths */}
-        <div>
-          <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" style={{ color: '#7FA87A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-              </svg>
-              <span className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>What Draws You Closer</span>
-              <span className="font-serif" style={{ fontSize: 15, fontWeight: 400, color: 'var(--text-tertiary)' }}>({pros.length})</span>
+          {/* Strengths */}
+          <div>
+            <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5" style={{ color: '#7FA87A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <span className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>What Draws You Closer</span>
+                <span className="font-serif" style={{ fontSize: 15, fontWeight: 400, color: 'var(--text-tertiary)' }}>({pros.length})</span>
+              </div>
+              <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#7FA87A')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
             </div>
-            <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#7FA87A')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </button>
+            {pros.length === 0
+              ? <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>
+                  No strengths captured yet.{' '}
+                  <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
+                </p>
+              : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{pros.map(p => <TraitRow key={p.id} item={p} accentColor="#7FA87A" />)}</div>
+            }
           </div>
-          {pros.length === 0
-            ? <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>
-                No strengths captured yet.{' '}
-                <button onClick={() => openAdd('pro')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
-              </p>
-            : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{pros.map(p => <TraitRow key={p.id} item={p} accentColor="#7FA87A" />)}</div>
-          }
-        </div>
 
-        {/* Challenges */}
-        <div>
-          <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5" style={{ color: '#C47A7A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
-              <span className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>Growth Edges</span>
-              <span className="font-serif" style={{ fontSize: 15, fontWeight: 400, color: 'var(--text-tertiary)' }}>({cons.length})</span>
+          {/* Challenges */}
+          <div>
+            <div className="flex items-center justify-between" style={{ marginBottom: 20 }}>
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5" style={{ color: '#C47A7A' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+                <span className="font-serif" style={{ fontSize: 20, fontWeight: 400, color: 'var(--text-primary)', letterSpacing: '-0.01em', lineHeight: 1.3 }}>Growth Edges</span>
+                <span className="font-serif" style={{ fontSize: 15, fontWeight: 400, color: 'var(--text-tertiary)' }}>({cons.length})</span>
+              </div>
+              <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
+                onMouseEnter={e => (e.currentTarget.style.color = '#C47A7A')}
+                onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </button>
             </div>
-            <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', lineHeight: 1 }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#C47A7A')}
-              onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-tertiary)')}>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-              </svg>
-            </button>
+            {cons.length === 0
+              ? <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>
+                  No challenges identified yet.{' '}
+                  <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
+                </p>
+              : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{cons.map(c => <TraitRow key={c.id} item={c} accentColor="#C47A7A" />)}</div>
+            }
           </div>
-          {cons.length === 0
-            ? <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>
-                No challenges identified yet.{' '}
-                <button onClick={() => openAdd('con')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-tertiary)', fontFamily: 'inherit', fontSize: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3 }}>Add one →</button>
-              </p>
-            : <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>{cons.map(c => <TraitRow key={c.id} item={c} accentColor="#C47A7A" />)}</div>
-          }
         </div>
       </div>
 

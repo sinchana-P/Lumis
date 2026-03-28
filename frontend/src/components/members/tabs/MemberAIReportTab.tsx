@@ -424,7 +424,7 @@ function ReportView({ reportText, member, healthScore }: { reportText: string; m
 export function MemberAIReportTab({ member, reportText, isLoading, error, healthScore }: MemberAIReportTabProps) {
   const firstName = member.fullName.split(' ')[0];
 
-  if (isLoading) return <LoadingSkeleton />;
-  if (!reportText) return <EmptyState firstName={firstName} error={error} />;
-  return <ReportView reportText={reportText} member={member} healthScore={healthScore} />;
+  if (isLoading) return <div className="h-full overflow-y-auto" style={{ padding: '32px' }}><LoadingSkeleton /></div>;
+  if (!reportText) return <div className="h-full overflow-y-auto" style={{ padding: '32px' }}><EmptyState firstName={firstName} error={error} /></div>;
+  return <div className="h-full overflow-y-auto" style={{ padding: '32px' }}><ReportView reportText={reportText} member={member} healthScore={healthScore} /></div>;
 }

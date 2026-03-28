@@ -403,19 +403,19 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
   const inPersonCount = interactions.filter(i => i.type === 'in-person').length;
 
   if (isLoading) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+    <div className="flex items-center justify-center px-8 pt-8">
       <p className="font-mono uppercase tracking-widest" style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>Loading interactions…</p>
     </div>
   );
 
   if (isError) return (
-    <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
+    <div className="flex items-center justify-center px-8 pt-8">
       <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Could not load interactions. Please try again.</p>
     </div>
   );
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col h-full min-h-0">
       <InteractionModal isOpen={modalOpen} editing={editing} onClose={() => { setModalOpen(false); setEditing(null); }} onSave={handleSave} saving={creating || updating} />
 
       {deletingItem && (
@@ -428,20 +428,20 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
         />
       )}
 
-      {interactions.length === 0 ? (
-        <div style={{ paddingTop: 40, textAlign: 'center' }}>
-          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No interactions logged yet</p>
-          <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
-            Start tracking your communications with {member.fullName} and how they affect your energy.
-          </p>
-          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
-            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-            Log First Interaction
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* ── List ── */}
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
+        {interactions.length === 0 ? (
+          <div style={{ textAlign: 'center' }}>
+            <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-primary)', marginBottom: 6 }}>No interactions logged yet</p>
+            <p className="font-serif" style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 24 }}>
+              Start tracking your communications with {member.fullName} and how they affect your energy.
+            </p>
+            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+              style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              Log First Interaction
+            </button>
+          </div>
+        ) : (
+          /* ── List ── */
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {interactions.map((interaction, index) => {
               const tCol = typeColor(interaction.type);
@@ -556,17 +556,19 @@ export function MemberInteractionsTab({ member, externalAddOpen, onExternalAddCl
               );
             })}
           </div>
+        )}
+      </div>
 
-          <TabFooter
-            stats={[
-              { val: interactions.length, label: 'Total',      color: 'var(--text-primary)' },
-              { val: positiveCount,        label: 'Positive',   color: '#7FA87A' },
-              { val: inPersonCount,        label: 'In Person',  color: 'var(--accent-primary)' },
-              { val: avgEnergy,            label: 'Avg Energy', color: energyColor(Number(avgEnergy)) },
-            ]}
-            tagline="How often you show up for someone quietly defines the depth of what you share."
-          />
-        </>
+      {interactions.length > 0 && (
+        <TabFooter
+          stats={[
+            { val: interactions.length, label: 'Total',      color: 'var(--text-primary)' },
+            { val: positiveCount,        label: 'Positive',   color: '#7FA87A' },
+            { val: inPersonCount,        label: 'In Person',  color: 'var(--accent-primary)' },
+            { val: avgEnergy,            label: 'Avg Energy', color: energyColor(Number(avgEnergy)) },
+          ]}
+          tagline="How often you show up for someone quietly defines the depth of what you share."
+        />
       )}
     </div>
   );

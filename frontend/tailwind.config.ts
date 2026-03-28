@@ -84,6 +84,8 @@ const config: Config = {
         display: ['var(--font-display)', 'Georgia', 'serif'],
         // JetBrains Mono — dates, codes, counts
         mono:    ['JetBrains Mono', 'monospace'],
+        // Nunito — uppercase section labels, nav labels (rounded terminals)
+        rounded: ['var(--font-rounded)', 'sans-serif'],
       },
       fontSize: {
         // Base scale — unchanged, body text reads well at these sizes

@@ -330,7 +330,7 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
   );
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col h-full min-h-0">
       <PatternModal isOpen={modalOpen} editing={editing} onClose={() => { setModalOpen(false); setEditing(null); }} onSave={handleSave} saving={creating || updating} />
 
       {deletingPattern && (
@@ -357,7 +357,8 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
         </div>
       ) : (
         <>
-          {/* ── List ── */}
+          {/* ── Scrollable list ── */}
+          <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {patterns.map((pattern, index) => {
               const { color, bg }    = categoryMeta(pattern.category);
@@ -461,6 +462,7 @@ export function MemberPatternsTab({ member, externalAddOpen, onExternalAddClose,
                 </div>
               );
             })}
+          </div>
           </div>
 
           <TabFooter

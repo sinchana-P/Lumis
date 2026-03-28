@@ -850,7 +850,7 @@ export function MemberNumerologyTab({ member, isUser = false, isExternalLoading 
   const isLoading = isFetching || isCalculating || isExternalLoading;
 
   return (
-    <div className="w-full max-w-none">
+    <div className="h-full overflow-y-auto w-full max-w-none" style={{ padding: '32px' }}>
       {/* Tab Navigation */}
       <div className="flex border-b border-primary/40 gap-10 overflow-x-auto mb-8">
         <button onClick={() => setActiveTab('core')} className={tabStyle('core', 'text-accent-primary')}>

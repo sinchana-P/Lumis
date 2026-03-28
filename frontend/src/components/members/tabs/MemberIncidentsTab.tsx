@@ -301,7 +301,7 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
   }, {} as Record<string, number>);
 
   return (
-    <div className="w-full">
+    <div className="flex flex-col h-full min-h-0">
       {/* Modal always rendered so header button always works */}
       <IncidentModal isOpen={modalOpen} editing={editing} onClose={() => { setModalOpen(false); setEditing(null); }} onSave={handleSave} saving={creating || updating} />
 
@@ -315,35 +315,35 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
         />
       )}
 
-      {isLoading && (
-        <div className="flex items-center justify-center" style={{ paddingTop: 40 }}>
-          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
-        </div>
-      )}
-      {isError && !isLoading && (
-        <div style={{ paddingTop: 40, textAlign: 'center' }}>
-          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 20 }}>Could not load incidents. Please try again.</p>
-          <button onClick={openAdd} className="font-mono uppercase tracking-widest"
-            style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-            Log Anyway
-          </button>
-        </div>
-      )}
+      <div className="flex-1 overflow-y-auto min-h-0 px-8 pt-8">
+        {isLoading && (
+          <div className="flex items-center justify-center">
+            <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)' }}>Loading incidents…</p>
+          </div>
+        )}
+        {isError && !isLoading && (
+          <div style={{ textAlign: 'center' }}>
+            <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 20 }}>Could not load incidents. Please try again.</p>
+            <button onClick={openAdd} className="font-mono uppercase tracking-widest"
+              style={{ fontSize: 10, padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              Log Anyway
+            </button>
+          </div>
+        )}
 
-      {!isLoading && !isError && (incidents.length === 0 ? (
-        /* ── Empty state ── */
-        <div style={{ paddingTop: 40, textAlign: 'center' }}>
-          <p className="font-serif" style={{ fontSize: 17, color: 'var(--text-primary)', marginBottom: 6, fontWeight: 400, letterSpacing: '-0.01em' }}>Your story begins here</p>
-          <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 24 }}>
-            Start chronicling the moments that shaped your connection with {member.fullName}.
-          </p>
-          <button onClick={openAdd} style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
-            Chronicle a Moment
-          </button>
-        </div>
-      ) : (
-        <>
-          {/* ── Timeline ── */}
+        {!isLoading && !isError && (incidents.length === 0 ? (
+          /* ── Empty state ── */
+          <div style={{ textAlign: 'center' }}>
+            <p className="font-serif" style={{ fontSize: 17, color: 'var(--text-primary)', marginBottom: 6, fontWeight: 400, letterSpacing: '-0.01em' }}>Your story begins here</p>
+            <p className="font-serif" style={{ fontSize: 15, color: 'var(--text-tertiary)', marginBottom: 24 }}>
+              Start chronicling the moments that shaped your connection with {member.fullName}.
+            </p>
+            <button onClick={openAdd} style={{ fontFamily: "'Nunito', sans-serif", fontSize: 12, fontWeight: 600, letterSpacing: '0.06em', padding: '9px 20px', borderRadius: 8, border: '1px solid var(--bg-tertiary)', background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              Chronicle a Moment
+            </button>
+          </div>
+        ) : (
+          /* ── Timeline ── */
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {incidents.map((incident, index) => {
               const { color, bg } = categoryMeta(incident.category);
@@ -444,13 +444,15 @@ export function MemberIncidentsTab({ member, externalAddOpen, onExternalAddClose
               );
             })}
           </div>
+        ))}
+      </div>
 
-          <TabFooter
-            stats={CATEGORIES.map(c => ({ val: counts[c.value], label: c.label, color: c.color }))}
-            tagline="Every moment — difficult or beautiful — is a thread in the story of this relationship."
-          />
-        </>
-      ))}
+      {!isLoading && !isError && incidents.length > 0 && (
+        <TabFooter
+          stats={CATEGORIES.map(c => ({ val: counts[c.value], label: c.label, color: c.color }))}
+          tagline="Every moment — difficult or beautiful — is a thread in the story of this relationship."
+        />
+      )}
     </div>
   );
 }

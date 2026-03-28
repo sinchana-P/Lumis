@@ -394,11 +394,11 @@ export function MemberAstrologyTab({ member, isUser = false, isExternalLoading =
   const isLoading = (isUser ? isFetchingMe : isFetchingMember) || isExternalLoading;
   const firstName = member.fullName.split(' ')[0];
 
-  if (isLoading) return <LoadingSkeleton />;
+  if (isLoading) return <div className="h-full overflow-y-auto" style={{ padding: '32px' }}><LoadingSkeleton /></div>;
 
   if (!profile) {
-    return <EmptyState member={member} isUser={isUser} error={externalError} />;
+    return <div className="h-full overflow-y-auto" style={{ padding: '32px' }}><EmptyState member={member} isUser={isUser} error={externalError} /></div>;
   }
 
-  return <AstrologyDataView profile={profile} firstName={firstName} />;
+  return <div className="h-full overflow-y-auto" style={{ padding: '32px' }}><AstrologyDataView profile={profile} firstName={firstName} /></div>;
 }

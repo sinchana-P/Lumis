@@ -343,7 +343,7 @@ export default function MemberDetailPage() {
           <div className="pl-8 pr-6 pb-6">
             <div className="text-center">
               <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 11, fontStyle: 'italic', fontWeight: 500, color: 'var(--text-tertiary)', lineHeight: 1.55 }}>
-                "The resonance of stillness is the loudest frequency."
+                &quot;The resonance of stillness is the loudest frequency.&quot;
               </p>
               <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 10, fontWeight: 500, color: 'var(--text-tertiary)', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: 6, opacity: 0.6 }}>
                 Internal Resonance
@@ -397,10 +397,8 @@ export default function MemberDetailPage() {
         />
 
         {/* Scrollable Tab Content */}
-        <div className="flex-1 overflow-y-auto" data-tour="tab-content">
-          <div className="p-8">
-            {renderTabContent()}
-          </div>
+        <div className="flex-1 overflow-hidden flex flex-col" data-tour="tab-content">
+          {renderTabContent()}
         </div>
       </main>
 
