@@ -23,10 +23,21 @@ export class NumerologyController {
     return { success: true, data: result };
   }
 
+  @Post('self')
+  @ApiOperation({ summary: 'Calculate and persist self numerology profile (no compatibility)' })
+  async calculateSelf(@User() user: any) {
+    const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.full_name || user.email;
+    if (!user.date_of_birth || !fullName) {
+      return { success: false, error: { code: 'VALIDATION_ERROR', message: 'Date of birth and name are required' } };
+    }
+    const result = await this.numerologyService.calculateSelf(user.id, user.date_of_birth, fullName);
+    return { success: true, data: result };
+  }
+
   @Get('me')
   @ApiOperation({ summary: 'Get numerology profile for the authenticated user' })
   async getMyProfile(@User() user: any) {
-    const result = await this.numerologyService.getForUser(user.id);
+    const result = await this.numerologyService.getForUser(user.id, user.date_of_birth);
     return { success: true, data: result };
   }
 

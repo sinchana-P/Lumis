@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { SupabaseService } from '../../common/services/supabase.service';
 import { AstrologyEngineService, BirthData } from './astrology-engine.service';
-import { AstrologyInterpreterService } from './astrology-interpreter.service';
+import { AstrologyInterpreterService, AstrologySelfInsights } from './astrology-interpreter.service';
 import { CalculateAstrologyDto } from './dto';
 
 @Injectable()
@@ -84,6 +84,47 @@ export class AstrologyService {
       throw new Error(error.message);
     }
 
+    return this.formatProfile(data);
+  }
+
+  async calculateSelf(userId: string, dto: CalculateAstrologyDto, firstName: string): Promise<any> {
+    const supabase = this.supabaseService.getAdminClient();
+
+    const birthData: BirthData = {
+      dob: dto.dob,
+      birthTime: dto.birthTime,
+      lat: dto.lat,
+      lon: dto.lon,
+      utcOffset: dto.utcOffset,
+    };
+
+    const computed = await this.engine.calculate(birthData);
+
+    const insights: AstrologySelfInsights = await this.interpreter.buildSelfInsights(computed, firstName);
+
+    const record = {
+      user_id: userId,
+      member_id: null,
+      computed,
+      insights,
+      updated_at: new Date().toISOString(),
+    };
+
+    const { data: existing } = await supabase
+      .from('astrology_profiles')
+      .select('id')
+      .eq('user_id', userId)
+      .is('member_id', null)
+      .maybeSingle();
+
+    let data: any, error: any;
+    if (existing) {
+      ({ data, error } = await supabase.from('astrology_profiles').update(record).eq('id', existing.id).select().single());
+    } else {
+      ({ data, error } = await supabase.from('astrology_profiles').insert(record).select().single());
+    }
+
+    if (error) throw new Error(error.message);
     return this.formatProfile(data);
   }
 

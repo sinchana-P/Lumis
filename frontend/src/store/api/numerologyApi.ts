@@ -30,6 +30,31 @@ export interface NumerologyInsights {
   theirNumberInYourLife: Record<string, string>;
 }
 
+export interface NumerologySelfInsights {
+  // Core number descriptions
+  lifePathMeaning: string;
+  expressionMeaning: string;
+  soulUrgeMeaning: string;
+  personalityMeaning: string;
+  birthdayMeaning: string;
+  maturityMeaning: string;
+  // Timing
+  personalYearMeaning: string;
+  personalMonthMeaning: string;
+  // Deep identity insights (AI)
+  emotionalCore: string;
+  innerConflict: string;
+  behaviorPattern: string;
+  // Application insights (AI)
+  careerAlignment: string;
+  relationshipPattern: string;
+  shadowAndSabotage: string;
+  // Evolution (AI)
+  growthPath: string;
+  pinnacleInsight: string;
+  challengeInsight: string;
+}
+
 export interface NumerologyCompatibility {
   lifePathScore: number;
   expressionScore: number;
@@ -47,6 +72,16 @@ export interface NumerologyProfile {
   timingNumbers: NumerologyTimingNumbers;
   insights: NumerologyInsights;
   compatibility: NumerologyCompatibility | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface NumerologySelfProfile {
+  id: string;
+  userId: string;
+  coreNumbers: NumerologyCoreNumbers;
+  timingNumbers: NumerologyTimingNumbers;
+  insights: NumerologySelfInsights;
   createdAt: string;
   updatedAt: string;
 }
@@ -84,7 +119,20 @@ export const numerologyApi = baseApi.injectEndpoints({
         { type: 'MemberNumerology', id: '__self__' },
       ],
     }),
+    calculateSelfNumerology: builder.mutation<NumerologySelfProfile, void>({
+      query: () => ({
+        url: '/numerology/self',
+        method: 'POST',
+      }),
+      transformResponse: (response: any) => response.data,
+      invalidatesTags: [{ type: 'MemberNumerology', id: '__self__' }],
+    }),
   }),
 });
 
-export const { useGetMemberNumerologyQuery, useGetMyNumerologyQuery, useCalculateNumerologyMutation } = numerologyApi;
+export const {
+  useGetMemberNumerologyQuery,
+  useGetMyNumerologyQuery,
+  useCalculateNumerologyMutation,
+  useCalculateSelfNumerologyMutation,
+} = numerologyApi;

@@ -47,6 +47,19 @@ export const MOON_SIGN_EMOTIONAL: Record<string, string> = {
   'Meena':'Their emotional world is oceanic — permeable, empathic, and easily dissolved into the other.',
 };
 
+export interface AstrologySelfInsights {
+  soulPurpose: string;
+  innerWorld: string;
+  emotionalGift: string;
+  shadowAndGrowth: string;
+  whatNourishesYou: string;
+  whenYouStruggle: string;
+  currentLifePhase: string;
+  planetaryGifts: string;
+  yogaBlessings: string;
+  upcomingPhase: string;
+}
+
 export interface AstrologyInsights {
   emotionalNature: string;
   emotionalGift: string;
@@ -128,6 +141,172 @@ export class AstrologyInterpreterService {
       planetarySignatures,
       dashaInfluence,
     };
+  }
+
+  async buildSelfInsights(
+    computed: AstrologyComputed,
+    firstName: string,
+  ): Promise<AstrologySelfInsights> {
+    const s = this.buildSignalContext(computed);
+
+    const [soulPurpose, innerWorld, emotionalGift, shadowAndGrowth, whatNourishesYou] =
+      await Promise.all([
+        this.safeGenerate(this.promptSoulPurpose(s, computed, firstName), 400,
+          `Your Sun in ${s.sunSign} and ${s.lagna} Ascendant create a particular signature — the way your inner fire meets the world. Your life is oriented toward self-expression through your ${s.sunSign} solar qualities, filtered through a ${s.lagna} lens that shapes how you actually engage with life.`),
+        this.safeGenerate(this.promptInnerWorld(s, firstName), 400,
+          `Your Moon in ${s.moonSign} (${s.nakshatra} nakshatra) describes the texture of your inner life. ${s.moonEmotional} You process the world emotionally through the specific frequency of your nakshatra, which shapes what you need to feel settled.`),
+        this.safeGenerate(this.promptSelfEmotionalGift(s, firstName), 300,
+          `Your greatest emotional gift is a depth of presence that most people only glimpse. Your ${s.moonSign} Moon gives you a specific quality of attunement that others feel but can rarely name.`),
+        this.safeGenerate(this.promptSelfShadowAndGrowth(s, firstName), 400,
+          `You tend to withdraw or contract when you feel unseen, pressured, or emotionally unsafe. This is a protection pattern, not a flaw. Understanding your own triggers is the beginning of transforming them.`),
+        this.safeGenerate(this.promptSelfWhatNourishes(s, computed, firstName), 350,
+          `You feel most yourself — most restored — when you have space, meaning, and beauty around you. Your ${s.moonSign} Moon needs specific conditions to feel genuinely safe, and honouring those is not luxury; it is maintenance.`),
+      ]);
+
+    const [whenYouStruggle, currentLifePhase, planetaryGifts, yogaBlessings, upcomingPhase] =
+      await Promise.all([
+        this.safeGenerate(this.promptSelfWhenYouStruggle(s, firstName), 350,
+          `When things go wrong, you tend to turn inward and become very quiet. From inside it feels like clarity-seeking. From outside it can look like withdrawal. Your stress pattern is to protect your inner world first — understanding this about yourself changes how you move through hard moments.`),
+        this.safeGenerate(this.promptSelfCurrentPhase(computed, firstName), 400,
+          `You are currently in your ${s.currentDasha} Mahadasha — a chapter of life that is shaping your priorities, energy, and the kinds of experiences finding you right now. This is not permanent; it is a season with its own gifts and demands.`),
+        this.safeGenerate(this.promptSelfPlanetaryGifts(computed, firstName), 350,
+          `Your chart carries specific planetary strengths that shape your natural abilities. These are the places where life tends to flow more easily — not because you don't work for it, but because you're moving with your own grain.`),
+        this.safeGenerate(this.promptSelfYogas(computed, firstName), 300,
+          computed.yogas.filter(y => y.isPresent).length > 0
+            ? `Your chart carries ${computed.yogas.filter(y => y.isPresent).map(y => y.name).join(', ')} — auspicious patterns that support particular kinds of growth and expression in your life.`
+            : `Your chart carries its own particular strengths even without classical yogas — found in the individual placement of your planets and their relationships to each other.`),
+        this.safeGenerate(this.promptSelfUpcomingPhase(computed, firstName), 300,
+          `Your next major life chapter — the ${computed.dasha.nextMahadasha.planet} Mahadasha — begins ${computed.dasha.nextMahadasha.startDate}. Knowing it is coming allows you to begin preparing at the soul level.`),
+      ]);
+
+    return {
+      soulPurpose, innerWorld, emotionalGift, shadowAndGrowth,
+      whatNourishesYou, whenYouStruggle, currentLifePhase,
+      planetaryGifts, yogaBlessings, upcomingPhase,
+    };
+  }
+
+  private promptSoulPurpose(s: ReturnType<typeof this.buildSignalContext>, computed: AstrologyComputed, name: string) {
+    const themes: Record<string, string> = {
+      Sun: 'authority, self-expression, ego work', Moon: 'emotional intelligence, nurturing',
+      Mars: 'action, courage, drive', Mercury: 'communication, learning, intellect',
+      Jupiter: 'expansion, wisdom, generosity', Venus: 'love, beauty, harmony',
+      Saturn: 'discipline, structure, mastery', Rahu: 'unconventional paths, obsession, growth',
+      Ketu: 'detachment, wisdom, spirituality',
+    };
+    return `You are Lumen. Write "Soul Purpose" for ${name} in second person (you/your). 3-4 COMPLETE sentences.
+First: what their Sun sign says about their core identity and life mission. Second: how the Ascendant shapes HOW they pursue it. Third-fourth: the synthesis — what they are here to embody.
+
+Sun sign: ${s.sunSign} (house ${computed.planets.find(p => p.name === 'Sun')?.house})
+Ascendant (Lagna): ${s.lagna}
+Current Mahadasha: ${s.currentDasha} (${themes[s.currentDasha] || ''})
+Yogas present: ${s.yogas || 'none'}`;
+  }
+
+  private promptInnerWorld(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+    return `You are Lumen. Write "Inner World" for ${name} in second person (you/your). 3-4 COMPLETE sentences.
+Describe the texture of their emotional life — how they feel, how they process, what they need to feel centred.
+Be specific. No jargon. Write for someone who doesn't know Vedic astrology.
+
+Moon sign: ${s.moonSign} (${s.moonEmotional})
+Nakshatra: ${s.nakshatra} — ${s.nakshatraSignature}
+Moon house: ${s.moonHouse}, dignity: ${s.moonDignity}`;
+  }
+
+  private promptSelfEmotionalGift(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+    return `You are Lumen. Write "Emotional Gift" for ${name} in second person (you/your). 2-3 COMPLETE sentences.
+What is their emotional superpower? What do they naturally offer that others find rare?
+
+Moon: ${s.moonSign}, Nakshatra: ${s.nakshatra}, Moon house: ${s.moonHouse}
+Yogas: ${s.yogas || 'none'}`;
+  }
+
+  private promptSelfShadowAndGrowth(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+    return `You are Lumen. Write "Shadow & Growth" for ${name} in second person (you/your). 3-4 COMPLETE sentences.
+What triggers their emotional withdrawal? What does their stress pattern look like? What is the growth invitation within it?
+
+Moon: ${s.moonSign}, Nakshatra: ${s.nakshatra}
+Mars house: ${s.marsHouse}, Saturn house: ${s.saturnHouse}`;
+  }
+
+  private promptSelfWhatNourishes(s: ReturnType<typeof this.buildSignalContext>, computed: AstrologyComputed, name: string) {
+    return `You are Lumen. Write "What Nourishes You" for ${name} in second person (you/your). 3-4 COMPLETE sentences.
+What specific conditions restore them? What environments, rhythms, or experiences make them feel genuinely well?
+
+Moon: ${s.moonSign}, Nakshatra: ${s.nakshatra}, Moon house: ${s.moonHouse}
+Lagna: ${s.lagna}, Venus house: ${s.venusHouse}, Jupiter house: ${s.jupiterHouse}`;
+  }
+
+  private promptSelfWhenYouStruggle(s: ReturnType<typeof this.buildSignalContext>, name: string) {
+    return `You are Lumen. Write "When You Struggle" for ${name} in second person (you/your). 3 COMPLETE sentences.
+Sentence 1: specific stress/defence pattern. Sentence 2: what it looks like from outside/inside. Sentence 3: the reframe — what this pattern is protecting.
+
+Moon: ${s.moonSign}, Nakshatra: ${s.nakshatra}
+Mars house: ${s.marsHouse}, Lagna: ${s.lagna}`;
+  }
+
+  private promptSelfCurrentPhase(computed: AstrologyComputed, name: string) {
+    const themes: Record<string, string> = {
+      Sun: 'identity, authority, ego definition',
+      Moon: 'emotional depth, home, inner life',
+      Mars: 'action, ambition, courage, conflict',
+      Mercury: 'communication, learning, mental expansion',
+      Jupiter: 'wisdom, growth, abundance, teaching',
+      Venus: 'love, creativity, beauty, relationships',
+      Saturn: 'discipline, restriction, long mastery, karma',
+      Rahu: 'ambition, obsession, unconventional growth',
+      Ketu: 'detachment, spiritual seeking, past patterns releasing',
+    };
+    const { dasha } = computed;
+    return `You are Lumen. Write "Current Life Phase" for ${name} in second person (you/your). 3-4 COMPLETE sentences.
+What is the meaning of this Mahadasha/Antardasha combination for how they are showing up in life right now?
+What is this phase asking of them? What is it building?
+
+Mahadasha: ${dasha.currentMahadasha.planet} (${themes[dasha.currentMahadasha.planet] || ''}) — ${dasha.currentMahadasha.startDate} to ${dasha.currentMahadasha.endDate}
+Antardasha: ${dasha.currentAntardasha.planet} (${themes[dasha.currentAntardasha.planet] || ''})`;
+  }
+
+  private promptSelfPlanetaryGifts(computed: AstrologyComputed, name: string) {
+    const strong = computed.planets
+      .filter(p => p.dignity === 'exalted' || p.dignity === 'own')
+      .map(p => `${p.name} (${p.dignity} in ${p.sign.split(' ')[0]}, house ${p.house})`);
+    const retro = computed.planets.filter(p => p.isRetrograde).map(p => p.name);
+    return `You are Lumen. Write "Planetary Gifts" for ${name} in second person (you/your). 2-3 COMPLETE sentences.
+What natural strengths and abilities do their strongest planets give them?
+
+Strong planets: ${strong.join(', ') || 'none at exaltation or own sign'}
+Retrograde: ${retro.join(', ') || 'none'}
+Moon: ${computed.moonSign}, Lagna: ${computed.ascendant}
+Yogas: ${computed.yogas.filter(y => y.isPresent).map(y => y.name).join(', ') || 'none'}`;
+  }
+
+  private promptSelfYogas(computed: AstrologyComputed, name: string) {
+    const present = computed.yogas.filter(y => y.isPresent);
+    if (present.length === 0) return `You are Lumen. Write 2 sentences about ${name}'s chart strengths even without classical yogas. Second person. Focus on what their planetary arrangement naturally supports.`;
+    return `You are Lumen. Write "Yoga Blessings" for ${name} in second person (you/your). 2-3 COMPLETE sentences.
+Explain what the yogas in their chart mean in plain language — what gifts, tendencies, or life themes they create.
+
+Yogas present: ${present.map(y => y.name).join(', ')}
+Moon: ${computed.moonSign}, Lagna: ${computed.ascendant}`;
+  }
+
+  private promptSelfUpcomingPhase(computed: AstrologyComputed, name: string) {
+    const themes: Record<string, string> = {
+      Sun: 'identity, leadership, ego refinement',
+      Moon: 'emotional depth, nurturing, home',
+      Mars: 'action, courage, ambition',
+      Mercury: 'communication, learning, agility',
+      Jupiter: 'expansion, wisdom, abundance',
+      Venus: 'love, creativity, beauty',
+      Saturn: 'discipline, patience, long mastery',
+      Rahu: 'growth, unconventional paths',
+      Ketu: 'spirituality, detachment, release',
+    };
+    const next = computed.dasha.nextMahadasha;
+    return `You are Lumen. Write "Upcoming Phase" for ${name} in second person (you/your). 2-3 COMPLETE sentences.
+What will the next Mahadasha ask of them? How can they prepare at the soul level?
+
+Next Mahadasha: ${next.planet} (${themes[next.planet] || ''}) — begins ${next.startDate}`;
   }
 
   private buildSignalContext(computed: AstrologyComputed) {

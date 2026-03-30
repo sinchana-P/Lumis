@@ -20,6 +20,14 @@ export class AstrologyController {
     return { success: true, data: result };
   }
 
+  @Post('self')
+  @ApiOperation({ summary: 'Calculate and persist self astrology profile (personal insights only)' })
+  async calculateSelf(@User() user: any, @Body() dto: CalculateAstrologyDto) {
+    const firstName = user.full_name?.split(' ')[0] || user.first_name || 'You';
+    const result = await this.astrologyService.calculateSelf(user.id, dto, firstName);
+    return { success: true, data: result };
+  }
+
   @Get('me')
   @ApiOperation({ summary: 'Get Vedic astrology profile for the authenticated user' })
   async getMyProfile(@User() user: any) {

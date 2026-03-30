@@ -66,6 +66,19 @@ export interface AstrologyInsights {
   dashaInfluence: string;
 }
 
+export interface AstrologySelfInsights {
+  soulPurpose: string;
+  innerWorld: string;
+  emotionalGift: string;
+  shadowAndGrowth: string;
+  whatNourishesYou: string;
+  whenYouStruggle: string;
+  currentLifePhase: string;
+  planetaryGifts: string;
+  yogaBlessings: string;
+  upcomingPhase: string;
+}
+
 export interface AstrologyProfile {
   id: string;
   memberId: string | null;
@@ -84,6 +97,15 @@ export interface CalculateAstrologyRequest {
   memberId?: string;
   memberRelation?: string;
   memberName?: string;
+}
+
+export interface AstrologySelfProfile {
+  id: string;
+  userId: string;
+  computed: AstrologyComputed;
+  insights: AstrologySelfInsights;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface GeocodeResult {
@@ -121,6 +143,15 @@ export const astrologyApi = baseApi.injectEndpoints({
       query: (place) => `/astrology/geocode?place=${encodeURIComponent(place)}`,
       transformResponse: (response: any) => response.data,
     }),
+    calculateSelfAstrology: builder.mutation<AstrologySelfProfile, { dob: string; birthTime: string; lat: number; lon: number; utcOffset: number }>({
+      query: (body) => ({
+        url: '/astrology/self',
+        method: 'POST',
+        body,
+      }),
+      transformResponse: (response: any) => response.data,
+      invalidatesTags: [{ type: 'MemberAstrology', id: '__self__' }],
+    }),
   }),
 });
 
@@ -129,4 +160,5 @@ export const {
   useGetMyAstrologyQuery,
   useCalculateAstrologyMutation,
   useGeocodePlaceQuery,
+  useCalculateSelfAstrologyMutation,
 } = astrologyApi;

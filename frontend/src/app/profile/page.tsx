@@ -17,11 +17,13 @@ import { MemberIncidentsTab } from '@/components/members/tabs/MemberIncidentsTab
 import { MemberPatternsTab } from '@/components/members/tabs/MemberPatternsTab';
 import { UserTraitsTab } from '@/components/profile/UserTraitsTab';
 import { UserSelfReportTab } from '@/components/profile/UserSelfReportTab';
+import { UserNumerologyTab } from '@/components/profile/UserNumerologyTab';
+import { UserAstrologyTab } from '@/components/profile/UserAstrologyTab';
 import { DottedDivider } from '@/components/ui/DottedDivider';
 import { Button } from '@/components/ui/Button';
 import { useGetTraitsQuery } from '@/store/api/traitsApi';
-import { useGetMyNumerologyQuery, useCalculateNumerologyMutation } from '@/store/api/numerologyApi';
-import { useGetMyAstrologyQuery, useCalculateAstrologyMutation } from '@/store/api/astrologyApi';
+import { useGetMyNumerologyQuery, useCalculateNumerologyMutation, useCalculateSelfNumerologyMutation } from '@/store/api/numerologyApi';
+import { useGetMyAstrologyQuery, useCalculateAstrologyMutation, useCalculateSelfAstrologyMutation } from '@/store/api/astrologyApi';
 import { useLumenSelfReportQuery } from '@/store/api/lumenApi';
 import { getAccessToken } from '@/lib/tokenStorage';
 import { useGetJournalEntriesQuery } from '@/store/api/journalApi';
@@ -684,8 +686,10 @@ export default function ProfilePage() {
 
   const { data: myNumerologyData } = useGetMyNumerologyQuery(undefined, { skip: !user });
   const [calculateNumerology, { isLoading: isGeneratingNumerology }] = useCalculateNumerologyMutation();
+  const [calculateSelfNumerology, { isLoading: isGeneratingSelfNumerology }] = useCalculateSelfNumerologyMutation();
   const { data: myAstrologyData } = useGetMyAstrologyQuery(undefined, { skip: !user });
   const [calculateAstrology, { isLoading: isGeneratingAstrology }] = useCalculateAstrologyMutation();
+  const [calculateSelfAstrology, { isLoading: isGeneratingSelfAstrology }] = useCalculateSelfAstrologyMutation();
   const { data: selfReportResponse, isLoading: isGeneratingSelfReport, refetch: refetchSelfReport } = useLumenSelfReportQuery(undefined, { skip: !selfReportTriggered });
 
   if (!user) return null;
@@ -715,9 +719,8 @@ export default function ProfilePage() {
   const handleGenerateNumerology = async () => {
     if (!user.date_of_birth) return;
     setNumerologyError(null);
-    const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.email || '';
     try {
-      await calculateNumerology({ dob: user.date_of_birth, fullName }).unwrap();
+      await calculateSelfNumerology().unwrap();
     } catch (err: any) {
       setNumerologyError(err?.data?.error?.message || 'Failed to generate. Please try again.');
     }
@@ -741,12 +744,10 @@ export default function ProfilePage() {
           utcOffset = geoJson.data?.utcOffset ?? 0;
         }
       } catch {}
-      const firstName = user.first_name || user.email?.split('@')[0] || 'You';
-      await calculateAstrology({
+      await calculateSelfAstrology({
         dob: user.date_of_birth,
         birthTime: user.time_of_birth,
         lat, lon, utcOffset,
-        memberName: firstName,
       }).unwrap();
     } catch (err: any) {
       setAstrologyError(err?.data?.error?.message || 'Failed to generate reading. Please try again.');
@@ -790,9 +791,9 @@ export default function ProfilePage() {
           />
         );
       case 'numerology':
-        return <MemberNumerologyTab member={userAsMember} isUser isExternalLoading={isGeneratingNumerology} />;
+        return <UserNumerologyTab />;
       case 'astrology':
-        return <MemberAstrologyTab member={userAsMember} isUser isExternalLoading={isGeneratingAstrology} externalError={astrologyError} />;
+        return <UserAstrologyTab />;
       case 'report':
         return (
           <UserSelfReportTab
@@ -828,9 +829,9 @@ export default function ProfilePage() {
   const getActionButton = () => {
     if (addAction) return <Button onClick={addAction}>{addLabel}</Button>;
     if (activeTab === 'numerology' && canGenerateNumerology)
-      return <Button onClick={handleGenerateNumerology} disabled={isGeneratingNumerology}>{isGeneratingNumerology ? 'Generating…' : hasNumerologyData ? 'Regenerate' : 'Generate Numerology'}</Button>;
+      return <Button onClick={handleGenerateNumerology} disabled={isGeneratingSelfNumerology}>{isGeneratingSelfNumerology ? 'Generating…' : hasNumerologyData ? 'Regenerate' : 'Generate Numerology'}</Button>;
     if (activeTab === 'astrology' && canGenerateAstrology)
-      return <Button onClick={handleGenerateAstrology} disabled={isGeneratingAstrology}>{isGeneratingAstrology ? 'Generating…' : hasAstrologyData ? 'Regenerate' : 'Generate Astrology'}</Button>;
+      return <Button onClick={handleGenerateAstrology} disabled={isGeneratingSelfAstrology}>{isGeneratingSelfAstrology ? 'Generating…' : hasAstrologyData ? 'Regenerate' : 'Generate Astrology'}</Button>;
     if (activeTab === 'report') {
       const hasReport = Boolean(selfReportResponse?.data?.text);
       return <Button onClick={() => { if (selfReportTriggered) refetchSelfReport(); else setSelfReportTriggered(true); }} disabled={isGeneratingSelfReport}>{isGeneratingSelfReport ? 'Generating…' : hasReport ? 'Regenerate Report' : 'Generate Report'}</Button>;
@@ -927,7 +928,7 @@ export default function ProfilePage() {
                 </span>
               )}
             </h2>
-            <p style={{ fontFamily: "'Nunito', sans-serif", fontSize: 13, fontWeight: 400, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+            <p className="font-serif" style={{ fontSize: 14, fontWeight: 400, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
               {TAB_DESCS[activeTab]}
             </p>
           </div>
