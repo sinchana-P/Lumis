@@ -1,0 +1,61 @@
+# Render Blueprint — Lumis frontend (Next.js) + backend (NestJS) in ONE web service.
+#
+# Next.js serves the public $PORT and proxies /api/v1/* and /api/docs to NestJS on
+# 127.0.0.1:3001 inside the same container (scripts/render-start.js). The browser
+# only ever talks to one origin, so no CORS / cross-site cookie setup is needed.
+#
+# Database is Supabase (Postgres) — not hosted on Render.
+# Values marked `sync: false` are prompted for in the Render dashboard on first deploy.
+services:
+  - type: web
+    name: lumis
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    # Proxied to NestJS — healthy only when both processes are up.
+    healthCheckPath: /api/v1/status
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: NODE_ENV
+        value: production
+      # Used at build (Next.js rewrites) and runtime (NestJS port) — keep in one place.
+      - key: BACKEND_INTERNAL_URL
+        value: http://127.0.0.1:3001
+
+      # Frontend (inlined at build time)
+      - key: NEXT_PUBLIC_API_URL
+        value: /api/v1
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+
+      # Backend
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: COHERE_API_KEY
+        sync: false
+      # Set to this service's own URL (e.g. https://lumis.onrender.com) after creation.
+      - key: FRONTEND_URL
+        sync: false
