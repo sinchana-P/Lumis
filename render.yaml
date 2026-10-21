@@ -8,7 +8,7 @@
 # Values marked `sync: false` are prompted for in the Render dashboard on first deploy.
 services:
   - type: web
-    name: lumis
+    name: lumis-log
     runtime: node
     plan: free
     branch: main
